@@ -1,0 +1,17 @@
+Hi, 
+
+Welcome to my project!
+
+I'm currently working on an American Football style game. My background is in C# .net developement, 
+with a passion and knack for math and phsyics. Currently the very basic game concepts exsist, 
+including pass arcs, Wr route running, DB Zone coverage. My current timeline looks to have a basic game
+concept ready by the end of March, with most gameplay tuning occuring from June into July. I am always looking 
+for more help, specifically creating models and animations. Character movement will be code based, 
+not animation based. 
+
+Current Timeline (anticipated date of feature deployment):
+03/04/19 - Add run game mechanics, allow selection between hand off and pass
+03/11/19 - Add catching / pass deflection mechanics
+03/18/19 - Add tackling mechanics
+03/25/19 - Add o-line /d-line mechanics
+04/08/19 - Begin game review 
