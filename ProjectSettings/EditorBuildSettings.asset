@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 0
+    path: Assets/WeaponSystem/Menu.unity
+    guid: bb336b18014d5a14eb0807aa0eadf3c4
+  - enabled: 0
+    path: Assets/WeaponSystem/Demo1.unity
+    guid: 44e7a54e6b53b5a4db02281953f9a928
+  - enabled: 0
+    path: Assets/WeaponSystem/Demo2.unity
+    guid: 4b33fcbac812cd14288ffd0eeb3067fe
+  - enabled: 0
+    path: Assets/WeaponSystem/Demo3.unity
+    guid: 199e46682b73d6147a86174170e32142
+  - enabled: 0
+    path: Assets/WeaponSystem/Demo2D.unity
+    guid: 6301aa5dc9b5acf4ea5fe72a8ad585e2
+  - enabled: 0
+    path: Assets/WeaponSystem/TD.unity
+    guid: c64e2f69f56701b459f69a27f01316b4
+  m_configObjects: {}
