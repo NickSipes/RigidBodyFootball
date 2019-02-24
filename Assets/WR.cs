@@ -24,16 +24,20 @@ public class WR : MonoBehaviour
 
     public Canvas canvas;
     public Image pressBar;
-
+    bool isHiked = false;
     public Transform target;
+
+    GameManager gameManager;
     // Use this for initialization
     void Start()
     {
+        gameManager = FindObjectOfType<GameManager>();
         qb = FindObjectOfType<QB>();
         rb = GetComponent<Rigidbody>();
         startColor = materialRenderer.material.color;
         aiCharacter = GetComponent<AICharacterControl>();
         startGoal = aiCharacter.target;
+        aiCharacter.target = null;
         target = startGoal;
         lr.material.color = LineColor;
         navStartSpeed = navMeshAgent.speed;
@@ -43,32 +47,20 @@ public class WR : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (materialRenderer.material.color != startColor)
+        if (!gameManager.isHiked)
+            return;
+       
+        
+        if (Input.anyKey)
         {
-            if (Input.GetMouseButtonDown(0)) //Bullet Pass
-            {
-                Debug.Log("Pressed secondary button.");
-                passTarget = transform.position;
-                qb.Throw(passTarget, this, 1.5f, 23f);
-
-            }
-
-            if (Input.GetMouseButtonDown(1)) // Touch Pass
-            {
-                Debug.Log("Pressed secondary button.");
-                passTarget = transform.position;
-                qb.Throw(passTarget, this, 2.3f, 20f);
-             }
-
-            if (Input.GetMouseButtonDown(2)) // Lob PASS
-            {
-                Debug.Log("Pressed middle click.");
-                passTarget = transform.position;
-                qb.Throw(passTarget, this, 3.2f, 19.5f);
-            }
+        BeginPass();
         }
-        canvas.transform.LookAt(Camera.main.transform);
+        SetTarget();
+        
+    }
 
+    private void SetTarget()
+    {
         if (aiCharacter.target == null)
         {
             aiCharacter.target = startGoal;
@@ -83,12 +75,41 @@ public class WR : MonoBehaviour
                 Destroy(ball);
                 aiCharacter.target = startGoal;
             }
-              
+
 
         }
-         
+
         DrawPath();
-        
+    }
+
+    private void BeginPass()
+    {
+        if (materialRenderer.material.color != startColor)
+        {
+            //todo adjust throwPower dependent on distance and throw type
+            if (Input.GetMouseButtonDown(0)) //Bullet Pass
+            {
+                Debug.Log("Pressed secondary button.");
+                passTarget = transform.position;
+                qb.Throw(passTarget, this, 1.5f, 23f);
+
+            }
+
+            if (Input.GetMouseButtonDown(1)) // Touch Pass
+            {
+                Debug.Log("Pressed secondary button.");
+                passTarget = transform.position;
+                qb.Throw(passTarget, this, 2.3f, 20f);
+            }
+
+            if (Input.GetMouseButtonDown(2)) // Lob PASS
+            {
+                //Debug.Log("Pressed middle click.");
+                passTarget = transform.position;
+                qb.Throw(passTarget, this, 3.2f, 19.5f);
+            }
+        }
+        canvas.transform.LookAt(Camera.main.transform);
     }
 
     void OnMouseEnter() 

@@ -10,7 +10,7 @@ for more help, specifically creating models and animations. Character movement w
 not animation based. 
 
 Current Timeline (anticipated date of feature deployment):
-03/04/19 - Add run game mechanics, allow selection between hand off and pass
+03/04/19 - Add run game mechanics, allow selection between hand off and pass, Add reset scene and hike ball mechanic
 03/11/19 - Add catching / pass deflection mechanics
 03/18/19 - Add tackling mechanics
 03/25/19 - Add o-line /d-line mechanics

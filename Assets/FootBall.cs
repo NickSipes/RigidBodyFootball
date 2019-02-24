@@ -55,7 +55,7 @@ public class FootBall : MonoBehaviour
         if (Ballistics.solve_ballistic_arc_lateral(transform.position, power, targetPos + Vector3.up, velocity, arcType,
             out fireVel, out gravity, out impactPos))
         {
-            GameObject go = Instantiate(targetMarker, impactPos, Quaternion.LookRotation(qb.transform.position));
+            GameObject go = Instantiate(targetMarker, impactPos, Quaternion.LookRotation(qb.transform.position + new Vector3(0,1,0)));
             Destroy(go, 2);
             wr.SetTarget(go.transform);
             transform.forward = diffGround;

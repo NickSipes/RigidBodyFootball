@@ -6,9 +6,11 @@ public class Goal : MonoBehaviour
 {
     public WaypointFollower wayPointFollower;
     private WR wr;
+    GameManager gameManager;
 	// Use this for initialization
 	void Start ()
     {
+        gameManager = FindObjectOfType<GameManager>();
         wr = FindObjectOfType<WR>();
         wayPointFollower = GetComponent<WaypointFollower>();
     }

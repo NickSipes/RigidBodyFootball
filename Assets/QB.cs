@@ -10,10 +10,13 @@ public class QB : MonoBehaviour {
     private GameObject throwingHand;
     private ThrowingHand throwingHandScript;
     // Use this for initialization
+    GameManager gameManager;
+    bool isHiked = false;
 
     void Start () {
         //controller = GetComponent<CharacterController>();
         throwingHandScript = FindObjectOfType<ThrowingHand>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
 	// Update is called once per frame

@@ -20,12 +20,13 @@ public class DB : MonoBehaviour
 
     [SerializeField]private bool isMan;
     [SerializeField] private bool isZone;
-
+    GameManager gameManager;
     private bool isPressing;
-
+    bool isHiked = false;
     // Use this for initialization
-	void Start ()
+    void Start ()
     {
+        gameManager = FindObjectOfType<GameManager>();
         wideRecievers = FindObjectsOfType<WR>();
         aiCharacter = GetComponent<AICharacterControl>();
         zoneCenter = transform.position + new Vector3(0, 0, 5);
@@ -35,6 +36,8 @@ public class DB : MonoBehaviour
 	//todo DB State Machine
 	// Update is called once per frame
 	void Update () {
+        if (!gameManager.isHiked)
+            return;
 
         if (startTarget == null)
         {
@@ -82,14 +85,14 @@ public class DB : MonoBehaviour
         aiCharacter.target = targetTransform;
         target = targetTransform;
         targetWr = targetTransform.GetComponentInParent<WR>();
-        Debug.Log("Target Changed");
+        //Debug.Log("Target Changed");
     }
     private void SitInZone(Transform targetTransform)
     {
         aiCharacter.target = targetTransform;
         target = targetTransform;
         targetWr = null;
-        Debug.Log("Target Changed");
+        //Debug.Log("Target Changed");
     }
     Transform GetClosestEnemy(WR[] enemies)
     {
@@ -140,7 +143,7 @@ public class DB : MonoBehaviour
         {
            var possibleEnemy = CheckZones(wideRecievers);
            Vector3 wrZoneCntrDist = possibleEnemy.position - zoneCenter;
-           Debug.Log(wrZoneCntrDist.magnitude);
+           //Debug.Log(wrZoneCntrDist.magnitude);
            if (wrZoneCntrDist.magnitude < zoneSize)
            {
                

@@ -40,7 +40,7 @@ public class WaypointFollower : MonoBehaviour
     private float progressDistance;
     public float currentSpeed;
     private int lastWaypoint;
-
+    GameManager gameManager;
     // Pull Waypoint data from circuit to set up our varying speed variables.
     public void InitializeSpeeds()
     {
@@ -77,6 +77,8 @@ public class WaypointFollower : MonoBehaviour
         distances[circuit.Waypoints.Length] = (circuit.Waypoints[circuit.Waypoints.Length - 1].position - circuit.Waypoints[0].position).magnitude + distances[circuit.Waypoints.Length - 1];
 
         ResetWaypointCircuit();
+
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     // Reset everything to the starting point.
@@ -97,6 +99,8 @@ public class WaypointFollower : MonoBehaviour
 
     private void Update()
     {
+        if (!gameManager.isHiked)
+            return;
         #region Determining our position relative to waypoints.
         if (progressDistance > distances[distances.Length - 1])
             progressDistance -= distances[distances.Length - 1];
