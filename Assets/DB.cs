@@ -1,13 +1,16 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Presets;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 using UnityStandardAssets.Characters.ThirdPerson;
 
 public class DB : MonoBehaviour
 {
     private WR[] wideRecievers;
+    private HB[] hb;
     private AICharacterControl aiCharacter;
     private Transform target;
     public Transform startTarget;
@@ -23,15 +26,28 @@ public class DB : MonoBehaviour
     GameManager gameManager;
     private bool isPressing;
     bool isHiked = false;
+    private bool beenPressed;
+    private Image pressBar;
+    private NavMeshAgent navMeshAgent;
+    private Canvas canvas;
+    private float navStartSpeed;
+    private float navStartAccel;
+    private HB targetHb;
+   
+
     // Use this for initialization
     void Start ()
     {
         gameManager = FindObjectOfType<GameManager>();
         wideRecievers = FindObjectsOfType<WR>();
+        hb = FindObjectsOfType<HB>();
         aiCharacter = GetComponent<AICharacterControl>();
         zoneCenter = transform.position + new Vector3(0, 0, 5);
         zoneCenterGO = Instantiate(new GameObject(), zoneCenter, Quaternion.identity);
-            
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        navStartSpeed = navMeshAgent.speed;
+        navStartAccel = navMeshAgent.acceleration;
+
     }
 	//todo DB State Machine
 	// Update is called once per frame
@@ -39,28 +55,57 @@ public class DB : MonoBehaviour
         if (!gameManager.isHiked)
             return;
 
-        if (startTarget == null)
+        if (gameManager.isPass)
         {
-            //todo this code will break zone coverage later
-            startTarget = GetClosestEnemy(wideRecievers);
-            SetTarget(startTarget);
-            if (targetWr == null)
+          
+            if (startTarget == null)
             {
-                Debug.Log("WR not found from DB set");
-                return;
+                //todo this code will break zone coverage later
+                startTarget = GetClosestWr(wideRecievers);
+                SetTargetWr(startTarget);
+                if (targetWr == null)
+                {
+                    Debug.Log("WR not found from DB set");
+                    return;
+                }
+
+                if (targetWr.CanBePressed())
+                    StartCoroutine(WrPress(targetWr));
             }
+            if (isMan) { }
 
-            if (targetWr.CanBePressed()) 
-            StartCoroutine(WrPress(targetWr));
+            if (isZone && isPressing == false)
+            {
+                PlayZone();
+            }
         }
-        if (isMan) { }
-
-        if (isZone && isPressing == false) 
+        if (gameManager.isRun)
         {
-            PlayZone();
+            target = GetClosestHb(hb);
+            SetTargetHb(target);
         }
-        
 	}
+
+    private Transform GetClosestHb(HB[] HalfBacks)
+    {
+        Transform bestTarget = null;
+        float closestDistanceSqr = Mathf.Infinity;
+        Vector3 currentPosition = transform.position;
+
+        foreach (HB potentialTarget in HalfBacks)
+        {
+
+            Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
+            float dSqrToTarget = directionToTarget.sqrMagnitude;
+            if (dSqrToTarget < closestDistanceSqr)
+            {
+                closestDistanceSqr = dSqrToTarget;
+                bestTarget = potentialTarget.transform;
+                targetHb = potentialTarget;
+            }
+        }
+        return bestTarget;
+    }
 
     IEnumerator WrPress(WR wr)
     {
@@ -80,13 +125,22 @@ public class DB : MonoBehaviour
 
     }
 
-    private void SetTarget(Transform targetTransform)
+    private void SetTargetWr(Transform targetTransform)
     {
         aiCharacter.target = targetTransform;
         target = targetTransform;
         targetWr = targetTransform.GetComponentInParent<WR>();
         //Debug.Log("Target Changed");
     }
+    private void SetTargetHb(Transform targetTransform)
+    {
+        aiCharacter.target = targetTransform;
+        target = targetTransform;
+        targetHb = targetTransform.GetComponentInParent<HB>();
+        //Debug.Log("Target Changed");
+    }
+
+
     private void SitInZone(Transform targetTransform)
     {
         aiCharacter.target = targetTransform;
@@ -94,7 +148,7 @@ public class DB : MonoBehaviour
         targetWr = null;
         //Debug.Log("Target Changed");
     }
-    Transform GetClosestEnemy(WR[] enemies)
+    Transform GetClosestWr(WR[] enemies)
     {
         Transform bestTarget = null;
         float closestDistanceSqr = Mathf.Infinity;
@@ -147,7 +201,7 @@ public class DB : MonoBehaviour
            if (wrZoneCntrDist.magnitude < zoneSize)
            {
                
-               SetTarget(possibleEnemy);
+               SetTargetWr(possibleEnemy);
            }
         }
         else
@@ -163,16 +217,30 @@ public class DB : MonoBehaviour
             }
         }
 
+    }
+    public bool CanBePressed()
+    {
+        if (!beenPressed)
+        {
+            beenPressed = true;
+            return true;
+        }
 
+        return false;
+    }
 
+    public void Press(float pressTimeNorm)
+    {
+        //pressBar.fillAmount = pressTimeNorm;
+        navMeshAgent.acceleration = 0f;
+        navMeshAgent.speed = 0f;
+    }
 
-
-        //bool inWeaponCircle = distanceToPlayer <= currentWeaponRange;
-        //bool inChaseRing = distanceToPlayer > currentWeaponRange
-        //                   &&
-        //                   distanceToPlayer <= chaseRadius;
-        //bool outsideChaseRing = distanceToPlayer > chaseRadius;
-
+    public void ReleasePress()
+    {
+        //canvas.enabled = !canvas.enabled;
+        navMeshAgent.speed = navStartSpeed;
+        navMeshAgent.acceleration = navStartAccel;
     }
     void OnDrawGizmos()
     {

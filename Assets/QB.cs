@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Characters.ThirdPerson;
 
 public class QB : MonoBehaviour {
     //CharacterController controller;
@@ -9,6 +10,7 @@ public class QB : MonoBehaviour {
     [SerializeField] private FootBall footBall;
     private GameObject throwingHand;
     private ThrowingHand throwingHandScript;
+    private AICharacterControl aiCharacter;
     // Use this for initialization
     GameManager gameManager;
     bool isHiked = false;
@@ -17,9 +19,18 @@ public class QB : MonoBehaviour {
         //controller = GetComponent<CharacterController>();
         throwingHandScript = FindObjectOfType<ThrowingHand>();
         gameManager = FindObjectOfType<GameManager>();
+        aiCharacter = GetComponent<AICharacterControl>();
     }
 
-	// Update is called once per frame
+    // Update is called once per frame
+    private void Update()
+    {
+        if (gameManager.isRun)
+        {
+
+        }
+    }
+
     void OnMouseDown()
     {
 

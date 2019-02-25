@@ -26,13 +26,17 @@ public class WR : MonoBehaviour
     public Image pressBar;
     bool isHiked = false;
     public Transform target;
-
+    DB[] defBacks;
     GameManager gameManager;
+    private DB targetDb;
+    private bool isBlocking;
+
     // Use this for initialization
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
         qb = FindObjectOfType<QB>();
+        defBacks = FindObjectsOfType<DB>();
         rb = GetComponent<Rigidbody>();
         startColor = materialRenderer.material.color;
         aiCharacter = GetComponent<AICharacterControl>();
@@ -49,7 +53,14 @@ public class WR : MonoBehaviour
     {
         if (!gameManager.isHiked)
             return;
-       
+        if (gameManager.isRun)
+        {
+            Transform blockTarget = GetClosestDB(defBacks);
+            SetTarget(blockTarget);
+            if (targetDb.CanBePressed())
+                StartCoroutine(DbBlock(targetDb));
+            return;
+        }
         
         if (Input.anyKey)
         {
@@ -110,6 +121,46 @@ public class WR : MonoBehaviour
             }
         }
         canvas.transform.LookAt(Camera.main.transform);
+    }
+    IEnumerator DbBlock(DB db)
+    {
+        Debug.Log("Block DB");
+        float pressTime = 1f; // 3 seconds you can change this 
+        //to whatever you want
+        float pressTimeNorm = 0;
+        while (pressTimeNorm <= 1f)
+        {
+            isBlocking = true;
+            pressTimeNorm += Time.deltaTime / pressTime;
+            db.Press(pressTimeNorm);
+            pressBar.fillAmount = pressTimeNorm;
+            yield return new WaitForEndOfFrame();
+        }
+        db.ReleasePress();
+        isBlocking = false;
+
+
+    }
+    Transform GetClosestDB(DB[] enemies)
+    {
+        Transform bestTarget = null;
+        float closestDistanceSqr = Mathf.Infinity;
+        Vector3 currentPosition = transform.position;
+
+        foreach (DB potentialTarget in enemies)
+        {
+
+            Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
+            float dSqrToTarget = directionToTarget.sqrMagnitude;
+            if (dSqrToTarget < closestDistanceSqr)
+            {
+                closestDistanceSqr = dSqrToTarget;
+                bestTarget = potentialTarget.transform;
+                targetDb = potentialTarget;
+            }
+        }
+
+        return bestTarget;
     }
 
     void OnMouseEnter() 
@@ -179,5 +230,6 @@ public class WR : MonoBehaviour
         navMeshAgent.speed = navStartSpeed;
         navMeshAgent.acceleration = navStartAccel;
     }
-    
+
+
 }
