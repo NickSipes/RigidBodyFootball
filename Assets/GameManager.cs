@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     public bool isRun = false;
     public bool isPass = false;
     public bool isHiked = false;
+    public Object BallOwner;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,7 +18,10 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(BallOwner != null)
+        {
+
+        }
     }
     public void ResetScene()
     {
@@ -27,6 +31,7 @@ public class GameManager : MonoBehaviour
     public void Hike() 
     {
         isHiked = true;
+        BallOwner = FindObjectOfType<QB>();
     }
     public void PassPlay()
     {

@@ -5,32 +5,8 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 using UnityStandardAssets.Characters.ThirdPerson;
 
-public class WR : MonoBehaviour
+public class WR : FootBallAthlete
 {
-    [SerializeField]private Renderer materialRenderer;
-    private QB qb;
-    private Color startColor;
-    public NavMeshAgent navMeshAgent;
-    private float navStartSpeed;
-    private float navStartAccel;
-    [SerializeField] private Color highlightColor;
-    public Color LineColor;
-    private AICharacterControl aiCharacter;
-    private Rigidbody rb;
-    [SerializeField]LineRenderer lr;
-    public Transform startGoal;
-    private Vector3 passTarget;
-    private bool beenPressed = false;
-
-    public Canvas canvas;
-    public Image pressBar;
-    bool isHiked = false;
-    public Transform target;
-    DB[] defBacks;
-    GameManager gameManager;
-    private DB targetDb;
-    private bool isBlocking;
-
     // Use this for initialization
     void Start()
     {

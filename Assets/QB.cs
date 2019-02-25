@@ -1,34 +1,114 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityStandardAssets.Characters.ThirdPerson;
 
-public class QB : MonoBehaviour {
+public class QB : FootBallAthlete {
     //CharacterController controller;
     public float speed = 5;
     public float gravity = -5;
-    [SerializeField] private FootBall footBall;
+   
     private GameObject throwingHand;
     private ThrowingHand throwingHandScript;
-    private AICharacterControl aiCharacter;
+    private bool hasBall = true;
     // Use this for initialization
-    GameManager gameManager;
-    bool isHiked = false;
+    FootBallAthlete athlete;
+
+    HB[] hbs;
+    WR[] wrs;
+    DB[] dbs;
+    Transform hbTransform;
 
     void Start () {
         //controller = GetComponent<CharacterController>();
+        athlete = GetComponent<FootBallAthlete>();
         throwingHandScript = FindObjectOfType<ThrowingHand>();
         gameManager = FindObjectOfType<GameManager>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
         aiCharacter = GetComponent<AICharacterControl>();
+        userControl = GetComponent<ThirdPersonUserControl>();
+        cameraFollow = FindObjectOfType<CameraFollow>();
+        navMeshAgent.enabled = false;
+        aiCharacter.enabled = false;
+        hbs = FindObjectsOfType<HB>();
+        wrs = FindObjectsOfType<WR>();
+        dbs = FindObjectsOfType<DB>();
     }
 
     // Update is called once per frame
     private void Update()
     {
+        if (!gameManager.isHiked) return;
+
         if (gameManager.isRun)
         {
-
+            if (!navMeshAgent.enabled)
+            {
+                navMeshAgent.enabled = true;
+                aiCharacter.enabled = true;
+            }
+            if (hbTransform == null)
+            {
+                hbTransform = GetClosestHB(hbs);
+                SetTargetHB(hbTransform);
+            }
+            Vector3 directionToTarget = hbTransform.position - transform.position;
+            float dSqrToTarget = directionToTarget.sqrMagnitude;
+            if(dSqrToTarget < 1 && hasBall)
+            {
+                Debug.Log("Handoff");
+                hasBall = false;
+                HandOffBall(hbTransform);
+            }
         }
+    }
+
+    private void HandOffBall(Transform hb)
+    {
+        HB ballCarrier = hb.GetComponent<HB>();
+        transform.tag = "OffPlayer";
+        StandStill();
+        ballCarrier.SetPlayerTag();
+        userControl.enabled = false;
+        cameraFollow.ResetPlayer();
+        ballCarrier.navMeshAgent.enabled = false;
+        ballCarrier.aiCharacter.enabled = false;
+       
+    }
+
+    private void StandStill()
+    {
+      GameObject go = Instantiate(new GameObject(), transform.position + new Vector3(-2,0,0), Quaternion.identity);
+      
+      aiCharacter.target = go.transform;
+    }
+
+    Transform GetClosestHB(HB[] enemies)
+    {
+        Transform bestTarget = null;
+        float closestDistanceSqr = Mathf.Infinity;
+        Vector3 currentPosition = transform.position;
+
+        foreach (HB potentialTarget in enemies)
+        {
+
+            Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
+            float dSqrToTarget = directionToTarget.sqrMagnitude;
+            if (dSqrToTarget < closestDistanceSqr)
+            {
+                closestDistanceSqr = dSqrToTarget;
+                bestTarget = potentialTarget.transform;
+            }
+        }
+
+        return bestTarget;
+    }
+    public void SetTargetHB(Transform targetSetter)
+    {
+        aiCharacter.target = targetSetter;
+        
     }
 
     void OnMouseDown()

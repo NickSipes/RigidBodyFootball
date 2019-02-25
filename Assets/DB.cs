@@ -7,32 +7,8 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 using UnityStandardAssets.Characters.ThirdPerson;
 
-public class DB : MonoBehaviour
+public class DB : FootBallAthlete
 {
-    private WR[] wideRecievers;
-    private HB[] hb;
-    private AICharacterControl aiCharacter;
-    private Transform target;
-    public Transform startTarget;
-    [Range(5, 10)]
-    public float zoneSize;
-    public Vector3 zoneCenter;
-    public GameObject zoneCenterGO;
-    public WR targetWr;
-
-
-    [SerializeField]private bool isMan;
-    [SerializeField] private bool isZone;
-    GameManager gameManager;
-    private bool isPressing;
-    bool isHiked = false;
-    private bool beenPressed;
-    private Image pressBar;
-    private NavMeshAgent navMeshAgent;
-    private Canvas canvas;
-    private float navStartSpeed;
-    private float navStartAccel;
-    private HB targetHb;
    
 
     // Use this for initialization
