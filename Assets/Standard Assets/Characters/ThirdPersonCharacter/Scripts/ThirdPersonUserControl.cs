@@ -12,7 +12,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         private Vector3 m_CamForward;             // The current forward direction of the camera
         private Vector3 m_Move;
         private bool m_Jump;                      // the world-relative desired move direction, calculated from the camForward and user input.
-
+        [SerializeField] bool isStrafe = true;
+        [SerializeField] float speed = 2f;
         
         private void Start()
         {
@@ -48,6 +49,12 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             // read inputs
             float h = CrossPlatformInputManager.GetAxis("Horizontal");
             float v = CrossPlatformInputManager.GetAxis("Vertical");
+            if (isStrafe)
+            {
+                m_Character.StrafeMoveAnimation(h, v, speed, true);
+                return;
+            }
+
             bool crouch = Input.GetKey(KeyCode.C);
 
             // calculate move direction to pass to character

@@ -15,6 +15,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		[SerializeField] float m_MoveSpeedMultiplier = 1f;
 		[SerializeField] float m_AnimSpeedMultiplier = 1f;
 		[SerializeField] float m_GroundCheckDistance = 0.1f;
+      
 
 		Rigidbody m_Rigidbody;
 		Animator m_Animator;
@@ -42,11 +43,18 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 			m_OrigGroundCheckDistance = m_GroundCheckDistance;
 		}
 
+        public void StrafeMoveAnimation(float h, float v, float speed, bool move)
+        {
+            m_Animator.SetBool("isStrafe", move);
+            m_Animator.SetFloat("VelocityX", h * speed);
+            m_Animator.SetFloat("VelocityZ", v * speed);
+            m_Rigidbody.velocity = new Vector3(h * speed, 0, v * speed);
+        }
 
 		public void Move(Vector3 move, bool crouch, bool jump)
 		{
 
-			// convert the world relative moveInput vector into a local-relative
+   			// convert the world relative moveInput vector into a local-relative
 			// turn amount and forward amount required to head in the desired
 			// direction.
 			if (move.magnitude > 1f) move.Normalize();
@@ -117,19 +125,23 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
 		void UpdateAnimator(Vector3 move)
 		{
-			// update the animator parameters
-			m_Animator.SetFloat("Forward", m_ForwardAmount, 0.1f, Time.deltaTime);
-			m_Animator.SetFloat("Turn", m_TurnAmount, 0.1f, Time.deltaTime);
-			m_Animator.SetBool("Crouch", m_Crouching);
-			m_Animator.SetBool("OnGround", m_IsGrounded);
-			if (!m_IsGrounded)
-			{
-				m_Animator.SetFloat("Jump", m_Rigidbody.velocity.y);
-			}
+           
+         
+            
+                // update the animator parameters
+                m_Animator.SetFloat("Forward", m_ForwardAmount, 0.1f, Time.deltaTime);
+                m_Animator.SetFloat("Turn", m_TurnAmount, 0.1f, Time.deltaTime);
+                m_Animator.SetBool("Crouch", m_Crouching);
+                m_Animator.SetBool("OnGround", m_IsGrounded);
+                if (!m_IsGrounded)
+                {
+                    m_Animator.SetFloat("Jump", m_Rigidbody.velocity.y);
+                }
 
-			// calculate which leg is behind, so as to leave that leg trailing in the jump animation
-			// (This code is reliant on the specific run cycle offset in our animations,
-			// and assumes one leg passes the other at the normalized clip times of 0.0 and 0.5)
+                // calculate which leg is behind, so as to leave that leg trailing in the jump animation
+                // (This code is reliant on the specific run cycle offset in our animations,
+                // and assumes one leg passes the other at the normalized clip times of 0.0 and 0.5)
+            
 			float runCycle =
 				Mathf.Repeat(
 					m_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime + m_RunCycleLegOffset, 1);
