@@ -11,7 +11,7 @@ not animation based.
 
 Current Timeline (anticipated date of feature deployment):
 03/04/19 - Add run game mechanics, allow selection between hand off and pass, Add reset scene and hike ball mechanic
-03/11/19 - Add catching / pass deflection mechanics
+03/11/19 - Add catching / pass deflection mechanics / Add mechanic to run through the catch, and for zone defenders to see incoming routes
 03/18/19 - Add tackling mechanics
 03/25/19 - Add o-line /d-line mechanics
 04/08/19 - Begin game review 

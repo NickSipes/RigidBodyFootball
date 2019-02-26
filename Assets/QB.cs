@@ -73,7 +73,7 @@ public class QB : FootBallAthlete {
         ballCarrier.SetPlayerTag();
         userControl.enabled = false;
         cameraFollow.ResetPlayer();
-        ballCarrier.navMeshAgent.enabled = false;
+        //ballCarrier.navMeshAgent.enabled = false;
         ballCarrier.aiCharacter.enabled = false;
        
     }
