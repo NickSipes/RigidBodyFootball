@@ -17,6 +17,7 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public Color LineColor;
     [HideInInspector] public AICharacterControl aiCharacter;
     [HideInInspector] public Rigidbody rb;
+    [HideInInspector] public Animator anim;
     public LineRenderer lr;
     [HideInInspector] public Transform startGoal;
     [HideInInspector] public Vector3 passTarget;

@@ -30,6 +30,7 @@ public class QB : FootBallAthlete {
         aiCharacter = GetComponent<AICharacterControl>();
         userControl = GetComponent<ThirdPersonUserControl>();
         cameraFollow = FindObjectOfType<CameraFollow>();
+        anim = GetComponent<Animator>();
         navMeshAgent.enabled = false;
         aiCharacter.enabled = false;
         hbs = FindObjectsOfType<HB>();
@@ -119,6 +120,7 @@ public class QB : FootBallAthlete {
     public void Throw(Vector3 passTarget, WR wr, float arcType, float power)
     {
         //get target vector with speed
+        anim.SetTrigger("PassTrigger");
         Quaternion lookAt = Quaternion.LookRotation(passTarget);
         throwingHand = throwingHandScript.gameObject;
         var thrownBall = Instantiate(footBall, throwingHand.transform.position, lookAt);
