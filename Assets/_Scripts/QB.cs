@@ -13,13 +13,19 @@ public class QB : FootBallAthlete {
     private GameObject throwingHand;
     private ThrowingHand throwingHandScript;
     private bool hasBall = true;
-    // Use this for initialization
+    float throwArc;
+    float throwPower;
+    Vector3 throwVector;
+    
     FootBallAthlete athlete;
 
     HB[] hbs;
     WR[] wrs;
     DB[] dbs;
     Transform hbTransform;
+
+
+   
 
     void Start () {
         //controller = GetComponent<CharacterController>();
@@ -119,16 +125,29 @@ public class QB : FootBallAthlete {
 
     public void Throw(Vector3 passTarget, WR wr, float arcType, float power)
     {
-        //get target vector with speed
+
+        throwVector = passTarget;
+        targetWr = wr;
+        throwArc = arcType;
+        throwPower = power;
+        StartCoroutine("PassTheBall");
         anim.SetTrigger("PassTrigger");
-        Quaternion lookAt = Quaternion.LookRotation(passTarget);
+    }
+
+    IEnumerator PassTheBall()   {
+        Quaternion lookAt = Quaternion.LookRotation(throwVector);
         throwingHand = throwingHandScript.gameObject;
+        yield return new WaitForSeconds(1);
         var thrownBall = Instantiate(footBall, throwingHand.transform.position, lookAt);
         FootBall thrownBallScript = thrownBall.GetComponent<FootBall>();
-        thrownBallScript.FireCannonAtPoint(passTarget, wr, arcType, power);
+        thrownBallScript.PassFootBallToMovingTarget(targetWr, throwArc, throwPower);
         Destroy(thrownBallScript, 3f);
+
     }
-}
+
+
+
+} 
 
 
 

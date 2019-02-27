@@ -33,7 +33,7 @@ public class FootBall : MonoBehaviour
         
 	}
 
-    public void FireCannonAtPoint(Vector3 targetPos, WR wr, float arcType, float power) 
+    public void PassFootBallToMovingTarget(WR wr, float arcType, float power) 
     {
         if (rb == null)
         {
@@ -46,6 +46,7 @@ public class FootBall : MonoBehaviour
         transform.parent = null;
         rb.useGravity = true;
         BallisticMotion motion = GetComponent<BallisticMotion>();
+        Vector3 targetPos = wr.transform.position;
         Vector3 diff = targetPos - transform.position;
         Vector3 diffGround = new Vector3(diff.x, 0f, diff.z);
         Vector3 fireVel, impactPos;
