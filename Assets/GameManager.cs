@@ -10,6 +10,10 @@ public class GameManager : MonoBehaviour
     public bool isHiked = false;
     public Object BallOwner;
     // Start is called before the first frame update
+
+    public delegate void HikeTheBall(bool wasHiked);
+    public event HikeTheBall hikeTheBall;
+
     void Start()
     {
         
@@ -31,6 +35,7 @@ public class GameManager : MonoBehaviour
     public void Hike() 
     {
         isHiked = true;
+        hikeTheBall(true);
         BallOwner = FindObjectOfType<QB>();
     }
     public void PassPlay()

@@ -24,11 +24,23 @@ public class QB : FootBallAthlete {
     DB[] dbs;
     Transform hbTransform;
 
-
+    bool isRapidFire;
    
 
-    void Start () {
+    void Start ()
+    {
         //controller = GetComponent<CharacterController>();
+        FindComponenets();
+        gameManager.hikeTheBall += HikeTheBall;
+    }
+
+    private void HikeTheBall(bool wasHiked)
+    {
+        HikeTrigger(); //anim
+    }
+
+    private void FindComponenets()
+    {
         athlete = GetComponent<FootBallAthlete>();
         throwingHandScript = FindObjectOfType<ThrowingHand>();
         gameManager = FindObjectOfType<GameManager>();
@@ -48,6 +60,7 @@ public class QB : FootBallAthlete {
     private void Update()
     {
         if (!gameManager.isHiked) return;
+        
 
         if (gameManager.isRun)
         {
@@ -122,10 +135,21 @@ public class QB : FootBallAthlete {
     {
 
     }
-
+    public void HikeTrigger()
+    {
+        anim.SetTrigger("HikeTrigger");
+       
+    }
+    public void SetDeltaPosition()
+    {
+        AnimatorClipInfo[] clip = anim.GetCurrentAnimatorClipInfo(0);
+        transform.position = anim.velocity;
+        Debug.Log("Anim event fire");
+        
+    }
     public void Throw(Vector3 passTarget, WR wr, float arcType, float power)
     {
-
+        if(!isRapidFire)
         throwVector = passTarget;
         targetWr = wr;
         throwArc = arcType;
@@ -142,10 +166,7 @@ public class QB : FootBallAthlete {
         FootBall thrownBallScript = thrownBall.GetComponent<FootBall>();
         thrownBallScript.PassFootBallToMovingTarget(targetWr, throwArc, throwPower);
         Destroy(thrownBallScript, 3f);
-
     }
-
-
 
 } 
 
