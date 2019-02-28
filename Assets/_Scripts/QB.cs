@@ -42,6 +42,7 @@ public class QB : FootBallAthlete {
     private void FindComponenets()
     {
         athlete = GetComponent<FootBallAthlete>();
+        rb = GetComponent<Rigidbody>();
         throwingHandScript = FindObjectOfType<ThrowingHand>();
         gameManager = FindObjectOfType<GameManager>();
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -138,15 +139,39 @@ public class QB : FootBallAthlete {
     public void HikeTrigger()
     {
         anim.SetTrigger("HikeTrigger");
+        navMeshAgent.enabled = true;
+    
        
     }
-    public void SetDeltaPosition()
+    public void SetPosition()
     {
-        AnimatorClipInfo[] clip = anim.GetCurrentAnimatorClipInfo(0);
-        transform.position = anim.velocity;
-        Debug.Log("Anim event fire");
+        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+        AnimatorClipInfo[] clips = anim.GetCurrentAnimatorClipInfo(0);
+        Keyframe keyframe;
+        
+        transform.position = transform.position + new Vector3(0,0.2f,-2);
+        Debug.Log(clips[0].clip.name);  
         
     }
+    void StartDropBack()
+    {
+        AnimatorClipInfo[] clips = anim.GetCurrentAnimatorClipInfo(0);
+        float clipTime = clips[0].clip.length;
+        StartCoroutine("DropBack", clipTime);
+    }
+    IEnumerator DropBack(float clipTime)
+    {
+        float t = 0;
+        navMeshAgent.SetDestination(transform.position + new Vector3(0, 0, -2.3f));
+        while (t <= clipTime) {
+            t += Time.deltaTime;
+            if (Input.anyKey) { navMeshAgent.enabled = false; }
+            yield return new WaitForEndOfFrame();
+                }
+        navMeshAgent.enabled = false;
+    }
+
+
     public void Throw(Vector3 passTarget, WR wr, float arcType, float power)
     {
         if(!isRapidFire)

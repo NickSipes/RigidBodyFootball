@@ -12,6 +12,7 @@ not animation based.
 Completed Tasks
 02/25/19 - Add run game mechanics, allow selection between hand off and pass, Add reset scene and hike ball mechanic
 02/27/19 - Retarget Football animations, get pass animation to play 
+
 Current Timeline (anticipated date of feature deployment):
 03/01/19 - Fix rootmotion issue in hiking the football
 03/05/19 - Learn how to make the QB standing with ball animation loop
