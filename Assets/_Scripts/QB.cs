@@ -28,10 +28,10 @@ public class QB : FootBallAthlete {
     void Start ()
     {
         //controller = GetComponent<CharacterController>();
-        FindComponenets();
+        FindComponents();
 
     }
-    private void FindComponenets()
+    private void FindComponents()
     {
         athlete = GetComponent<FootBallAthlete>();
         rb = GetComponent<Rigidbody>();
