@@ -19,7 +19,7 @@ public class WR : FootBallAthlete
         startGoal = aiCharacter.target;
         aiCharacter.target = null;
         target = startGoal;
-        lr.material.color = LineColor;
+        //lr.material.color = LineColor;
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
     }
@@ -66,7 +66,7 @@ public class WR : FootBallAthlete
 
         }
 
-        DrawPath();
+        //DrawPath();
     }
 
     private void BeginPass()
@@ -168,19 +168,19 @@ public class WR : FootBallAthlete
         target = targetSetter;
     }
 
-    void DrawPath()
-    {
+    //void DrawPath()
+    //{
         
-        Vector3[] path = navMeshAgent.path.corners;
-        if (path != null && path.Length > 1)
-        {
-            lr.positionCount = path.Length;
-            for (int i = 0; i < path.Length; i++)
-            {
-                lr.SetPosition(i, path[i]);
-            }
-        }
-    }
+    //    Vector3[] path = navMeshAgent.path.corners;
+    //    if (path != null && path.Length > 1)
+    //    {
+    //        lr.positionCount = path.Length;
+    //        for (int i = 0; i < path.Length; i++)
+    //        {
+    //            lr.SetPosition(i, path[i]);
+    //        }
+    //    }
+    //}
 
     public bool CanBePressed()
     {

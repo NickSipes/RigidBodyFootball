@@ -19,9 +19,7 @@ public class QB : FootBallAthlete {
     
     FootBallAthlete athlete;
 
-    HB[] hbs;
-    WR[] wrs;
-    DB[] dbs;
+    
     Transform hbTransform;
 
     bool isRapidFire;
@@ -31,14 +29,8 @@ public class QB : FootBallAthlete {
     {
         //controller = GetComponent<CharacterController>();
         FindComponenets();
-        gameManager.hikeTheBall += HikeTheBall;
-    }
 
-    private void HikeTheBall(bool wasHiked)
-    {
-        HikeTrigger(); //anim
     }
-
     private void FindComponenets()
     {
         athlete = GetComponent<FootBallAthlete>();
@@ -53,15 +45,18 @@ public class QB : FootBallAthlete {
         navMeshAgent.enabled = false;
         aiCharacter.enabled = false;
         hbs = FindObjectsOfType<HB>();
-        wrs = FindObjectsOfType<WR>();
-        dbs = FindObjectsOfType<DB>();
+        wideRecievers = FindObjectsOfType<WR>();
+        defBacks = FindObjectsOfType<DB>();
+        oLine = FindObjectsOfType<Oline>();
+        dLine = FindObjectsOfType<Dline>();
     }
+
 
     // Update is called once per frame
     private void Update()
     {
         if (!gameManager.isHiked) return;
-        
+
 
         if (gameManager.isRun)
         {
@@ -77,7 +72,7 @@ public class QB : FootBallAthlete {
             }
             Vector3 directionToTarget = hbTransform.position - transform.position;
             float dSqrToTarget = directionToTarget.sqrMagnitude;
-            if(dSqrToTarget < 1 && hasBall)
+            if (dSqrToTarget < 1 && hasBall)
             {
                 Debug.Log("Handoff");
                 hasBall = false;
@@ -86,6 +81,49 @@ public class QB : FootBallAthlete {
         }
     }
 
+    public void HikeTrigger()
+    {
+            navMeshAgent.enabled = true;
+        if (gameManager.isPass)
+        {
+            anim.SetTrigger("HikeTrigger");
+        }
+        if (gameManager.isRun)
+        {
+            Debug.Log("Run Play");
+            anim.SetTrigger("HandOff");
+            gameManager.Hike();
+            LineManHike();
+        }
+
+    }
+    void SnapTheHike() //triggered by animation event
+    {
+        LineManHike();
+        gameManager.Hike();
+    }
+
+    public void LineManHike()
+    {
+
+        foreach (var lineman in oLine)
+        {
+            lineman.HikeTheBall(true);
+        }
+        foreach (var lineman in dLine)
+        {
+            lineman.HikeTheBall(true);
+        }
+    }
+    public void SetPosition()
+    {
+        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+        AnimatorClipInfo[] clips = anim.GetCurrentAnimatorClipInfo(0);
+        transform.position = transform.position + new Vector3(0, 0.2f, -2);
+        Debug.Log(clips[0].clip.name);
+    }
+
+  
     private void HandOffBall(Transform hb)
     {
         HB ballCarrier = hb.GetComponent<HB>();
@@ -126,33 +164,15 @@ public class QB : FootBallAthlete {
 
         return bestTarget;
     }
+
     public void SetTargetHB(Transform targetSetter)
     {
+        if (aiCharacter.enabled == false)
+        { aiCharacter.enabled = true;  }
         aiCharacter.target = targetSetter;
         
     }
 
-    void OnMouseDown()
-    {
-
-    }
-    public void HikeTrigger()
-    {
-        anim.SetTrigger("HikeTrigger");
-        navMeshAgent.enabled = true;
-    
-       
-    }
-    public void SetPosition()
-    {
-        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-        AnimatorClipInfo[] clips = anim.GetCurrentAnimatorClipInfo(0);
-        Keyframe keyframe;
-        
-        transform.position = transform.position + new Vector3(0,0.2f,-2);
-        Debug.Log(clips[0].clip.name);  
-        
-    }
     void StartDropBack()
     {
         AnimatorClipInfo[] clips = anim.GetCurrentAnimatorClipInfo(0);
@@ -185,6 +205,7 @@ public class QB : FootBallAthlete {
 
     IEnumerator PassTheBall()   {
         Quaternion lookAt = Quaternion.LookRotation(throwVector);
+        transform.rotation = lookAt;
         throwingHand = throwingHandScript.gameObject;
         yield return new WaitForSeconds(1);
         var thrownBall = Instantiate(footBall, throwingHand.transform.position, lookAt);

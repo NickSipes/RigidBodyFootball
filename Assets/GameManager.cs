@@ -13,10 +13,13 @@ public class GameManager : MonoBehaviour
 
     public delegate void HikeTheBall(bool wasHiked);
     public event HikeTheBall hikeTheBall;
+            [HideInInspector] public Oline[] oLine;
+            [HideInInspector] public Dline[] dLine;
 
     void Start()
     {
-        
+        oLine = FindObjectsOfType<Oline>();
+        dLine = FindObjectsOfType<Dline>();
     }
 
     // Update is called once per frame
@@ -35,8 +38,7 @@ public class GameManager : MonoBehaviour
     public void Hike() 
     {
         isHiked = true;
-        hikeTheBall(true);
-        BallOwner = FindObjectOfType<QB>();
+        BallOwner = FindObjectOfType<QB>(); //todo find better solution
     }
     public void PassPlay()
     {

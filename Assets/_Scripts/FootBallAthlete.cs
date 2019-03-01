@@ -18,7 +18,7 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public AICharacterControl aiCharacter;
     [HideInInspector] public Rigidbody rb;
     [HideInInspector] public Animator anim;
-    public LineRenderer lr;
+    //public LineRenderer lr;
     [HideInInspector] public Transform startGoal;
     [HideInInspector] public Vector3 passTarget;
     [HideInInspector] public bool beenPressed = false;
@@ -27,12 +27,14 @@ public class FootBallAthlete : MonoBehaviour
     public Image pressBar;
     [HideInInspector] public bool isHiked = false;
     public Transform target;
-    [HideInInspector] public DB[] defBacks;
-    [HideInInspector] public GameManager gameManager;
+    public GameManager gameManager;
     [HideInInspector] public bool isBlocking;
 
     [HideInInspector] public WR[] wideRecievers;
-    [HideInInspector] public HB[] hb;
+    [HideInInspector] public DB[] defBacks;
+    [HideInInspector] public HB[] hbs;
+    [HideInInspector] public Oline[] oLine;
+    [HideInInspector] public Dline[] dLine;
 
     [HideInInspector] public Transform startTarget;
 
@@ -59,9 +61,4 @@ public class FootBallAthlete : MonoBehaviour
         cameraFollow = FindObjectOfType<CameraFollow>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (!gameManager.isHiked) return;
-    }
 }

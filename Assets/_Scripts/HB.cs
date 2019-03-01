@@ -14,7 +14,7 @@ public class HB : FootBallAthlete
     {
         gameManager = FindObjectOfType<GameManager>();
         qb = FindObjectOfType<QB>();
-        hb = FindObjectsOfType<HB>();
+        hbs = FindObjectsOfType<HB>();
         rb = GetComponent<Rigidbody>();
         startColor = materialRenderer.material.color;
         aiCharacter = GetComponent<AICharacterControl>();
@@ -24,7 +24,7 @@ public class HB : FootBallAthlete
         startGoal = aiCharacter.target;
         aiCharacter.target = null;
         target = startGoal;
-        lr.material.color = LineColor;
+        //lr.material.color = LineColor;
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
     }

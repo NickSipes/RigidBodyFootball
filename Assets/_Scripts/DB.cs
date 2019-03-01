@@ -16,7 +16,7 @@ public class DB : FootBallAthlete
     {
         gameManager = FindObjectOfType<GameManager>();
         wideRecievers = FindObjectsOfType<WR>();
-        hb = FindObjectsOfType<HB>();
+        hbs = FindObjectsOfType<HB>();
         aiCharacter = GetComponent<AICharacterControl>();
         zoneCenter = transform.position + new Vector3(0, 0, 5);
         zoneCenterGO = Instantiate(new GameObject(), zoneCenter, Quaternion.identity);
@@ -57,7 +57,7 @@ public class DB : FootBallAthlete
         }
         if (gameManager.isRun)
         {
-            target = GetClosestHb(hb);
+            target = GetClosestHb(hbs);
             SetTargetHb(target);
         }
 	}
