@@ -41,6 +41,10 @@ public class Oline : FootBallAthlete
         {
             PassProtection();
         }
+        if (gameManager.isRun)
+        {
+            RunProtection();
+        }
 
 
     }
@@ -67,6 +71,24 @@ public class Oline : FootBallAthlete
                     }
         }
 
+    }
+    void RunProtection()
+    {
+        if (target == null)
+        {
+            target = GetClosestDline(dLine);
+        }
+        SetTargetDline(target);
+        Vector3 directionToTarget = target.position - transform.position;
+        float dSqrToTarget = directionToTarget.sqrMagnitude;
+        if (dSqrToTarget < 1)
+        {
+            var dlineToBlock = target.GetComponent<Dline>();
+            if (!dlineToBlock.wasBlocked)
+            {
+                StartCoroutine("BlockTarget", target);
+            }
+        }
     }
 
     IEnumerator BlockTarget(Transform target)

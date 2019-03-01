@@ -60,6 +60,7 @@ public class QB : FootBallAthlete {
 
         if (gameManager.isRun)
         {
+            userControl.enabled = false;
             if (!navMeshAgent.enabled)
             {
                 navMeshAgent.enabled = true;
