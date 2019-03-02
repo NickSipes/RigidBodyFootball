@@ -18,6 +18,8 @@ Completed Tasks
 
 Current Timeline (anticipated date of feature deployment):
 
+03/02/19 - Fix github bug, learn how to manage version control with unity better.
+03/03/19 - Dline doesnt chase HB on handoff
 03/11/19 - Add catching / pass deflection mechanics / Add mechanic to run through the catch, and for zone defenders to see incoming routes
 03/18/19 - Add tackling mechanics
 04/08/19 - Begin game review 

@@ -63,7 +63,7 @@ public class Oline : FootBallAthlete
         SetTargetDline(target);
         Vector3 directionToTarget = target.position - transform.position;
         float dSqrToTarget = directionToTarget.sqrMagnitude;
-        if (dSqrToTarget < 1 )
+        if (dSqrToTarget < 3 )//todo block range
         {
             var dlineToBlock = target.GetComponent<Dline>();
             if (!dlineToBlock.wasBlocked) {
