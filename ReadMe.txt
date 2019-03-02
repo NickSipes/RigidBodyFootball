@@ -7,7 +7,7 @@ with a passion and knack for math and phsyics. Currently the very basic game con
 including pass arcs, Wr route running, DB Zone coverage. My current timeline looks to have a basic game
 concept ready by the end of March, with most gameplay tuning occuring from June into July. I am always looking 
 for more help, specifically creating models and animations. Character movement will be code based, 
-not animation based. 
+not animation based. Join our discord at https://discord.gg/Mp3cZ5j
 
 Completed Tasks
 02/25/19 - Add run game mechanics, allow selection between hand off and pass, Add reset scene and hike ball mechanic
