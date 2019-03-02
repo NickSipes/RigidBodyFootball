@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Routes : MonoBehaviour {
+public class Routes : ScriptableObject {
 
 	// Use this for initialization
 	void Start () {
