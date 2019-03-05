@@ -29,6 +29,8 @@ Completed Tasks
 
 Current Timeline (anticipated date of feature deployment):
 
+03/05/19 - fix movement bug created by removing unity standard scripts
+
 03/11/19 - Add catching / pass defense mechanics / Add mechanic to run through the catch, and for zone defenders to see incoming routes
 03/18/19 - Add tackling mechanics / fumble & interception mechanics / implement some IK animations like look at ball
 04/08/19 - Begin game mechanics review 
