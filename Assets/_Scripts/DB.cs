@@ -18,7 +18,7 @@ public class DB : FootBallAthlete
         gameManager = FindObjectOfType<GameManager>();
         wideRecievers = FindObjectsOfType<WR>();
         hbs = FindObjectsOfType<HB>();
-        aiCharacter = GetComponent<AICharacterControl>();
+    
         navMeshAgent = GetComponent<NavMeshAgent>();
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;

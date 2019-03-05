@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityStandardAssets.Characters.ThirdPerson;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class QB : FootBallAthlete {
     //CharacterController controller;
@@ -38,12 +39,12 @@ public class QB : FootBallAthlete {
         throwingHandScript = FindObjectOfType<ThrowingHand>();
         gameManager = FindObjectOfType<GameManager>();
         navMeshAgent = GetComponent<NavMeshAgent>();
-        aiCharacter = GetComponent<AICharacterControl>();
+        
         userControl = GetComponent<ThirdPersonUserControl>();
         cameraFollow = FindObjectOfType<CameraFollow>();
         anim = GetComponent<Animator>();
         navMeshAgent.enabled = false;
-        aiCharacter.enabled = false;
+      
         hbs = FindObjectsOfType<HB>();
         wideRecievers = FindObjectsOfType<WR>();
         defBacks = FindObjectsOfType<DB>();
@@ -61,11 +62,7 @@ public class QB : FootBallAthlete {
         if (gameManager.isRun)
         {
             userControl.enabled = false;
-            if (!navMeshAgent.enabled)
-            {
-                navMeshAgent.enabled = true;
-                aiCharacter.enabled = true;
-            }
+          
             if (hbTransform == null)
             {
                 hbTransform = GetClosestHB(hbs);
@@ -81,8 +78,29 @@ public class QB : FootBallAthlete {
             }
         }
     }
+    private void FixedUpdate()
+    {
+        if (!gameManager.isHiked) return;
+        // read inputs
+        if (gameManager.isPass)
+        {
+           StrafeMove(true);
+        }   
+        
+    }
 
-    public void HikeTrigger()
+    public void StrafeMove(bool move)
+    {
+        speed = 20;
+        float h = CrossPlatformInputManager.GetAxis("Horizontal");
+        float v = CrossPlatformInputManager.GetAxis("Vertical");
+        anim.SetBool("isStrafe", move);
+        anim.SetFloat("VelocityX", h * speed);
+        anim.SetFloat("VelocityZ", v * speed);
+        rb.velocity = new Vector3(h * speed, 0, v * speed);
+    }
+
+    public void HikeTrigger() // called from UI button
     {
             navMeshAgent.enabled = true;
         if (gameManager.isPass)
@@ -136,7 +154,7 @@ public class QB : FootBallAthlete {
         cameraFollow.ResetPlayer();
         gameManager.ChangeBallOwner(ballCarrier.gameObject); 
         //ballCarrier.navMeshAgent.enabled = false;
-        ballCarrier.aiCharacter.enabled = false;
+      
        
     }
 
@@ -144,7 +162,7 @@ public class QB : FootBallAthlete {
     {
       GameObject go = Instantiate(new GameObject(), transform.position + new Vector3(-2,0,0), Quaternion.identity);
       
-      aiCharacter.target = go.transform;
+      navMeshAgent.SetDestination(go.transform.position);
     }
 
     Transform GetClosestHB(HB[] enemies)
@@ -170,9 +188,7 @@ public class QB : FootBallAthlete {
 
     public void SetTargetHB(Transform targetSetter)
     {
-        if (aiCharacter.enabled == false)
-        { aiCharacter.enabled = true;  }
-        aiCharacter.target = targetSetter;
+        navMeshAgent.SetDestination(targetSetter.position);
         
     }
 

@@ -8,6 +8,8 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class FootBallAthlete : MonoBehaviour
 {
 
+    public GameObject startGoal;
+
     //todo clean up inheritance and add setters and getters instead of public variables. Seperate OffPlayers variables from DefPlayers variables
     public Renderer materialRenderer;
     [HideInInspector] public QB qb;
@@ -21,7 +23,7 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public Rigidbody rb;
     [HideInInspector] public Animator anim;
     //public LineRenderer lr;
-    [HideInInspector] public Transform startGoal;
+
     [HideInInspector] public Vector3 passTarget;
     [HideInInspector] public bool beenPressed = false;
     public FootBall footBall;

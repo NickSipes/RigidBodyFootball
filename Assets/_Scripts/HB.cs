@@ -21,9 +21,9 @@ public class HB : FootBallAthlete
         thirdPerson = GetComponent<ThirdPersonCharacter>();
         userControl = GetComponent<ThirdPersonUserControl>();
         navMeshAgent = GetComponent<NavMeshAgent>();
-        startGoal = aiCharacter.target;
-        aiCharacter.target = null;
-        target = startGoal;
+   
+        navMeshAgent.destination = transform.position;
+        target = startGoal.transform;
         //lr.material.color = LineColor;
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;

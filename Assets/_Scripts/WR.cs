@@ -9,6 +9,7 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class WR : FootBallAthlete
 {
     // Use this for initialization
+ 
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
@@ -16,11 +17,10 @@ public class WR : FootBallAthlete
         defBacks = FindObjectsOfType<DB>();
         rb = GetComponent<Rigidbody>();
         startColor = materialRenderer.material.color;
-        aiCharacter = GetComponent<AICharacterControl>();
-        startGoal = aiCharacter.target;
-        aiCharacter.target = null;
-        target = startGoal;
+             
+        target = startGoal.transform;
         //lr.material.color = LineColor;
+  
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
     }
@@ -28,30 +28,42 @@ public class WR : FootBallAthlete
     // Update is called once per frame
     void Update()
     {
-        if (!gameManager.isHiked)
-            return;
+        if (!gameManager.isHiked) return;
+
+     
+        GetTarget();
+
         if (gameManager.isRun)
         {
+
+            canvas.transform.LookAt(Camera.main.transform);
             Transform blockTarget = GetClosestDB(defBacks);
             SetTarget(blockTarget);
             if (targetDb.CanBePressed())
                 StartCoroutine(DbBlock(targetDb));
             return;
         }
-        
-        if (Input.anyKey)
+        if (materialRenderer.material.color != startColor) //
         {
-        BeginPass();
+            if (Input.anyKey)
+            {
+                BeginPass(); // todo this is a really bad way to call this function
+            }
         }
-        SetTarget();
         
     }
 
-    private void SetTarget()
+    public void SetTarget(Transform targetSetter)
     {
-        if (aiCharacter.target == null)
+        navMeshAgent.SetDestination(targetSetter.position);
+        target = targetSetter;
+    }
+
+    private void GetTarget()
+    {
+        if (navMeshAgent.destination == null)
         {
-            aiCharacter.target = startGoal;
+            navMeshAgent.destination = startGoal.transform.position;
         }
 
         if (navMeshAgent.hasPath && navMeshAgent.remainingDistance < 2 && target != null)
@@ -60,7 +72,7 @@ public class WR : FootBallAthlete
             if (ball != null)
             {
                 Destroy(ball);
-                navMeshAgent.SetDestination(startGoal.position);
+                navMeshAgent.SetDestination(startGoal.transform.position);
             }
         }
         //DrawPath();
@@ -68,9 +80,8 @@ public class WR : FootBallAthlete
 
     private void BeginPass()
     {
-        if (materialRenderer.material.color != startColor)
-        {
-            //todo adjust throwPower dependent on distance and throw type
+       
+        //todo adjust throwPower dependent on distance and throw type
             if (Input.GetMouseButtonDown(0)) //Bullet Pass
             {
                 Debug.Log("Pressed secondary button.");
@@ -92,8 +103,8 @@ public class WR : FootBallAthlete
                 passTarget = transform.position;
                 qb.BeginThrowAnim(passTarget, this, 3.2f, 19.5f);
             }
-        }
-        canvas.transform.LookAt(Camera.main.transform);
+        
+       
     }
     IEnumerator DbBlock(DB db)
     {
@@ -166,11 +177,7 @@ public class WR : FootBallAthlete
                   "RB Velocity " + rb.velocity);
     }
 
-    public void SetTarget(Transform targetSetter)
-    {
-        navMeshAgent.SetDestination(targetSetter.position);
-        target = targetSetter;
-    }
+  
 
     //void DrawPath()
     //{
