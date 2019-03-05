@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -56,16 +57,12 @@ public class WR : FootBallAthlete
         if (navMeshAgent.hasPath && navMeshAgent.remainingDistance < 2 && target != null)
         {
             var ball = target.root.GetComponent<FootBall>();
-
             if (ball != null)
             {
                 Destroy(ball);
-                aiCharacter.target = startGoal;
+                navMeshAgent.SetDestination(startGoal.position);
             }
-
-
         }
-
         //DrawPath();
     }
 
@@ -139,6 +136,13 @@ public class WR : FootBallAthlete
         return bestTarget;
     }
 
+    internal void RaycastForward()
+    {
+        Vector3 fwd = transform.TransformDirection(Vector3.forward);
+        if (Physics.Raycast(transform.position, fwd, 10))
+            print("There is something in front of the object!");
+    }
+
     void OnMouseEnter() 
     {
         materialRenderer.material.color = highlightColor;
@@ -164,7 +168,7 @@ public class WR : FootBallAthlete
 
     public void SetTarget(Transform targetSetter)
     {
-        aiCharacter.target = targetSetter;
+        navMeshAgent.SetDestination(targetSetter.position);
         target = targetSetter;
     }
 

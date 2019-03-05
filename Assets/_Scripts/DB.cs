@@ -10,6 +10,7 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class DB : FootBallAthlete
 {
    
+    //todo DB State Machine
 
     // Use this for initialization
     void Start ()
@@ -18,16 +19,27 @@ public class DB : FootBallAthlete
         wideRecievers = FindObjectsOfType<WR>();
         hbs = FindObjectsOfType<HB>();
         aiCharacter = GetComponent<AICharacterControl>();
-        zoneCenter = transform.position + new Vector3(0, 0, 5);
-        zoneCenterGO = Instantiate(new GameObject(), zoneCenter, Quaternion.identity);
         navMeshAgent = GetComponent<NavMeshAgent>();
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
 
+        CreateZone(); //todo only run if player is in zone
     }
-	//todo DB State Machine
-	// Update is called once per frame
-	void Update () {
+
+    private void CreateZone()
+    {
+        zoneCenter = transform.position + new Vector3(0, 0, 5);
+        //todo make zoneCenterGO move functions;
+        zoneCenterGO = Instantiate(new GameObject(), zoneCenter, Quaternion.identity);
+        zoneCenterGO.transform.name = transform.name + "ZoneObject";
+        GameObject zoneObjectContainer = GameObject.FindGameObjectWithTag("ZoneObject");
+        zoneCenterGO.transform.parent = zoneObjectContainer.transform;
+        zoneCenterGO.transform.tag = "ZoneObject";
+        zoneCenterGO.AddComponent<SphereCollider>();
+    }
+
+    // Update is called once per frame
+    void Update () {
         if (!gameManager.isHiked)
             return;
 
@@ -97,20 +109,20 @@ public class DB : FootBallAthlete
         }
         wr.ReleasePress();
         isPressing = false;
-
-
     }
+
+
 
     private void SetTargetWr(Transform targetTransform)
     {
-        aiCharacter.target = targetTransform;
+        navMeshAgent.SetDestination(targetTransform.position);
         target = targetTransform;
         targetWr = targetTransform.GetComponentInParent<WR>();
         //Debug.Log("Target Changed");
     }
     private void SetTargetHb(Transform targetTransform)
     {
-        aiCharacter.target = targetTransform;
+        navMeshAgent.SetDestination(targetTransform.position);
         target = targetTransform;
         targetHb = targetTransform.GetComponentInParent<HB>();
         //Debug.Log("Target Changed");
@@ -119,11 +131,21 @@ public class DB : FootBallAthlete
 
     private void SitInZone(Transform targetTransform)
     {
-        aiCharacter.target = targetTransform;
+        CheckIncomingRoutes();
         target = targetTransform;
         targetWr = null;
+        navMeshAgent.SetDestination(targetTransform.position);
         //Debug.Log("Target Changed");
     }
+
+    private void CheckIncomingRoutes()
+    {
+        foreach (WR wR in wideRecievers)
+        {
+            wR.RaycastForward();
+        }
+    }
+
     Transform GetClosestWr(WR[] enemies)
     {
         Transform bestTarget = null;
@@ -176,8 +198,7 @@ public class DB : FootBallAthlete
            //Debug.Log(wrZoneCntrDist.magnitude);
            if (wrZoneCntrDist.magnitude < zoneSize)
            {
-               
-               SetTargetWr(possibleEnemy);
+                 SetTargetWr(possibleEnemy);
            }
         }
         else

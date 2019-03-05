@@ -89,7 +89,6 @@ public class Oline : FootBallAthlete
             var dlineToBlock = target.GetComponent<Dline>();
             if (!dlineToBlock.wasBlocked && !dlineToBlock.isBlocked)
             {
-            
                 StartCoroutine("BlockTarget", target);
             }
         }
@@ -136,11 +135,7 @@ public class Oline : FootBallAthlete
     }
     public void SetTargetDline(Transform targetSetter)
     {
-
         navMeshAgent.SetDestination(qb.transform.position + (targetSetter.position - qb.transform.position) / 2);
-
-
-
     }
 
 }
