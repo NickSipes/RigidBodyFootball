@@ -36,7 +36,7 @@ public class DB : FootBallAthlete
           
             if (startTarget == null)
             {
-                //todo this code will break zone coverage later
+                //todo this code will break zone coverage later, only targets WRs
                 startTarget = GetClosestWr(wideRecievers);
                 SetTargetWr(startTarget);
                 if (targetWr == null)

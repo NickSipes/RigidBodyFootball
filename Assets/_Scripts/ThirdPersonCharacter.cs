@@ -4,6 +4,9 @@ using UnityEngine;
 	[RequireComponent(typeof(Rigidbody))]
 	[RequireComponent(typeof(CapsuleCollider))]
 	[RequireComponent(typeof(Animator))]
+    //todo: this is a standard unity script that needs to be refactored for our purposes. Eliminate all references to m_groud and m_jump. 
+    // this will break the animation controller, the 'ground' animation state needs to be deleted. Replace all animation triggers that set off ground
+    // while using this class to set float values for animators
 	public class ThirdPersonCharacter : MonoBehaviour
 	{
 		[SerializeField] float m_MovingTurnSpeed = 360;

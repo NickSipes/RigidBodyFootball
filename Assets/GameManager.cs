@@ -5,14 +5,21 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
+
+    //todo make gamemanger a scriptable object
+
     public bool isRun = false;
     public bool isPass = false;
     public bool isHiked = false;
-    public Object BallOwner;
+    public Object ballOwner;
     // Start is called before the first frame update
 
     public delegate void HikeTheBall(bool wasHiked);
     public event HikeTheBall hikeTheBall;
+
+    public delegate void BallOwnerChange(GameObject ballOwner);
+    public event BallOwnerChange ballOwnerChange;
+
             [HideInInspector] public Oline[] oLine;
             [HideInInspector] public Dline[] dLine;
 
@@ -25,7 +32,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(BallOwner != null)
+        if(ballOwner != null)
         {
 
         }
@@ -34,11 +41,11 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-    //TODO add hike system
+  
     public void Hike() 
     {
         isHiked = true;
-        BallOwner = FindObjectOfType<QB>(); //todo find better solution
+        ballOwner = FindObjectOfType<QB>(); //todo find better solution
     }
     public void PassPlay()
     {
@@ -51,5 +58,10 @@ public class GameManager : MonoBehaviour
         Debug.Log("Run Play");
         isRun = true;
         isPass = false;
+    }
+    public void ChangeBallOwner(GameObject target)
+    {
+        ballOwner = target;
+        ballOwnerChange(target);
     }
 }

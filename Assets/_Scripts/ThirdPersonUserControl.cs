@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 
+
+//todo: this is a unity standard asset script. Refactor variables to meet the rest of the projects naming standards. Look for ways to improve
 [RequireComponent(typeof(ThirdPersonCharacter))]
 public class ThirdPersonUserControl : MonoBehaviour
 {

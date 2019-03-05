@@ -127,12 +127,14 @@ public class QB : FootBallAthlete {
   
     private void HandOffBall(Transform hb)
     {
+        //todo extract call to game manager in order to trigger gameManager.ballOwnerChange event
         HB ballCarrier = hb.GetComponent<HB>();
         transform.tag = "OffPlayer";
         StandStill();
         ballCarrier.SetPlayerTag();
         userControl.enabled = false;
         cameraFollow.ResetPlayer();
+        gameManager.ChangeBallOwner(ballCarrier.gameObject); 
         //ballCarrier.navMeshAgent.enabled = false;
         ballCarrier.aiCharacter.enabled = false;
        
@@ -193,9 +195,10 @@ public class QB : FootBallAthlete {
     }
 
 
-    public void Throw(Vector3 passTarget, WR wr, float arcType, float power)
+    public void BeginThrowAnim(Vector3 passTarget, WR wr, float arcType, float power)
     {
         if(!isRapidFire)
+        //todo cleanup this code, could cause bugs setting these values then running coroutine
         throwVector = passTarget;
         targetWr = wr;
         throwArc = arcType;
@@ -208,11 +211,11 @@ public class QB : FootBallAthlete {
         Quaternion lookAt = Quaternion.LookRotation(throwVector);
         transform.rotation = lookAt;
         throwingHand = throwingHandScript.gameObject;
-        yield return new WaitForSeconds(1);
-        var thrownBall = Instantiate(footBall, throwingHand.transform.position, lookAt);
+        yield return new WaitForSeconds(1); //todo find way to access animation curve info.
+        var thrownBall = Instantiate(footBall, throwingHand.transform.position, lookAt); //todo put footballs in hierarchy container
         FootBall thrownBallScript = thrownBall.GetComponent<FootBall>();
         thrownBallScript.PassFootBallToMovingTarget(targetWr, throwArc, throwPower);
-        Destroy(thrownBallScript, 3f);
+        Destroy(thrownBall, 3f); //todo get better solution to removing footballs
     }
 
 } 

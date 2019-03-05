@@ -5,6 +5,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 {
     [RequireComponent(typeof (UnityEngine.AI.NavMeshAgent))]
     [RequireComponent(typeof (ThirdPersonCharacter))]
+
+    //todo this unity standard asset needs to be repurposed for this project. The update loop needs to change.
     public class AICharacterControl : MonoBehaviour
     {
         public UnityEngine.AI.NavMeshAgent agent { get; private set; }             // the navmesh agent required for the path finding

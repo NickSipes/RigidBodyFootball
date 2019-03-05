@@ -7,6 +7,8 @@ using UnityStandardAssets.Characters.ThirdPerson;
 
 public class FootBallAthlete : MonoBehaviour
 {
+
+    //todo clean up inheritance and add setters and getters instead of public variables. Seperate OffPlayers variables from DefPlayers variables
     public Renderer materialRenderer;
     [HideInInspector] public QB qb;
     [HideInInspector] public Color startColor;
@@ -46,7 +48,7 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public HB targetHb;
     [HideInInspector] public DB targetDb;
 
-
+    
     public bool isMan;
     public bool isZone;
 
@@ -55,6 +57,8 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public ThirdPersonUserControl userControl;
     [HideInInspector] public ThirdPersonCharacter thirdPerson;
     [HideInInspector] public CameraFollow cameraFollow;
+
+
     // Start is called before the first frame update
     void Start()
     {

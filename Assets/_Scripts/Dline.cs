@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -10,20 +11,24 @@ public class Dline : FootBallAthlete
 
     public bool wasBlocked = false;
     [SerializeField] Image blockBar;
+    private float blockCooldown = 2f;
+    [HideInInspector] public bool isBlocked;
+
     // Start is called before the first frame update
     void Start()
     {
         FindComponents();
+        RegesterEvents();
     }
 
-  
+
     private void FindComponents()
     {
         rb = GetComponent<Rigidbody>();
         gameManager = FindObjectOfType<GameManager>();
         navMeshAgent = GetComponent<NavMeshAgent>();
-        aiCharacter = GetComponent<AICharacterControl>();
-        userControl = GetComponent<ThirdPersonUserControl>();
+        //aiCharacter = GetComponent<AICharacterControl>();
+        //userControl = GetComponent<ThirdPersonUserControl>();
         cameraFollow = FindObjectOfType<CameraFollow>();
         anim = GetComponent<Animator>();
         hbs = FindObjectsOfType<HB>();
@@ -33,6 +38,10 @@ public class Dline : FootBallAthlete
         dLine = FindObjectsOfType<Dline>();
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
+    }
+    private void RegesterEvents()
+    {
+        gameManager.ballOwnerChange += BallOwnerChange;
     }
 
     // Update is called once per frame
@@ -44,13 +53,22 @@ public class Dline : FootBallAthlete
             target = GameObject.FindGameObjectWithTag("Player").transform;
         }
         SetTarget(target);
+
+        if (wasBlocked && !isBlocked)
+            StartCoroutine(BlockCoolDown()); 
+    }
+
+    IEnumerator BlockCoolDown()
+    {
+        yield return new WaitForSeconds(blockCooldown);
+        wasBlocked = false;
+
     }
 
     public void SetTarget(Transform targetSetter)
     {
-        if (aiCharacter.enabled == false)
-        { aiCharacter.enabled = true; }
-        aiCharacter.target = targetSetter;
+       
+       navMeshAgent.SetDestination(targetSetter.position);
         target = targetSetter;
 
     }
@@ -69,14 +87,22 @@ public class Dline : FootBallAthlete
         blockBar.fillAmount = blockTimeNorm;
         navMeshAgent.acceleration = 0f;
         navMeshAgent.speed = 0f;
+        isBlocked = true;
     }
 
     public void ReleaseBlock()
     {
         canvas.enabled = !canvas.enabled;
-        SetTarget(GameObject.FindGameObjectWithTag("Player").transform);
+        isBlocked = false;
         wasBlocked = true;
+        SetTarget(GameObject.FindGameObjectWithTag("Player").transform);
         navMeshAgent.speed = navStartSpeed;
         navMeshAgent.acceleration = navStartAccel;
+    }
+
+    public void BallOwnerChange(GameObject ballOwner)
+    {
+        SetTarget(ballOwner.transform);
+
     }
 }

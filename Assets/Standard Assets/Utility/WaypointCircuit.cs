@@ -8,6 +8,7 @@ using UnityEditor;
 
 namespace UnityStandardAssets.Utility
 {
+    //todo this is a unity standard assets script. Almost entire script is useful, but it needs to be adjusted to cover WR route running.
     public class WaypointCircuit : MonoBehaviour
     {
         public WaypointList waypointList = new WaypointList();

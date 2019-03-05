@@ -14,16 +14,17 @@ public class Oline : FootBallAthlete
     {
         FindComponents();
     }
-    
+
     private void FindComponents()
     {
         rb = GetComponent<Rigidbody>();
         gameManager = FindObjectOfType<GameManager>();
         navMeshAgent = GetComponent<NavMeshAgent>();
-        aiCharacter = GetComponent<AICharacterControl>();
-        userControl = GetComponent<ThirdPersonUserControl>();
+        //aiCharacter = GetComponent<AICharacterControl>();
+        //userControl = GetComponent<ThirdPersonUserControl>();
         cameraFollow = FindObjectOfType<CameraFollow>();
         anim = GetComponent<Animator>();
+        qb = FindObjectOfType<QB>();
         hbs = FindObjectsOfType<HB>();
         wideRecievers = FindObjectsOfType<WR>();
         defBacks = FindObjectsOfType<DB>();
@@ -56,19 +57,21 @@ public class Oline : FootBallAthlete
 
     void PassProtection()
     {
-        if(target == null)
+        if (target == null)
         {
-           target = GetClosestDline(dLine);
+            target = GetClosestDline(dLine);
         }
         SetTargetDline(target);
         Vector3 directionToTarget = target.position - transform.position;
         float dSqrToTarget = directionToTarget.sqrMagnitude;
-        if (dSqrToTarget < 3 )//todo block range
+        if (dSqrToTarget < 3)//todo setup block range variable
         {
             var dlineToBlock = target.GetComponent<Dline>();
-            if (!dlineToBlock.wasBlocked) {
+            if (!dlineToBlock.wasBlocked && !dlineToBlock.isBlocked)
+            {
+                Debug.Log("Block " + target.name);
                 StartCoroutine("BlockTarget", target);
-                    }
+            }
         }
 
     }
@@ -84,8 +87,9 @@ public class Oline : FootBallAthlete
         if (dSqrToTarget < 1)
         {
             var dlineToBlock = target.GetComponent<Dline>();
-            if (!dlineToBlock.wasBlocked)
+            if (!dlineToBlock.wasBlocked && !dlineToBlock.isBlocked)
             {
+            
                 StartCoroutine("BlockTarget", target);
             }
         }
@@ -93,12 +97,13 @@ public class Oline : FootBallAthlete
 
     IEnumerator BlockTarget(Transform target)
     {
+
         var lineMan = target.GetComponent<Dline>();
-        float blockTime = 1f; // 3 seconds you can change this 
-        //to whatever you want
+        float blockTime = 1f; // make setable variable
         float blockTimeNorm = 0;
-        while (blockTimeNorm <= 1f)
+        while (blockTimeNorm <= 1f) //todo this counter is ugly and needs to be better
         {
+
             isBlocking = true;
             blockTimeNorm += Time.deltaTime / blockTime;
             lineMan.Block(blockTimeNorm, this);
@@ -106,8 +111,6 @@ public class Oline : FootBallAthlete
         }
         lineMan.ReleaseBlock();
         isBlocking = false;
-
-        
     }
 
     Transform GetClosestDline(Dline[] enemies)
@@ -123,6 +126,7 @@ public class Oline : FootBallAthlete
             float dSqrToTarget = directionToTarget.sqrMagnitude;
             if (dSqrToTarget < closestDistanceSqr)
             {
+
                 closestDistanceSqr = dSqrToTarget;
                 bestTarget = potentialTarget.transform;
             }
@@ -132,9 +136,10 @@ public class Oline : FootBallAthlete
     }
     public void SetTargetDline(Transform targetSetter)
     {
-        if (aiCharacter.enabled == false)
-        { aiCharacter.enabled = true; }
-        aiCharacter.target = targetSetter;
+
+        navMeshAgent.SetDestination(qb.transform.position + (targetSetter.position - qb.transform.position) / 2);
+
+
 
     }
 

@@ -78,7 +78,7 @@ public class WR : FootBallAthlete
             {
                 Debug.Log("Pressed secondary button.");
                 passTarget = transform.position;
-                qb.Throw(passTarget, this, 1.5f, 23f);
+                qb.BeginThrowAnim(passTarget, this, 1.5f, 23f);
 
             }
 
@@ -86,14 +86,14 @@ public class WR : FootBallAthlete
             {
                 Debug.Log("Pressed secondary button.");
                 passTarget = transform.position;
-                qb.Throw(passTarget, this, 2.3f, 20f);
+                qb.BeginThrowAnim(passTarget, this, 2.3f, 20f);
             }
 
             if (Input.GetMouseButtonDown(2)) // Lob PASS
             {
                 //Debug.Log("Pressed middle click.");
                 passTarget = transform.position;
-                qb.Throw(passTarget, this, 3.2f, 19.5f);
+                qb.BeginThrowAnim(passTarget, this, 3.2f, 19.5f);
             }
         }
         canvas.transform.LookAt(Camera.main.transform);
