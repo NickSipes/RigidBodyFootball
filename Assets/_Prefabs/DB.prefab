@@ -1440,6 +1440,7 @@ GameObject:
   - component: {fileID: 114775322890263972}
   - component: {fileID: 114196049453310922}
   - component: {fileID: 1221416027}
+  - component: {fileID: 1516126011}
   m_Layer: 0
   m_Name: DB
   m_TagString: Untagged
@@ -1590,7 +1591,7 @@ MonoBehaviour:
   LineColor: {r: 0, g: 0, b: 0, a: 0}
   aiCharacter: {fileID: 0}
   rb: {fileID: 0}
-  lr: {fileID: 0}
+  anim: {fileID: 0}
   startGoal: {fileID: 0}
   passTarget: {x: 0, y: 0, z: 0}
   beenPressed: 0
@@ -1599,11 +1600,64 @@ MonoBehaviour:
   pressBar: {fileID: 0}
   isHiked: 0
   target: {fileID: 0}
-  defBacks: []
   gameManager: {fileID: 0}
   isBlocking: 0
   wideRecievers: []
-  hb: []
+  defBacks: []
+  hbs: []
+  oLine: []
+  dLine: []
+  startTarget: {fileID: 0}
+  zoneSize: 10
+  zoneCenter: {x: 0, y: 0, z: 0}
+  zoneCenterGO: {fileID: 0}
+  targetWr: {fileID: 0}
+  targetHb: {fileID: 0}
+  targetDb: {fileID: 0}
+  isMan: 0
+  isZone: 1
+  isPressing: 0
+  userControl: {fileID: 0}
+  thirdPerson: {fileID: 0}
+  cameraFollow: {fileID: 0}
+--- !u!114 &1516126011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437905258545790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50695e554f318a04697f9955bd570857, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  materialRenderer: {fileID: 0}
+  qb: {fileID: 0}
+  startColor: {r: 0, g: 0, b: 0, a: 0}
+  navMeshAgent: {fileID: 0}
+  navStartSpeed: 0
+  navStartAccel: 0
+  highlightColor: {r: 0, g: 0, b: 0, a: 0}
+  LineColor: {r: 0, g: 0, b: 0, a: 0}
+  aiCharacter: {fileID: 0}
+  rb: {fileID: 0}
+  anim: {fileID: 0}
+  startGoal: {fileID: 0}
+  passTarget: {x: 0, y: 0, z: 0}
+  beenPressed: 0
+  footBall: {fileID: 0}
+  canvas: {fileID: 0}
+  pressBar: {fileID: 0}
+  isHiked: 0
+  target: {fileID: 0}
+  gameManager: {fileID: 0}
+  isBlocking: 0
+  wideRecievers: []
+  defBacks: []
+  hbs: []
+  oLine: []
+  dLine: []
   startTarget: {fileID: 0}
   zoneSize: 10
   zoneCenter: {x: 0, y: 0, z: 0}

@@ -206,7 +206,7 @@ MonoBehaviour:
   LineColor: {r: 0, g: 0, b: 0, a: 0}
   aiCharacter: {fileID: 0}
   rb: {fileID: 0}
-  lr: {fileID: 0}
+  anim: {fileID: 0}
   startGoal: {fileID: 0}
   passTarget: {x: 0, y: 0, z: 0}
   beenPressed: 0
@@ -215,11 +215,13 @@ MonoBehaviour:
   pressBar: {fileID: 0}
   isHiked: 0
   target: {fileID: 0}
-  defBacks: []
   gameManager: {fileID: 0}
   isBlocking: 0
   wideRecievers: []
-  hb: []
+  defBacks: []
+  hbs: []
+  oLine: []
+  dLine: []
   startTarget: {fileID: 0}
   zoneSize: 0
   zoneCenter: {x: 0, y: 0, z: 0}
@@ -263,7 +265,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -1505,8 +1507,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1389415752264276}
-  m_LocalRotation: {x: -0.0000020492112, y: 0.0000006409474, z: 0.043222737, w: 0.99906546}
-  m_LocalPosition: {x: -0.044983033, y: 0.00011812973, z: -0.000000026061407}
+  m_LocalRotation: {x: -0.0000019669533, y: 0.00000059604645, z: 0.043222755, w: 0.9990655}
+  m_LocalPosition: {x: -0.04498303, y: 0.000118128955, z: -0.00000002606248}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4221411558122386}
@@ -2743,8 +2745,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1889125315627220}
-  m_LocalRotation: {x: -7.318979e-17, y: 1.4170987e-17, z: -0.13052638, w: 0.9914448}
-  m_LocalPosition: {x: -0.12697862, y: 0.02224573, z: -0.00000028315998}
+  m_LocalRotation: {x: 0.000000029802322, y: -0, z: -0.13052642, w: 0.9914448}
+  m_LocalPosition: {x: -0.12697868, y: 0.022245735, z: -0.00000028312206}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4481842240817454}
