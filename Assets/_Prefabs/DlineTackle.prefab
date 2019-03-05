@@ -2053,6 +2053,7 @@ MonoBehaviour:
   cameraFollow: {fileID: 0}
   wasBlocked: 0
   blockBar: {fileID: 49370339136942921}
+  isBlocked: 0
 --- !u!1 &1653392376744804137
 GameObject:
   m_ObjectHideFlags: 0
