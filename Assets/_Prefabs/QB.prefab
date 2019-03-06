@@ -85,11 +85,8 @@ GameObject:
   - component: {fileID: 95585072643824078}
   - component: {fileID: 54006616352534192}
   - component: {fileID: 136884001363606144}
-  - component: {fileID: 114760280371826144}
   - component: {fileID: 114036973220166040}
-  - component: {fileID: 114494215254707132}
   - component: {fileID: 123875910}
-  - component: {fileID: 123875907}
   m_Layer: 0
   m_Name: QB
   m_TagString: Player
@@ -128,7 +125,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 1b206e4d2c5cd924b9a59e466af06e9b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -146,7 +143,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -164,26 +161,6 @@ CapsuleCollider:
   m_Height: 1.6
   m_Direction: 1
   m_Center: {x: 0, y: 0.8, z: 0}
---- !u!114 &114760280371826144
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1014315521399686}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce7a80d520cacc042b5fe14f373d8173, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_MovingTurnSpeed: 360
-  m_StationaryTurnSpeed: 180
-  m_JumpPower: 6
-  m_GravityMultiplier: 2
-  m_RunCycleLegOffset: 0.2
-  m_MoveSpeedMultiplier: 1
-  m_AnimSpeedMultiplier: 1
-  m_GroundCheckDistance: 0.3
 --- !u!114 &114036973220166040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196,6 +173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 287d250d4568ac14d8ec3b80f1621fd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startGoal: {fileID: 0}
   materialRenderer: {fileID: 0}
   qb: {fileID: 0}
   startColor: {r: 0, g: 0, b: 0, a: 0}
@@ -207,7 +185,6 @@ MonoBehaviour:
   aiCharacter: {fileID: 0}
   rb: {fileID: 0}
   anim: {fileID: 0}
-  startGoal: {fileID: 0}
   passTarget: {x: 0, y: 0, z: 0}
   beenPressed: 0
   footBall: {fileID: 114875198895940586, guid: 056b4f200a2c2f74eb7c26762be412ec, type: 3}
@@ -237,20 +214,6 @@ MonoBehaviour:
   cameraFollow: {fileID: 0}
   speed: 10
   gravity: -5
---- !u!114 &114494215254707132
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1014315521399686}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 521b611700410be45810047f0a74e899, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isStrafe: 1
-  speed: 2
 --- !u!195 &123875910
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -273,19 +236,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &123875907
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1014315521399686}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c5335f0882fe4d478883cc8c58ce906, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 0}
 --- !u!1 &1028447992150660
 GameObject:
   m_ObjectHideFlags: 0

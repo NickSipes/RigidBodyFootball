@@ -8,8 +8,8 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class FootBallAthlete : MonoBehaviour
 {
 
-    public GameObject startGoal;
-
+    public Goal startGoal;
+    public Routes route;
     //todo clean up inheritance and add setters and getters instead of public variables. Seperate OffPlayers variables from DefPlayers variables
     public Renderer materialRenderer;
     [HideInInspector] public QB qb;
@@ -19,7 +19,7 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public float navStartAccel;
     public Color highlightColor;
     [HideInInspector] public Color LineColor;
-    [HideInInspector] public AICharacterControl aiCharacter;
+
     [HideInInspector] public Rigidbody rb;
     [HideInInspector] public Animator anim;
     //public LineRenderer lr;
@@ -55,9 +55,6 @@ public class FootBallAthlete : MonoBehaviour
     public bool isZone;
 
     [HideInInspector] public bool isPressing;
-
-    [HideInInspector] public ThirdPersonUserControl userControl;
-    [HideInInspector] public ThirdPersonCharacter thirdPerson;
     [HideInInspector] public CameraFollow cameraFollow;
 
 

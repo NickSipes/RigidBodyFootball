@@ -39,11 +39,10 @@ public class QB : FootBallAthlete {
         throwingHandScript = FindObjectOfType<ThrowingHand>();
         gameManager = FindObjectOfType<GameManager>();
         navMeshAgent = GetComponent<NavMeshAgent>();
-        
-        userControl = GetComponent<ThirdPersonUserControl>();
+
         cameraFollow = FindObjectOfType<CameraFollow>();
         anim = GetComponent<Animator>();
-        navMeshAgent.enabled = false;
+
       
         hbs = FindObjectsOfType<HB>();
         wideRecievers = FindObjectsOfType<WR>();
@@ -61,7 +60,7 @@ public class QB : FootBallAthlete {
 
         if (gameManager.isRun)
         {
-            userControl.enabled = false;
+            
           
             if (hbTransform == null)
             {
@@ -84,6 +83,7 @@ public class QB : FootBallAthlete {
         // read inputs
         if (gameManager.isPass)
         {
+           
            StrafeMove(true);
         }   
         
@@ -91,7 +91,7 @@ public class QB : FootBallAthlete {
 
     public void StrafeMove(bool move)
     {
-        speed = 20;
+        speed = 5; // todo make setable variable
         float h = CrossPlatformInputManager.GetAxis("Horizontal");
         float v = CrossPlatformInputManager.GetAxis("Vertical");
         anim.SetBool("isStrafe", move);
@@ -122,7 +122,7 @@ public class QB : FootBallAthlete {
         gameManager.Hike();
     }
 
-    public void LineManHike()
+    public void LineManHike() //todo move to gamemanger hikeball event
     {
 
         foreach (var lineman in oLine)
@@ -150,7 +150,7 @@ public class QB : FootBallAthlete {
         transform.tag = "OffPlayer";
         StandStill();
         ballCarrier.SetPlayerTag();
-        userControl.enabled = false;
+       
         cameraFollow.ResetPlayer();
         gameManager.ChangeBallOwner(ballCarrier.gameObject); 
         //ballCarrier.navMeshAgent.enabled = false;
@@ -192,7 +192,7 @@ public class QB : FootBallAthlete {
         
     }
 
-    void StartDropBack()
+    void StartDropBack() // called via anim event
     {
         AnimatorClipInfo[] clips = anim.GetCurrentAnimatorClipInfo(0);
         float clipTime = clips[0].clip.length;
@@ -202,11 +202,13 @@ public class QB : FootBallAthlete {
     {
         float t = 0;
         navMeshAgent.SetDestination(transform.position + new Vector3(0, 0, -2.3f));
-        while (t <= clipTime) {
+        while (t <= clipTime)
+        {
             t += Time.deltaTime;
             if (Input.anyKey) { navMeshAgent.enabled = false; }
+            transform.LookAt(new Vector3(0, 0, 10));
             yield return new WaitForEndOfFrame();
-                }
+        }
         navMeshAgent.enabled = false;
     }
 

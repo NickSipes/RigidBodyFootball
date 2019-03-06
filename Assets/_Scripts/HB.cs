@@ -17,9 +17,7 @@ public class HB : FootBallAthlete
         hbs = FindObjectsOfType<HB>();
         rb = GetComponent<Rigidbody>();
         startColor = materialRenderer.material.color;
-        aiCharacter = GetComponent<AICharacterControl>();
-        thirdPerson = GetComponent<ThirdPersonCharacter>();
-        userControl = GetComponent<ThirdPersonUserControl>();
+       
         navMeshAgent = GetComponent<NavMeshAgent>();
    
         navMeshAgent.destination = transform.position;
@@ -41,9 +39,9 @@ public class HB : FootBallAthlete
     }
     void AddPlayerControl()
     {       
-        userControl.enabled = true;
+       
         navMeshAgent.enabled = false;
-        aiCharacter.enabled = false;
+   
     }
 
     internal void SetPlayerTag()

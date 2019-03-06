@@ -9,7 +9,7 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class WR : FootBallAthlete
 {
     // Use this for initialization
- 
+
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
@@ -17,12 +17,14 @@ public class WR : FootBallAthlete
         defBacks = FindObjectsOfType<DB>();
         rb = GetComponent<Rigidbody>();
         startColor = materialRenderer.material.color;
-             
+            
         target = startGoal.transform;
         //lr.material.color = LineColor;
+        navMeshAgent.destination = transform.position;
   
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
+        startGoal.SetWr(this);
     }
 
     // Update is called once per frame
@@ -61,14 +63,14 @@ public class WR : FootBallAthlete
 
     private void GetTarget()
     {
-        if (navMeshAgent.destination == null)
+        if (navMeshAgent.destination == transform.position)
         {
             navMeshAgent.destination = startGoal.transform.position;
         }
 
         if (navMeshAgent.hasPath && navMeshAgent.remainingDistance < 2 && target != null)
         {
-            var ball = target.root.GetComponent<FootBall>();
+            var ball = target.GetComponent<FootBall>();
             if (ball != null)
             {
                 Destroy(ball);
