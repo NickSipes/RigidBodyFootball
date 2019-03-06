@@ -17,16 +17,22 @@ public class HB : FootBallAthlete
         hbs = FindObjectsOfType<HB>();
         rb = GetComponent<Rigidbody>();
         startColor = materialRenderer.material.color;
-       
+        anim = GetComponent<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
    
         navMeshAgent.destination = transform.position;
-        target = startGoal.transform;
+        //target = startGoal.transform;
         //lr.material.color = LineColor;
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
+        gameManager.hikeTheBall += HikeTheBall;
     }
-    
+
+    private void HikeTheBall(bool wasHiked)
+    {
+        anim.SetTrigger("HikeTrigger");
+    }
+
     // Update is called once per frame
     void Update()
     {

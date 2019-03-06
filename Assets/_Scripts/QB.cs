@@ -42,7 +42,7 @@ public class QB : FootBallAthlete {
 
         cameraFollow = FindObjectOfType<CameraFollow>();
         anim = GetComponent<Animator>();
-
+        userControl = GetComponent<UserControl>();
       
         hbs = FindObjectsOfType<HB>();
         wideRecievers = FindObjectsOfType<WR>();
@@ -60,7 +60,7 @@ public class QB : FootBallAthlete {
 
         if (gameManager.isRun)
         {
-            
+            userControl.enabled = false;
           
             if (hbTransform == null)
             {
@@ -83,22 +83,13 @@ public class QB : FootBallAthlete {
         // read inputs
         if (gameManager.isPass)
         {
-           
-           StrafeMove(true);
+
+          
         }   
         
     }
 
-    public void StrafeMove(bool move)
-    {
-        speed = 5; // todo make setable variable
-        float h = CrossPlatformInputManager.GetAxis("Horizontal");
-        float v = CrossPlatformInputManager.GetAxis("Vertical");
-        anim.SetBool("isStrafe", move);
-        anim.SetFloat("VelocityX", h * speed);
-        anim.SetFloat("VelocityZ", v * speed);
-        rb.velocity = new Vector3(h * speed, 0, v * speed);
-    }
+   
 
     public void HikeTrigger() // called from UI button
     {
@@ -110,30 +101,17 @@ public class QB : FootBallAthlete {
         if (gameManager.isRun)
         {
             Debug.Log("Run Play");
-            anim.SetTrigger("HandOff");
             gameManager.Hike();
-            LineManHike();
+       
         }
 
     }
     void SnapTheHike() //triggered by animation event
     {
-        LineManHike();
+     
         gameManager.Hike();
     }
 
-    public void LineManHike() //todo move to gamemanger hikeball event
-    {
-
-        foreach (var lineman in oLine)
-        {
-            lineman.HikeTheBall(true);
-        }
-        foreach (var lineman in dLine)
-        {
-            lineman.HikeTheBall(true);
-        }
-    }
     public void SetPosition()
     {
         AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
@@ -150,7 +128,7 @@ public class QB : FootBallAthlete {
         transform.tag = "OffPlayer";
         StandStill();
         ballCarrier.SetPlayerTag();
-       
+        ballCarrier.SetUserControl();
         cameraFollow.ResetPlayer();
         gameManager.ChangeBallOwner(ballCarrier.gameObject); 
         //ballCarrier.navMeshAgent.enabled = false;

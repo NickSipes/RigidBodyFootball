@@ -39,7 +39,6 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public HB[] hbs;
     [HideInInspector] public Oline[] oLine;
     [HideInInspector] public Dline[] dLine;
-
     [HideInInspector] public Transform startTarget;
 
     [Range(5, 10)]
@@ -57,12 +56,20 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public bool isPressing;
     [HideInInspector] public CameraFollow cameraFollow;
 
+    [HideInInspector] public UserControl userControl;
+
+
 
     // Start is called before the first frame update
     void Start()
     {
         cameraFollow = FindObjectOfType<CameraFollow>();
+      
     }
-
-
+     
+    public void SetUserControl()
+    {
+        userControl = GetComponent<UserControl>();
+        userControl.enabled = true; //todo create an method to disable user control on all other players
+    }
 }

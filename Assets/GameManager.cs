@@ -44,8 +44,9 @@ public class GameManager : MonoBehaviour
   
     public void Hike() 
     {
+        hikeTheBall(true);
         isHiked = true;
-        ballOwner = FindObjectOfType<QB>(); //todo find better solution
+        ballOwner = FindObjectOfType<QB>(); //todo find better solution of getting the ball owner 
     }
     public void PassPlay()
     {

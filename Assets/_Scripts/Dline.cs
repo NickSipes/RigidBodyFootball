@@ -42,12 +42,14 @@ public class Dline : FootBallAthlete
     private void RegesterEvents()
     {
         gameManager.ballOwnerChange += BallOwnerChange;
+        gameManager.hikeTheBall += HikeTheBall;
     }
 
     // Update is called once per frame
     void Update()
     {
         if (!gameManager.isHiked) return;
+
         if (target == null)
         {
             target = GameObject.FindGameObjectWithTag("Player").transform;

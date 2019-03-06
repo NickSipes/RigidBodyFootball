@@ -13,6 +13,7 @@ public class Oline : FootBallAthlete
     void Start()
     {
         FindComponents();
+        gameManager.hikeTheBall += HikeTheBall;
     }
 
     private void FindComponents()
