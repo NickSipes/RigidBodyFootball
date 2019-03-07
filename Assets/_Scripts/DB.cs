@@ -45,8 +45,20 @@ public class DB : FootBallAthlete
 
         if (gameManager.isPass)
         {
-          
-            if (startTarget == null)
+            if (targetWr != null)
+            {
+                if (IsTargetInZone())
+                {
+                    navMeshAgent.SetDestination(targetWr.transform.position);
+                }
+                else
+                {
+                    targetWr = null;
+                    target = null;
+                }
+            }
+
+            if (target == null)
             {
                 //todo this code will break zone coverage later, only targets WRs
                 startTarget = GetClosestWr(wideRecievers);
@@ -60,7 +72,7 @@ public class DB : FootBallAthlete
                 if (targetWr.CanBePressed())
                     StartCoroutine(WrPress(targetWr));
             }
-            if (isMan) { }
+          
 
             if (isZone && isPressing == false)
             {
@@ -73,6 +85,12 @@ public class DB : FootBallAthlete
             SetTargetHb(target);
         }
 	}
+
+    private bool IsTargetInZone()
+    {
+        if ((targetWr.transform.position - zoneCenterGO.transform.position).magnitude <= zoneSize) return true; //target is outside zone
+        else return false;
+    }
 
     private Transform GetClosestHb(HB[] HalfBacks)
     {
@@ -110,9 +128,7 @@ public class DB : FootBallAthlete
         wr.ReleasePress();
         isPressing = false;
     }
-
-
-
+        
     private void SetTargetWr(Transform targetTransform)
     {
         navMeshAgent.SetDestination(targetTransform.position);
@@ -120,6 +136,7 @@ public class DB : FootBallAthlete
         targetWr = targetTransform.GetComponentInParent<WR>();
         //Debug.Log("Target Changed");
     }
+
     private void SetTargetHb(Transform targetTransform)
     {
         navMeshAgent.SetDestination(targetTransform.position);
@@ -215,7 +232,7 @@ public class DB : FootBallAthlete
         }
 
     }
-    public bool CanBePressed()
+    public bool CanBePressed() //todo rename to block
     {
         if (!beenPressed)
         {
