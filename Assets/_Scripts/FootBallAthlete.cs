@@ -64,6 +64,7 @@ public class FootBallAthlete : MonoBehaviour
     void Start()
     {
         cameraFollow = FindObjectOfType<CameraFollow>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
       
     }
      

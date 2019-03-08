@@ -8,7 +8,7 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class Oline : FootBallAthlete
 {
 
-
+    public FootBallAthlete ballCarrier;
 
     void Start()
     {
@@ -56,7 +56,7 @@ public class Oline : FootBallAthlete
         anim.SetTrigger("HikeTrigger");
     }
 
-    void PassProtection()
+    void PassProtection() //todo consolidate duplicate code
     {
         if (target == null)
         {
@@ -76,26 +76,59 @@ public class Oline : FootBallAthlete
         }
 
     }
-    void RunProtection()
+
+    
+    void RunProtection() //todo consolidate duplicate code
     {
         if (target == null)
         {
             target = GetClosestDline(dLine);
         }
-        SetTargetDline(target);
         Vector3 directionToTarget = target.position - transform.position;
+        transform.LookAt(target);
+        //todo change code to be moving foreward with blocks, get to the second level after shedding first defender
+        SetTargetDlineRun(target);
         float dSqrToTarget = directionToTarget.sqrMagnitude;
-        if (dSqrToTarget < 1)
+        if (dSqrToTarget < 3) //todo setup runblock range variable
         {
             var dlineToBlock = target.GetComponent<Dline>();
             if (!dlineToBlock.wasBlocked && !dlineToBlock.isBlocked)
             {
-                StartCoroutine("BlockTarget", target);
+                StartCoroutine("RunBlockTarget", target);
             }
         }
     }
 
+    private void SetTargetDlineRun(Transform target) //todo collapse into single function
+    {
+
+        navMeshAgent.SetDestination(target.position); // todo centralize ball carrier, access ballcarrier instead of hard coded transform
+    }
+
+    public void SetTargetDline(Transform targetSetter)
+    {
+
+        navMeshAgent.SetDestination(qb.transform.position + (targetSetter.position - qb.transform.position) / 2); // todo centralize ball carrier, access ballcarrier instead of hard coded transform
+    }
+
     IEnumerator BlockTarget(Transform target)
+    {
+
+        var lineMan = target.GetComponent<Dline>();
+        float blockTime = 1f; // make setable variable
+        float blockTimeNorm = 0;
+        while (blockTimeNorm <= 1f) //todo this counter is ugly and needs to be better
+        {
+
+            isBlocking = true;
+            blockTimeNorm += Time.deltaTime / blockTime;
+            lineMan.Block(blockTimeNorm, this);
+            yield return new WaitForEndOfFrame();
+        }
+        lineMan.ReleaseBlock();
+        isBlocking = false;
+    }
+    IEnumerator RunBlockTarget(Transform target)
     {
 
         var lineMan = target.GetComponent<Dline>();
@@ -134,9 +167,5 @@ public class Oline : FootBallAthlete
 
         return bestTarget;
     }
-    public void SetTargetDline(Transform targetSetter)
-    {
-        navMeshAgent.SetDestination(qb.transform.position + (targetSetter.position - qb.transform.position) / 2);
-    }
-
+    
 }

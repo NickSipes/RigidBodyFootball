@@ -7,7 +7,7 @@ public class FootBall : MonoBehaviour
 {
     [SerializeField]
     private Rigidbody rb;
-
+    GameManager gameManager;
     [SerializeField] [Range(0, 1)] private float arcPeakRange;
     [SerializeField] [Range(0, 1)] private float throwPowerRange;
 
@@ -24,7 +24,7 @@ public class FootBall : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
-   
+     
     }
 	
 	// Update is called once per frame
@@ -33,39 +33,46 @@ public class FootBall : MonoBehaviour
         
 	}
 
-    public void PassFootBallToMovingTarget(WR wr, float arcType, float power) 
+    void SetGameManager()
     {
+        if(!gameManager)
+        gameManager = FindObjectOfType<GameManager>();
+    }
+    public void PassFootBallToMovingTarget(QB ballThrower, WR wideReceiver, float arcType, float power) 
+    {
+        gameManager.AttemptPass(ballThrower, wideReceiver, arcType, power);
         if (rb == null)
         {
             rb = GetComponent<Rigidbody>();
      
         }
         //targetPos = GetPositionIn(2, wr);
-
-        QB qb = FindObjectOfType<QB>();
+        SetGameManager();
         transform.parent = null;
         rb.useGravity = true;
         BallisticMotion motion = GetComponent<BallisticMotion>();
-        Vector3 targetPos = wr.transform.position;
+        Vector3 targetPos = wideReceiver.transform.position;
         Vector3 diff = targetPos - transform.position;
         Vector3 diffGround = new Vector3(diff.x, 0f, diff.z);
         Vector3 fireVel, impactPos;
-        Vector3 velocity = wr.navMeshAgent.velocity;
+        Vector3 velocity = wideReceiver.navMeshAgent.velocity;
+
         //FTS Calculations https://github.com/forrestthewoods/lib_fts/tree/master/projects/unity/ballistic_trajectory
         float gravity;
+        
         if (Ballistics.solve_ballistic_arc_lateral(transform.position, power, targetPos + Vector3.up, velocity, arcType,
             out fireVel, out gravity, out impactPos))
         {
-            GameObject go = Instantiate(targetMarker, impactPos, Quaternion.LookRotation(qb.transform.position + new Vector3(0,1,0)));
+            GameObject go = Instantiate(targetMarker, impactPos, Quaternion.LookRotation(ballThrower.transform.position + new Vector3(0,1,0)));
             Destroy(go, 2);
-            wr.SetTarget(go.transform);
             transform.forward = diffGround;
             motion.Initialize(transform.position, gravity);
             motion.AddImpulse(fireVel);
+            gameManager.ThrowTheBall(ballThrower, wideReceiver,impactPos, arcType, power);
         }
         Debug.Log("Firing at " + impactPos);
       
-        wr.PrintPosition();
+       
 
     }
 

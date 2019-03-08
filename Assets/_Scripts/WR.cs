@@ -21,10 +21,17 @@ public class WR : FootBallAthlete
         target = startGoal.transform;
         //lr.material.color = LineColor;
         navMeshAgent.destination = transform.position;
-  
+
+        gameManager.onBallThrown += BallThrown;
+
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
         startGoal.SetWr(this);
+    }
+
+    private void BallThrown(QB thrower, WR reciever, Vector3 impactPos, float arcType, float power)
+    {
+        
     }
 
     // Update is called once per frame
@@ -80,21 +87,21 @@ public class WR : FootBallAthlete
         //DrawPath();
     }
 
-    private void BeginPass()
+    private void BeginPass() //todo, move code to QB or game manager
     {
        
         //todo adjust throwPower dependent on distance and throw type
             if (Input.GetMouseButtonDown(0)) //Bullet Pass
             {
-                Debug.Log("Pressed secondary button.");
+                
                 passTarget = transform.position;
-                qb.BeginThrowAnim(passTarget, this, 1.5f, 23f);
+                qb.BeginThrowAnim(passTarget, this, 1.5f, 23f); //todo fix hardcoded variables, needs to be a measure of distance + qb throw power
 
             }
 
             if (Input.GetMouseButtonDown(1)) // Touch Pass
             {
-                Debug.Log("Pressed secondary button.");
+               
                 passTarget = transform.position;
                 qb.BeginThrowAnim(passTarget, this, 2.3f, 20f);
             }

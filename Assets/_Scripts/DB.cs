@@ -11,19 +11,31 @@ public class DB : FootBallAthlete
 {
    
     //todo DB State Machine
-
+    
     // Use this for initialization
     void Start ()
     {
         gameManager = FindObjectOfType<GameManager>();
         wideRecievers = FindObjectsOfType<WR>();
         hbs = FindObjectsOfType<HB>();
-    
         navMeshAgent = GetComponent<NavMeshAgent>();
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
 
+        gameManager.onBallThrown += BallThrown;
+        gameManager.passAttempt += PassAttempt;
         CreateZone(); //todo only run if player is in zone
+    }
+
+    private void BallThrown(QB thrower, WR reciever,Vector3 impactPos, float arcType, float power)
+    {
+       
+
+    }
+    private void PassAttempt(QB thrower, WR reciever,  float arcType, float power)
+    {
+
+
     }
 
     private void CreateZone()
@@ -61,7 +73,7 @@ public class DB : FootBallAthlete
             if (target == null)
             {
                 //todo this code will break zone coverage later, only targets WRs
-                startTarget = GetClosestWr(wideRecievers);
+                startTarget = GetClosestWr(wideRecievers);//todo this is unneccesary variables 
                 SetTargetWr(startTarget);
                 if (targetWr == null)
                 {
@@ -184,6 +196,7 @@ public class DB : FootBallAthlete
 
         return bestTarget;
     }
+
     Transform CheckZones(WR[] enemies)
     {
         Transform bestTarget = null;
@@ -232,6 +245,7 @@ public class DB : FootBallAthlete
         }
 
     }
+
     public bool CanBePressed() //todo rename to block
     {
         if (!beenPressed)
@@ -256,6 +270,7 @@ public class DB : FootBallAthlete
         navMeshAgent.speed = navStartSpeed;
         navMeshAgent.acceleration = navStartAccel;
     }
+
     void OnDrawGizmos()
     {
         // Draw zone sphere 
