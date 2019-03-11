@@ -21,7 +21,7 @@ public class FootBall : MonoBehaviour
     public float throwPower { get { return Mathf.Lerp(1f, 30f, throwPowerRange); } }
 
     [SerializeField] private GameObject targetMarker;
-
+    public bool isComplete;
     //private bool isDestroying = false;
     public float destroyTime = 3f;
     
@@ -47,8 +47,9 @@ public class FootBall : MonoBehaviour
 
     public void PassFootBallToMovingTarget(QB ballThrower, WR wideReceiver,FootBall footBall,float arcType, float power) 
     {
+        isComplete = true;
         SetGameManager();
-        gameManager.AttemptPass(ballThrower, wideReceiver, arcType, power);
+        gameManager.AttemptPass(ballThrower, wideReceiver, this, arcType, power);
         if (rb == null)
         {
             rb = GetComponent<Rigidbody>();
@@ -75,7 +76,7 @@ public class FootBall : MonoBehaviour
             transform.forward = diffGround;
             motion.Initialize(transform.position, gravity);
             motion.AddImpulse(fireVel);
-            gameManager.ThrowTheBall(ballThrower, wideReceiver, this, impactPos, arcType, power);
+            gameManager.ThrowTheBall(ballThrower, wideReceiver, this, impactPos, arcType, power, isComplete); //todo the football stores whether the pass is complete or not, not sure if thats a good idea.
         }
         Debug.Log("Firing at " + impactPos);
       
@@ -83,7 +84,42 @@ public class FootBall : MonoBehaviour
 
     }
 
-  
+    public void BlockBallTrajectory()
+    {
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody>();
+
+        }
+     
+        //todo this code is used three times now REFACTOR
+        transform.parent = null;
+        rb.useGravity = true;
+        BallisticMotion motion = GetComponent<BallisticMotion>();
+        Vector3 targetPos = transform.position + new Vector3(5,5,0);
+        Vector3 diff = targetPos - transform.position;
+        Vector3 diffGround = new Vector3(diff.x, 0f, diff.z);
+        Vector3 fireVel, impactPos;
+       
+        //FTS Calculations https://github.com/forrestthewoods/lib_fts/tree/master/projects/unity/ballistic_trajectory
+        float gravity;
+
+        if (Ballistics.solve_ballistic_arc_lateral(transform.position, 15, targetPos, new Vector3(0,0,0), 10,
+            out fireVel, out gravity, out impactPos))
+        {
+      
+            transform.forward = diffGround;
+            motion.Initialize(transform.position, gravity);
+            motion.AddImpulse(fireVel);
+            
+        }
+        Debug.Log("Blocked at " + impactPos);
+
+
+
+    }
+
+
 
 }
 

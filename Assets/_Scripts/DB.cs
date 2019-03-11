@@ -96,12 +96,12 @@ public class DB : FootBallAthlete
 
     }
 
-    private void BallThrown(QB thrower, WR reciever,FootBall ball, Vector3 impactPos, float arcType, float power)
+    private void BallThrown(QB thrower, WR reciever,FootBall ball, Vector3 impactPos, float arcType, float power, bool isComplete)
     {
 
 
     }
-    private void PassAttempt(QB thrower, WR reciever, float arcType, float power)
+    private void PassAttempt(QB thrower, WR reciever,FootBall ball, float arcType, float power)
     {
         if (InVincintyOfPass(reciever))
         {
@@ -110,7 +110,7 @@ public class DB : FootBallAthlete
 
 
                
-                AniciptateThrow(thrower, reciever, arcType, power);
+                AniciptateThrow(thrower, reciever, ball, arcType, power);
             }
 
             if (arcType == 2.3f) { }
@@ -119,7 +119,7 @@ public class DB : FootBallAthlete
 
     }
 
-    private void AniciptateThrow(QB thrower, WR reciever, float arcType, float power)
+    private void AniciptateThrow(QB thrower, WR reciever, FootBall ball, float arcType, float power)
 
     {
         //todo this code is used twice now 
@@ -142,14 +142,25 @@ public class DB : FootBallAthlete
 
             if ((transform.position - impactPos).magnitude < 5 ) // todo create range variableStat
             {
-
-                navMeshAgent.speed += power; // todo fix this terrible code
+                navMeshAgent.speed += power; // todo fix this terrible code, basically speeds up character to get in position
                 navMeshAgent.SetDestination(impactPos);
                 Debug.Log("PassBlock");
-                anim.SetTrigger("BlockPass");
+                StartCoroutine("BlockPass", ball);
+                ball.isComplete = false;
             }
 
         }
+    }
+
+    IEnumerator BlockPass(FootBall ball)
+    {
+        anim.SetTrigger("BlockPass");
+        while ((transform.position - ball.transform.position).magnitude > 1)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+
+        ball.BlockBallTrajectory();
     }
 
     bool InVincintyOfPass(WR wR)
@@ -218,7 +229,6 @@ public class DB : FootBallAthlete
         targetHb = targetTransform.GetComponentInParent<HB>();
         //Debug.Log("Target Changed");
     }
-
 
     private void SitInZone(Transform targetTransform)
     {

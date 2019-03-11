@@ -21,10 +21,10 @@ public class GameManager : MonoBehaviour
     public delegate void BallOwnerChange(FootBallAthlete ballOwner);
     public event BallOwnerChange ballOwnerChange;
 
-    public delegate void PassAttempt(QB thrower, WR reciever, float arcType, float power);
+    public delegate void PassAttempt(QB thrower, WR reciever,FootBall footBall, float arcType, float power);
     public event PassAttempt passAttempt;
 
-    public delegate void OnBallThrown(QB thrower, WR reciever,FootBall footBall , Vector3 impactPos, float arcType, float power);
+    public delegate void OnBallThrown(QB thrower, WR reciever,FootBall footBall , Vector3 impactPos, float arcType, float power, bool isComplete);
     public event OnBallThrown onBallThrown;
 
     [HideInInspector] public Oline[] oLine;
@@ -72,18 +72,19 @@ public class GameManager : MonoBehaviour
     {
         FootBallAthlete ballCarrier = newOwner.GetComponent<FootBallAthlete>();
         prevOwner.transform.tag = "OffPlayer";
+    
         ballCarrier.SetUserControl();
         cameraFollow.ResetPlayer();
         ballOwner = ballCarrier;
         ballOwnerChange(ballCarrier);
     }
-    public void ThrowTheBall(QB ballThrower, WR ballReciever,FootBall ball , Vector3 impactPos, float arcType, float power)
+    public void ThrowTheBall(QB ballThrower, WR ballReciever,FootBall ball , Vector3 impactPos, float arcType, float power, bool isComplete)
     {
-        onBallThrown(ballThrower, ballReciever,ball, impactPos, arcType, power);
+        onBallThrown(ballThrower, ballReciever,ball, impactPos, arcType, power, isComplete);
     }
-    public void AttemptPass(QB ballThrower, WR ballReciever,float arcType, float power)
+    public void AttemptPass(QB ballThrower, WR ballReciever, FootBall ball,float arcType, float power)
     {
-        passAttempt(ballThrower, ballReciever, arcType, power);
+        passAttempt(ballThrower, ballReciever, ball, arcType, power);
     }
 
 }

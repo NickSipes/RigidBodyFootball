@@ -72,7 +72,7 @@ public class WR : FootBallAthlete
         anim.SetTrigger("HikeTrigger");
     }
 
-    public void BallThrown(QB thrower, WR reciever,FootBall ball,Vector3 impactPos, float arcType, float power)
+    public void BallThrown(QB thrower, WR reciever,FootBall ball,Vector3 impactPos, float arcType, float power, bool isComplete)
     {
         StartCoroutine("GetToImpactPos", impactPos);
                
@@ -108,10 +108,20 @@ public class WR : FootBallAthlete
     }
     IEnumerator CatchTheBall(FootBall ball)
     {
-        gameManager.ChangeBallOwner(GameObject.FindGameObjectWithTag("Player"), gameObject);
         iK.rightHandObj = ball.transform;
-        yield return new WaitForEndOfFrame();
         anim.SetBool("hasBall", true);
+        while((transform.position - ball.transform.position).magnitude > 1f)
+        {
+            if (ball.isComplete)
+            {
+                cameraFollow.FollowBall(ball);
+            }
+            yield return new WaitForEndOfFrame();
+        }
+        if (ball.isComplete)
+        {
+            gameManager.ChangeBallOwner(GameObject.FindGameObjectWithTag("Player"), gameObject);
+        }
         iK.isActive = false;
     }
 
