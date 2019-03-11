@@ -13,11 +13,12 @@ public class GameManager : MonoBehaviour
     public bool isHiked = false;
     public Object ballOwner;
     // Start is called before the first frame update
+    public CameraFollow cameraFollow;
 
     public delegate void HikeTheBall(bool wasHiked);
     public event HikeTheBall hikeTheBall;
 
-    public delegate void BallOwnerChange(GameObject ballOwner);
+    public delegate void BallOwnerChange(FootBallAthlete ballOwner);
     public event BallOwnerChange ballOwnerChange;
 
     public delegate void PassAttempt(QB thrower, WR reciever, float arcType, float power);
@@ -33,6 +34,7 @@ public class GameManager : MonoBehaviour
     {
         oLine = FindObjectsOfType<Oline>();
         dLine = FindObjectsOfType<Dline>();
+        cameraFollow = FindObjectOfType<CameraFollow>();
     }
 
     // Update is called once per frame
@@ -66,10 +68,14 @@ public class GameManager : MonoBehaviour
         isRun = true;
         isPass = false;
     }
-    public void ChangeBallOwner(GameObject target)
+    public void ChangeBallOwner(GameObject prevOwner, GameObject newOwner)
     {
-        ballOwner = target;
-        ballOwnerChange(target);
+        FootBallAthlete ballCarrier = newOwner.GetComponent<FootBallAthlete>();
+        prevOwner.transform.tag = "OffPlayer";
+        ballCarrier.SetUserControl();
+        cameraFollow.ResetPlayer();
+        ballOwner = ballCarrier;
+        ballOwnerChange(ballCarrier);
     }
     public void ThrowTheBall(QB ballThrower, WR ballReciever,FootBall ball , Vector3 impactPos, float arcType, float power)
     {

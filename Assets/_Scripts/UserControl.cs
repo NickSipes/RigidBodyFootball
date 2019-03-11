@@ -20,8 +20,10 @@ public class UserControl : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        
         if (!gameManager.isHiked) return;
 
+       
         float speed = 5; // todo make setable variable
         float h = CrossPlatformInputManager.GetAxis("Horizontal");
         float v = CrossPlatformInputManager.GetAxis("Vertical");

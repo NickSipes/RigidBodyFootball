@@ -9,17 +9,20 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class WR : FootBallAthlete
 {
     // Use this for initialization
-    
+    IKControl iK;
     void Start()
     {
+
+       
         gameManager = FindObjectOfType<GameManager>();
         qb = FindObjectOfType<QB>();
         defBacks = FindObjectsOfType<DB>();
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
+        iK = GetComponent<IKControl>();
+        iK.isActive = false;
         startColor = materialRenderer.material.color;
-        
-        
+        cameraFollow = FindObjectOfType<CameraFollow>();
 
         //target = startGoal.transform;
         //lr.material.color = LineColor;
@@ -34,43 +37,9 @@ public class WR : FootBallAthlete
         //start goal set by inspector
         startGoal.SetWr(this);
     }
-
-    private void HikeTheBall(bool wasHiked)
-    {
-        anim.SetTrigger("HikeTrigger");
-    }
-
-    public void BallThrown(QB thrower, WR reciever,FootBall ball,Vector3 impactPos, float arcType, float power)
-    {
-        //todo move reciever to a through pass target
-        if (reciever == this)
-        {
-            SetDestination(impactPos);
-            SetTarget(ball.transform);
-            footBall = ball;
-            isCatching = true;
-            anim.SetTrigger("CatchTrigger");
-
-        }
-    }
-    public void ResetRoute() // Called from anim event
-    {
-        footBall = null;
-        target = null;
-        isCatching = false;
-
-    }
-
-    private void SetTarget(Transform _target)
-    {
-        target = _target;
-    }
-
     // Update is called once per frame
     void Update()
     {
-
-
         if (!gameManager.isHiked) return;
         if (!isCatching) GetTarget();
 
@@ -86,12 +55,8 @@ public class WR : FootBallAthlete
                     }
             }
         }
-        
-     
-
         if (gameManager.isRun)
         {
-
             canvas.transform.LookAt(Camera.main.transform);
             Transform blockTarget = GetClosestDB(defBacks);
             SetDestination(blockTarget.transform.position);
@@ -99,13 +64,74 @@ public class WR : FootBallAthlete
                 StartCoroutine(DbBlock(targetDb));
             return;
         }
-      
-        
     }
 
+
+    private void HikeTheBall(bool wasHiked)
+    {
+        anim.SetTrigger("HikeTrigger");
+    }
+
+    public void BallThrown(QB thrower, WR reciever,FootBall ball,Vector3 impactPos, float arcType, float power)
+    {
+        StartCoroutine("GetToImpactPos", impactPos);
+               
+        //todo move reciever to a through pass target
+        if (reciever == this)
+        {
+            StartCoroutine("TracktheBall", ball);
+            SetTarget(ball.transform);
+            footBall = ball;
+            isCatching = true;
+        }
+    }
+    IEnumerator GetToImpactPos(Vector3 impact)
+    {
+        SetDestination(impact);
+
+        yield return new WaitForSeconds(2); //todo this is a very bad way to do this
+
+        ResetRoute();
+
+    }
+    IEnumerator TracktheBall(FootBall ball)
+    {
+        while ((transform.position - ball.transform.position).magnitude > 10f) //todo will have to create some forumla based on throwPower to trigger animations correctly
+        {
+            iK.isActive = true;
+            iK.LookAtBall(ball);
+            yield return new WaitForEndOfFrame();
+        }
+           
+        anim.SetTrigger("CatchTrigger");
+        StartCoroutine("CatchTheBall", ball);
+    }
+    IEnumerator CatchTheBall(FootBall ball)
+    {
+        gameManager.ChangeBallOwner(GameObject.FindGameObjectWithTag("Player"), gameObject);
+        iK.rightHandObj = ball.transform;
+        yield return new WaitForEndOfFrame();
+        anim.SetBool("hasBall", true);
+        iK.isActive = false;
+    }
+
+    public void ResetRoute() // Called from anim event
+    {
+        footBall = null;
+        target = null;
+        isCatching = false;
+        StopAllCoroutines();
+    }
+
+    private void SetTarget(Transform _target)
+    {
+        target = _target;
+    }
+
+  
     public void SetDestination(Vector3 targetSetter)
     {
-        //Debug.Log(this + "Dest set " + targetSetter);
+        Debug.Log(this + "Dest set " + targetSetter);
         navMeshAgent.SetDestination(targetSetter);
         //target = targetSetter;
     }

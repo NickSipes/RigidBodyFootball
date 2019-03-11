@@ -66,16 +66,24 @@ public class FootBallAthlete : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        cameraFollow = FindObjectOfType<CameraFollow>();
-        navMeshAgent = GetComponent<NavMeshAgent>();
       
     }
      
     public void SetUserControl()
     {
+        tag = "Player";
+        rb = GetComponent<Rigidbody>();
+        cameraFollow = FindObjectOfType<CameraFollow>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
         userControl = GetComponent<UserControl>();
         userControl.enabled = true; //todo create an method to disable user control on all other players
+        rb.isKinematic = false;
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, 0, transform.eulerAngles.z);
+        navMeshAgent.enabled = false;
     }
-    
-    
+
+ 
+   
 }
+    
+

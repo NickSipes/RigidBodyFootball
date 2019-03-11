@@ -102,7 +102,7 @@ public class Dline : FootBallAthlete
         navMeshAgent.acceleration = navStartAccel;
     }
 
-    public void BallOwnerChange(GameObject ballOwner)
+    public void BallOwnerChange(FootBallAthlete ballOwner)
     {
         SetTarget(ballOwner.transform);
 

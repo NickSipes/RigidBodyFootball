@@ -44,6 +44,7 @@ public class FootBall : MonoBehaviour
         if(!gameManager)
         gameManager = FindObjectOfType<GameManager>();
     }
+
     public void PassFootBallToMovingTarget(QB ballThrower, WR wideReceiver,FootBall footBall,float arcType, float power) 
     {
         SetGameManager();

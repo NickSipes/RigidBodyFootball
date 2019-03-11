@@ -123,17 +123,10 @@ public class QB : FootBallAthlete {
   
     private void HandOffBall(Transform hb)
     {
-        //todo extract call to game manager in order to trigger gameManager.ballOwnerChange event
-        HB ballCarrier = hb.GetComponent<HB>();
-        transform.tag = "OffPlayer";
+
+        gameManager.ChangeBallOwner(gameObject, hb.gameObject);
         StandStill();
-        ballCarrier.SetPlayerTag();
-        ballCarrier.SetUserControl();
-        cameraFollow.ResetPlayer();
-        gameManager.ChangeBallOwner(ballCarrier.gameObject); 
-        //ballCarrier.navMeshAgent.enabled = false;
-      
-       
+
     }
 
     private void StandStill()

@@ -8,7 +8,7 @@ using UnityStandardAssets.Characters.ThirdPerson;
 
 public class HB : FootBallAthlete
 {
-    
+
     // Use this for initialization
     void Start()
     {
@@ -19,7 +19,7 @@ public class HB : FootBallAthlete
         startColor = materialRenderer.material.color;
         anim = GetComponent<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
-   
+
         navMeshAgent.destination = transform.position;
         //target = startGoal.transform;
         //lr.material.color = LineColor;
@@ -40,19 +40,10 @@ public class HB : FootBallAthlete
 
         if (gameManager.isRun)
         {
-           
+
         }
     }
-    void AddPlayerControl()
-    {       
-       
-        navMeshAgent.enabled = false;
-   
-    }
-
-    internal void SetPlayerTag()
-    {
-      tag = "Player";
-      AddPlayerControl();
-    }
 }
+   
+
+  
