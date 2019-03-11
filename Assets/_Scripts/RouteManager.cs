@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Goal : MonoBehaviour
+public class RouteManager : MonoBehaviour
 {
+    //todo collapse into waypoint follower
+
     public WaypointFollower wayPointFollower;
     private WR[] wrs;
     private WR wr;

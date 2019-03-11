@@ -8,7 +8,7 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class FootBallAthlete : MonoBehaviour
 {
 
-    public Goal startGoal;
+    public RouteManager startGoal;
     public Routes route;
     //todo clean up inheritance and add setters and getters instead of public variables. Seperate OffPlayers variables from DefPlayers variables
     public Renderer materialRenderer;
@@ -54,6 +54,9 @@ public class FootBallAthlete : MonoBehaviour
     public bool isZone;
 
     [HideInInspector] public bool isPressing;
+
+    [HideInInspector] public bool isCatching = false;
+
     [HideInInspector] public CameraFollow cameraFollow;
 
     [HideInInspector] public UserControl userControl;
@@ -73,4 +76,6 @@ public class FootBallAthlete : MonoBehaviour
         userControl = GetComponent<UserControl>();
         userControl.enabled = true; //todo create an method to disable user control on all other players
     }
+    
+    
 }

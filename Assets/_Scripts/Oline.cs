@@ -70,7 +70,7 @@ public class Oline : FootBallAthlete
             var dlineToBlock = target.GetComponent<Dline>();
             if (!dlineToBlock.wasBlocked && !dlineToBlock.isBlocked)
             {
-                Debug.Log("Block " + target.name);
+                //Debug.Log("Block " + target.name);
                 StartCoroutine("BlockTarget", target);
             }
         }

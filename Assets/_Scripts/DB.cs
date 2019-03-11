@@ -9,7 +9,8 @@ using UnityStandardAssets.Characters.ThirdPerson;
 
 public class DB : FootBallAthlete
 {
-   
+   //todo HOW ARE WE GOING TO HANDLE JUMP ANIMATIONS
+
     //todo DB State Machine
     
     // Use this for initialization
@@ -21,23 +22,14 @@ public class DB : FootBallAthlete
         navMeshAgent = GetComponent<NavMeshAgent>();
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
-
+        anim = GetComponent<Animator>();
+        gameManager.hikeTheBall += HikeTheBall;
         gameManager.onBallThrown += BallThrown;
         gameManager.passAttempt += PassAttempt;
         CreateZone(); //todo only run if player is in zone
     }
 
-    private void BallThrown(QB thrower, WR reciever,Vector3 impactPos, float arcType, float power)
-    {
-       
-
-    }
-    private void PassAttempt(QB thrower, WR reciever,  float arcType, float power)
-    {
-
-
-    }
-
+    
     private void CreateZone()
     {
         zoneCenter = transform.position + new Vector3(0, 0, 5);
@@ -86,7 +78,7 @@ public class DB : FootBallAthlete
             }
           
 
-            if (isZone && isPressing == false)
+            if (isZone && !isPressing)
             {
                 PlayZone();
             }
@@ -97,6 +89,76 @@ public class DB : FootBallAthlete
             SetTargetHb(target);
         }
 	}
+
+    private void HikeTheBall(bool wasHiked)
+    {
+        anim.SetTrigger("HikeTrigger");
+
+    }
+
+    private void BallThrown(QB thrower, WR reciever,FootBall ball, Vector3 impactPos, float arcType, float power)
+    {
+
+
+    }
+    private void PassAttempt(QB thrower, WR reciever, float arcType, float power)
+    {
+        if (InVincintyOfPass(reciever))
+        {
+            if (arcType == 1.5f)
+            {
+
+
+               
+                AniciptateThrow(thrower, reciever, arcType, power);
+            }
+
+            if (arcType == 2.3f) { }
+            if (arcType == 3.2f) { }
+        }
+
+    }
+
+    private void AniciptateThrow(QB thrower, WR reciever, float arcType, float power)
+
+    {
+        //todo this code is used twice now 
+        Vector3 targetPos = reciever.transform.position;
+        Vector3 diff = targetPos - transform.position;
+        Vector3 diffGround = new Vector3(diff.x, 0f, diff.z);
+        Vector3 fireVel, impactPos;
+        Vector3 velocity = reciever.navMeshAgent.velocity;
+
+        //FTS Calculations https://github.com/forrestthewoods/lib_fts/tree/master/projects/unity/ballistic_trajectory
+        float gravity;
+
+        if (Ballistics.solve_ballistic_arc_lateral(transform.position, power, targetPos + Vector3.up, velocity, arcType,
+            out fireVel, out gravity, out impactPos))
+        {
+            //todo: get distance to impact pos and match it against DB position and speed, 
+            //pass outcome of roll to the football call an onInterception or onBlock event
+            //figure out how to add a second impluse to the thrown football in the case of a blocked pass
+
+
+            if ((transform.position - impactPos).magnitude < 5 ) // todo create range variableStat
+            {
+
+                navMeshAgent.speed += power; // todo fix this terrible code
+                navMeshAgent.SetDestination(impactPos);
+                Debug.Log("PassBlock");
+                anim.SetTrigger("BlockPass");
+            }
+
+        }
+    }
+
+    bool InVincintyOfPass(WR wR)
+    {
+        float distToWr = Vector3.Distance(transform.position, wR.transform.position);
+        if (distToWr <= 5) return true; //todo create coverage range variable
+        else return false;
+    }
+
 
     private bool IsTargetInZone()
     {

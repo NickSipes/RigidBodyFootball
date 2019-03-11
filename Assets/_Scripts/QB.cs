@@ -210,7 +210,7 @@ public class QB : FootBallAthlete {
         yield return new WaitForSeconds(1); //todo find way to access animation curve info.
         var thrownBall = Instantiate(footBall, throwingHand.transform.position, lookAt); //todo put footballs in hierarchy container
         FootBall thrownBallScript = thrownBall.GetComponent<FootBall>();
-        thrownBallScript.PassFootBallToMovingTarget(this, targetWr, throwArc, throwPower);
+        thrownBallScript.PassFootBallToMovingTarget(this, targetWr, thrownBallScript, throwArc, throwPower);
         Destroy(thrownBall, 3f); //todo get better solution to removing footballs
     }
 

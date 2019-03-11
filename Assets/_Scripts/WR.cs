@@ -9,70 +9,112 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class WR : FootBallAthlete
 {
     // Use this for initialization
-
+    
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
         qb = FindObjectOfType<QB>();
         defBacks = FindObjectsOfType<DB>();
         rb = GetComponent<Rigidbody>();
+        anim = GetComponent<Animator>();
         startColor = materialRenderer.material.color;
-            
-        target = startGoal.transform;
+        
+        
+
+        //target = startGoal.transform;
         //lr.material.color = LineColor;
         navMeshAgent.destination = transform.position;
 
         gameManager.onBallThrown += BallThrown;
+        gameManager.hikeTheBall += HikeTheBall;
 
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
+
+        //start goal set by inspector
         startGoal.SetWr(this);
     }
 
-    private void BallThrown(QB thrower, WR reciever, Vector3 impactPos, float arcType, float power)
+    private void HikeTheBall(bool wasHiked)
     {
-        
+        anim.SetTrigger("HikeTrigger");
+    }
+
+    public void BallThrown(QB thrower, WR reciever,FootBall ball,Vector3 impactPos, float arcType, float power)
+    {
+        //todo move reciever to a through pass target
+        if (reciever == this)
+        {
+            SetDestination(impactPos);
+            SetTarget(ball.transform);
+            footBall = ball;
+            isCatching = true;
+            anim.SetTrigger("CatchTrigger");
+
+        }
+    }
+    public void ResetRoute() // Called from anim event
+    {
+        footBall = null;
+        target = null;
+        isCatching = false;
+
+    }
+
+    private void SetTarget(Transform _target)
+    {
+        target = _target;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!gameManager.isHiked) return;
 
+
+        if (!gameManager.isHiked) return;
+        if (!isCatching) GetTarget();
+
+        if (gameManager.isPass)
+        {
+            if (!isCatching)
+            {
+                if (materialRenderer.material.color != startColor) //
+
+                    if (Input.anyKey)
+                    {
+                        BeginPass(); // todo this is a really bad way to call this function, should be called from QB
+                    }
+            }
+        }
+        
      
-        GetTarget();
 
         if (gameManager.isRun)
         {
 
             canvas.transform.LookAt(Camera.main.transform);
             Transform blockTarget = GetClosestDB(defBacks);
-            SetTarget(blockTarget);
+            SetDestination(blockTarget.transform.position);
             if (targetDb.CanBePressed())
                 StartCoroutine(DbBlock(targetDb));
             return;
         }
-        if (materialRenderer.material.color != startColor) //
-        {
-            if (Input.anyKey)
-            {
-                BeginPass(); // todo this is a really bad way to call this function
-            }
-        }
+      
         
     }
 
-    public void SetTarget(Transform targetSetter)
+    public void SetDestination(Vector3 targetSetter)
     {
-        navMeshAgent.SetDestination(targetSetter.position);
-        target = targetSetter;
+        //Debug.Log(this + "Dest set " + targetSetter);
+        navMeshAgent.SetDestination(targetSetter);
+        //target = targetSetter;
     }
 
     private void GetTarget()
     {
-        if (navMeshAgent.destination == transform.position)
+        if (navMeshAgent.destination == transform.position && target == null)
         {
-            navMeshAgent.destination = startGoal.transform.position;
+           SetDestination(startGoal.transform.position);
         }
 
         if (navMeshAgent.hasPath && navMeshAgent.remainingDistance < 2 && target != null)
@@ -81,7 +123,7 @@ public class WR : FootBallAthlete
             if (ball != null)
             {
                 Destroy(ball);
-                navMeshAgent.SetDestination(startGoal.transform.position);
+                SetDestination(startGoal.transform.position);
             }
         }
         //DrawPath();

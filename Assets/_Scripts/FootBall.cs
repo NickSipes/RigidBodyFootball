@@ -5,6 +5,12 @@ using UnityEngine.AI;
 
 public class FootBall : MonoBehaviour
 {
+
+    //todo Make function to get football time to target
+    // distance from qb to impactPos 
+    // speed is velocity
+    // time = distance/speed
+
     [SerializeField]
     private Rigidbody rb;
     GameManager gameManager;
@@ -38,8 +44,9 @@ public class FootBall : MonoBehaviour
         if(!gameManager)
         gameManager = FindObjectOfType<GameManager>();
     }
-    public void PassFootBallToMovingTarget(QB ballThrower, WR wideReceiver, float arcType, float power) 
+    public void PassFootBallToMovingTarget(QB ballThrower, WR wideReceiver,FootBall footBall,float arcType, float power) 
     {
+        SetGameManager();
         gameManager.AttemptPass(ballThrower, wideReceiver, arcType, power);
         if (rb == null)
         {
@@ -47,7 +54,6 @@ public class FootBall : MonoBehaviour
      
         }
         //targetPos = GetPositionIn(2, wr);
-        SetGameManager();
         transform.parent = null;
         rb.useGravity = true;
         BallisticMotion motion = GetComponent<BallisticMotion>();
@@ -68,7 +74,7 @@ public class FootBall : MonoBehaviour
             transform.forward = diffGround;
             motion.Initialize(transform.position, gravity);
             motion.AddImpulse(fireVel);
-            gameManager.ThrowTheBall(ballThrower, wideReceiver,impactPos, arcType, power);
+            gameManager.ThrowTheBall(ballThrower, wideReceiver, this, impactPos, arcType, power);
         }
         Debug.Log("Firing at " + impactPos);
       
@@ -76,67 +82,7 @@ public class FootBall : MonoBehaviour
 
     }
 
-    /// <summary>
-    /// Calculates the position of this enemy in x amount of seconds and returns it.
-    /// </summary>
-    /// <param name="seconds">Amount of seconds we're predicting ahead.</param>
-    /// <returns></returns>
-
-    public Vector3 GetPositionIn(float seconds, WR wr)
-    {
-        // Setup variables
-        NavMeshPath path = wr.navMeshAgent.path;
-        float distanceExpected = wr.navMeshAgent.velocity.magnitude * seconds;
-        int expectedTargetWaypoint = 1;
-        bool isPredictingFurtherThanTargetWaypoint = false;
-        float distanceToCover = 0;
-
-        while (true)
-        {
-            // if statement prevents the error when using expectedTargetWaypoint - 1.
-            if (expectedTargetWaypoint == 0)
-            {
-                // Distance from start to first waypoint
-                distanceToCover = Vector3.Distance(transform.position, path.corners[expectedTargetWaypoint]);
-            }
-            else
-            {
-                // Distance from current Waypoint to the Next
-                distanceToCover = Vector3.Distance(path.corners[expectedTargetWaypoint - 1], path.corners[expectedTargetWaypoint]);
-            }
-
-            // Will you make it to the next waypoint?
-            if (distanceExpected - distanceToCover > 0)
-            {
-                distanceExpected -= distanceToCover;
-                expectedTargetWaypoint++;
-                isPredictingFurtherThanTargetWaypoint = true;
-
-                // Made it to the finish, return finish point.
-                if (expectedTargetWaypoint >= path.corners.Length)
-                    return path.corners[path.corners.Length - 1];
-            }
-            else
-            {
-                // return the position where we expect this enemy to be after xSeconds at this constant speed.
-                // if statement prevents the error when using expectedTargetWaypoint - 1.
-                if (!isPredictingFurtherThanTargetWaypoint)
-                {
-                    Debug.Log("Distance Expected: " + distanceExpected + ", Distance to Cover: " + distanceToCover + ", result: " + (distanceExpected / distanceToCover));
-
-                    // return a point between A and B depending on the percentage of its full distance we expect to cover.
-                    return Vector3.Lerp(transform.position, path.corners[expectedTargetWaypoint], distanceExpected / distanceToCover);
-                }
-                else
-                {
-                    Debug.Log("Distance Expected: " + distanceExpected + ", Distance to Cover: " + distanceToCover + ", result: " + (distanceExpected / distanceToCover));
-                    // return a point between A and B depending on the percentage of its full distance we expect to cover.
-                    return Vector3.Lerp(path.corners[expectedTargetWaypoint - 1], path.corners[expectedTargetWaypoint], distanceExpected / distanceToCover);
-                }
-            }
-        }
-    }
-
+  
 
 }
 

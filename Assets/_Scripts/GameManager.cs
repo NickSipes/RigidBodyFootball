@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
     public delegate void PassAttempt(QB thrower, WR reciever, float arcType, float power);
     public event PassAttempt passAttempt;
 
-    public delegate void OnBallThrown(QB thrower, WR reciever, Vector3 impactPos, float arcType, float power);
+    public delegate void OnBallThrown(QB thrower, WR reciever,FootBall footBall , Vector3 impactPos, float arcType, float power);
     public event OnBallThrown onBallThrown;
 
     [HideInInspector] public Oline[] oLine;
@@ -71,9 +71,9 @@ public class GameManager : MonoBehaviour
         ballOwner = target;
         ballOwnerChange(target);
     }
-    public void ThrowTheBall(QB ballThrower, WR ballReciever, Vector3 impactPos, float arcType, float power)
+    public void ThrowTheBall(QB ballThrower, WR ballReciever,FootBall ball , Vector3 impactPos, float arcType, float power)
     {
-        onBallThrown(ballThrower, ballReciever, impactPos, arcType, power);
+        onBallThrown(ballThrower, ballReciever,ball, impactPos, arcType, power);
     }
     public void AttemptPass(QB ballThrower, WR ballReciever,float arcType, float power)
     {
