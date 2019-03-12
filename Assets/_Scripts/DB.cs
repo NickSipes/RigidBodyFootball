@@ -144,7 +144,7 @@ public class DB : FootBallAthlete
             {
                 navMeshAgent.speed += power; // todo fix this terrible code, basically speeds up character to get in position
                 navMeshAgent.SetDestination(impactPos);
-                Debug.Log("PassBlock");
+                //Debug.Log("PassBlock");
                 StartCoroutine("BlockPass", ball);
                 ball.isComplete = false;
             }
@@ -155,8 +155,9 @@ public class DB : FootBallAthlete
     IEnumerator BlockPass(FootBall ball)
     {
         anim.SetTrigger("BlockPass");
-        while ((transform.position - ball.transform.position).magnitude > 1)
+        while ((transform.position - ball.transform.position).magnitude > 2.7)
         {
+            //Debug.Log((transform.position - ball.transform.position).magnitude);
             yield return new WaitForEndOfFrame();
         }
 

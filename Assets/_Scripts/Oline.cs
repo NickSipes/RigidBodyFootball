@@ -52,7 +52,7 @@ public class Oline : FootBallAthlete
     }
     public void HikeTheBall(bool wasHiked)
     {
-        Debug.Log("Oline Hike");
+        //Debug.Log("Oline Hike");
         anim.SetTrigger("HikeTrigger");
     }
 
@@ -63,6 +63,7 @@ public class Oline : FootBallAthlete
             target = GetClosestDline(dLine);
         }
         SetTargetDline(target);
+        transform.LookAt(target);
         Vector3 directionToTarget = target.position - transform.position;
         float dSqrToTarget = directionToTarget.sqrMagnitude;
         if (dSqrToTarget < 3)//todo setup block range variable

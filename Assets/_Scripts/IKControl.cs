@@ -30,7 +30,7 @@ public class IKControl : MonoBehaviour
                 // Set the look target position, if one has been assigned
                 if (lookObj != null)
                 {
-                    Debug.Log("Look at " + lookObj);
+                    //Debug.Log("Look at " + lookObj);
                     animator.SetLookAtWeight(1);
                     animator.SetLookAtPosition(lookObj.position);
                 }

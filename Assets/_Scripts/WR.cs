@@ -110,26 +110,26 @@ public class WR : FootBallAthlete
     {
         iK.rightHandObj = ball.transform;
         anim.SetBool("hasBall", true);
-        while((transform.position - ball.transform.position).magnitude > 1f)
-        {
-            if (ball.isComplete)
-            {
-                cameraFollow.FollowBall(ball);
-            }
-            yield return new WaitForEndOfFrame();
-        }
+
         if (ball.isComplete)
         {
+            while ((transform.position - ball.transform.position).magnitude > 2f)
+            {
+                cameraFollow.FollowBall(ball);
+                yield return new WaitForEndOfFrame();
+            }
             gameManager.ChangeBallOwner(GameObject.FindGameObjectWithTag("Player"), gameObject);
         }
-        iK.isActive = false;
+        ResetRoute();
     }
+
 
     public void ResetRoute() // Called from anim event
     {
         footBall = null;
         target = null;
         isCatching = false;
+        iK.isActive = false;
         StopAllCoroutines();
     }
 
@@ -141,7 +141,7 @@ public class WR : FootBallAthlete
   
     public void SetDestination(Vector3 targetSetter)
     {
-        Debug.Log(this + "Dest set " + targetSetter);
+        //Debug.Log(this + "Dest set " + targetSetter);
         navMeshAgent.SetDestination(targetSetter);
         //target = targetSetter;
     }

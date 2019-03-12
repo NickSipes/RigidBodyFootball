@@ -78,7 +78,7 @@ public class FootBall : MonoBehaviour
             motion.AddImpulse(fireVel);
             gameManager.ThrowTheBall(ballThrower, wideReceiver, this, impactPos, arcType, power, isComplete); //todo the football stores whether the pass is complete or not, not sure if thats a good idea.
         }
-        Debug.Log("Firing at " + impactPos);
+        //Debug.Log("Firing at " + impactPos);
       
        
 
@@ -100,11 +100,11 @@ public class FootBall : MonoBehaviour
         Vector3 diff = targetPos - transform.position;
         Vector3 diffGround = new Vector3(diff.x, 0f, diff.z);
         Vector3 fireVel, impactPos;
-       
+        Debug.Log("Block Ballistics");
         //FTS Calculations https://github.com/forrestthewoods/lib_fts/tree/master/projects/unity/ballistic_trajectory
         float gravity;
 
-        if (Ballistics.solve_ballistic_arc_lateral(transform.position, 15, targetPos, new Vector3(0,0,0), 10,
+        if (Ballistics.solve_ballistic_arc_lateral(transform.position, 1, targetPos, transform.position + new Vector3(10,0,0), 10,
             out fireVel, out gravity, out impactPos))
         {
       
@@ -113,7 +113,7 @@ public class FootBall : MonoBehaviour
             motion.AddImpulse(fireVel);
             
         }
-        Debug.Log("Blocked at " + impactPos);
+        //Debug.Log("Blocked at " + impactPos);
 
 
 
