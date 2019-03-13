@@ -74,15 +74,20 @@ public class WR : FootBallAthlete
 
     public void BallThrown(QB thrower, WR reciever,FootBall ball,Vector3 impactPos, float arcType, float power, bool isComplete)
     {
-        StartCoroutine("GetToImpactPos", impactPos);
                
         //todo move reciever to a through pass target
         if (reciever == this)
         {
+            StartCoroutine("GetToImpactPos", impactPos);
             StartCoroutine("TracktheBall", ball);
             SetTarget(ball.transform);
             footBall = ball;
             isCatching = true;
+            qb.userControl.enabled = false;
+        }
+        if(reciever != gameObject)
+        {
+
         }
     }
     IEnumerator GetToImpactPos(Vector3 impact)
@@ -236,11 +241,20 @@ public class WR : FootBallAthlete
 
     internal void RaycastForward()
     {
-        Vector3 fwd = transform.TransformDirection(Vector3.forward);
-        if (Physics.Raycast(transform.position, fwd, 10))
-            print("There is something in front of the object!");
-    }
+        RaycastHit[] hits;
+        hits = Physics.RaycastAll(transform.position, transform.forward, 100.0F);
 
+        for (int i = 0; i < hits.Length; i++)
+        {
+            RaycastHit hit = hits[i];
+            Transform rend = hit.transform;
+
+            if (rend)
+            {
+                Debug.Log(rend.name);
+            }
+        }
+    }
     void OnMouseEnter() 
     {
         materialRenderer.material.color = highlightColor;

@@ -12,12 +12,14 @@ for more help, specifically creating models and animations. Character movement w
 not animation based. Join our discord at https://discord.gg/Mp3cZ5j
 
 
-Beginning of March Update:
+March 1st
 I've begun adding //todo in code where semi experienced codes could help. They include things as simple 
 as creating stats variables where I hard code floats, and as difficult as extracting functions 
 and creating a more modular enviroment. I continue to try to use code as simple as possible get mechanics working, 
 while worrying about refactoring and optimizing after mechanics are working. Currently still on goal for deployment.  
 The first set of videos are being pushed to youtube.
+
+Mid March: 
 
 
 Completed Tasks
@@ -26,14 +28,15 @@ Completed Tasks
 02/28/19 - Fix rootmotion issue in hiking the football (not an easily reusable workaround, need to hardcode rootmotion ending position)
 08/28/19 - Learn how to make the QB standing with ball animation loop (Bad Loop, but works. Fix root rotation issue) 
 03/05/19 - Add o-line /d-line mechanics 
+03/11/19 - Add catching / pass defense mechanics / Add mechanic to run through the catch, and for zone defenders to see incoming routes
 
 Current Timeline (anticipated date of feature deployment):
-
-03/11/19 - Add catching / pass defense mechanics / Add mechanic to run through the catch, and for zone defenders to see incoming routes
-03/18/19 - Add tackling mechanics / fumble & interception mechanics / implement some IK animations like look at ball
+03/12/19 - Finish ability for defenders to see incoming routes
+03/14/19 - Add tackling mechanics
+03/18/19 - Fumble & interception mechanics / implement some IK animations like look at ball
 04/08/19 - Begin game mechanics review 
 
 Current Timeline for Tutorial Videos (anticipated record date):
-03/06/19 - Exploring Unitys Layout, creating gameObjects, terrian, and scripts. Importing standard assets, and asset store.
-03/08/19 - Creating terran, navmesh Agents,  getting Ethan imported and animated, writing first script, camera follow
-03/10/19 - Importing Maximo animations, finding Football fbx on web, 
+03/13/19 - Exploring Unitys Layout, creating gameObjects, terrian, and scripts. Importing standard assets, and asset store.
+03/14/19 - Creating terran, navmesh Agents,  getting Ethan imported and animated, writing first script, camera follow
+03/15/19 - Importing Maximo animations, finding Football fbx on web, 
