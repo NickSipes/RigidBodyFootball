@@ -4,20 +4,34 @@ using UnityEngine;
 
 public class Zones : MonoBehaviour
 {
-   
+    internal float zoneSize;
     private DB db;
-   
 
-	// Use this for initialization
-	void Start ()
+    public Vector3 zoneCenter;
+    SphereCollider sphereCollider;
+
+    // Use this for initialization
+    void Start ()
     {
-        db = GetComponent<DB>();
+      
 
     }
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
-
+        if (!sphereCollider)
+        {
+            sphereCollider = GetComponent<SphereCollider>();
+        }
+        sphereCollider.radius = zoneSize;
+        zoneCenter = transform.position;
+    }
+    public void SetDB(DB dB)
+    {
+        db = dB;
+    }
+    public DB GetDB()
+    {
+        return db;
+    }
 }

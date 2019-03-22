@@ -49,12 +49,13 @@ public class FootBall : MonoBehaviour
     {
         isComplete = true;
         SetGameManager();
-        gameManager.AttemptPass(ballThrower, wideReceiver, this, arcType, power);
+        gameManager.AttemptPass(ballThrower, wideReceiver, this, arcType, power); //todo, this is ugly. Probably should be a bool for isComplete
         if (rb == null)
         {
             rb = GetComponent<Rigidbody>();
      
         }
+
         //targetPos = GetPositionIn(2, wr);
         transform.parent = null;
         rb.useGravity = true;
@@ -65,9 +66,10 @@ public class FootBall : MonoBehaviour
         Vector3 fireVel, impactPos;
         Vector3 velocity = wideReceiver.navMeshAgent.velocity;
 
+
         //FTS Calculations https://github.com/forrestthewoods/lib_fts/tree/master/projects/unity/ballistic_trajectory
-        float gravity;
         
+        float gravity;
         if (Ballistics.solve_ballistic_arc_lateral(transform.position, power, targetPos + Vector3.up, velocity, arcType,
             out fireVel, out gravity, out impactPos))
         {
@@ -86,6 +88,8 @@ public class FootBall : MonoBehaviour
 
     public void BlockBallTrajectory()
     {
+        gameManager.TipDrill(); //tdoo 
+
         if (rb == null)
         {
             rb = GetComponent<Rigidbody>();

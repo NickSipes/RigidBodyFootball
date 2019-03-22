@@ -1285,11 +1285,12 @@ GameObject:
   - component: {fileID: 4664930174696828}
   - component: {fileID: 95150375175570662}
   - component: {fileID: 54471278584272472}
-  - component: {fileID: 136365499602947914}
   - component: {fileID: 195593887730924228}
   - component: {fileID: 114601096298828610}
   - component: {fileID: 7954969319134554546}
   - component: {fileID: 6379663420362412516}
+  - component: {fileID: 302167118}
+  - component: {fileID: 302167119}
   m_Layer: 0
   m_Name: WR
   m_TagString: Untagged
@@ -1351,20 +1352,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 84
   m_CollisionDetection: 0
---- !u!136 &136365499602947914
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1398987617140480}
-  m_Material: {fileID: 13400000, guid: c2815a7ab32e42c4bb42f59caacb8ec1, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 1.6900537
-  m_Height: 3.424715
-  m_Direction: 1
-  m_Center: {x: 0.036190987, y: 0.7999985, z: 0}
 --- !u!195 &195593887730924228
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1379,9 +1366,9 @@ NavMeshAgent:
   m_Acceleration: 10
   avoidancePriority: 50
   m_AngularSpeed: 160
-  m_StoppingDistance: 1
+  m_StoppingDistance: 0.5
   m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
+  m_AutoBraking: 0
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 0
@@ -1402,6 +1389,7 @@ MonoBehaviour:
   startGoal: {fileID: 0}
   route: {fileID: 0}
   materialRenderer: {fileID: 137472182022256350}
+  iK: {fileID: 0}
   qb: {fileID: 0}
   startColor: {r: 0, g: 0, b: 0, a: 0}
   navMeshAgent: {fileID: 195593887730924228}
@@ -1426,9 +1414,8 @@ MonoBehaviour:
   oLine: []
   dLine: []
   startTarget: {fileID: 0}
-  zoneSize: 0
-  zoneCenter: {x: 0, y: 0, z: 0}
-  zoneCenterGO: {fileID: 0}
+  defZoneSize: 0
+  zone: {fileID: 0}
   targetWr: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
@@ -1438,6 +1425,8 @@ MonoBehaviour:
   isCatching: 0
   cameraFollow: {fileID: 0}
   userControl: {fileID: 0}
+  cameraRaycaster: {fileID: 0}
+  isSelected: 0
 --- !u!114 &7954969319134554546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1465,6 +1454,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c13277d34ad31154998551f04756b97c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!208 &302167118
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398987617140480}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 1, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1, z: 0}
+  m_TimeToStationary: 0.5
+--- !u!136 &302167119
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398987617140480}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 1.7463064
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.8498473, z: 0}
 --- !u!1 &1428451670434370
 GameObject:
   m_ObjectHideFlags: 0

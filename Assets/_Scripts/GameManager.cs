@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,15 +9,20 @@ public class GameManager : MonoBehaviour
 
     //todo make gamemanger a scriptable object
 
+    FootBallAthlete ballAthlete;
+    [HideInInspector] public GameObject selector;
     public bool isRun = false;
     public bool isPass = false;
     public bool isHiked = false;
-    public Object ballOwner;
+    //public Object ballOwner;
     // Start is called before the first frame update
     public CameraFollow cameraFollow;
 
     public delegate void HikeTheBall(bool wasHiked);
     public event HikeTheBall hikeTheBall;
+
+    public delegate void ClearTheSelector(bool isCleared);
+    public event ClearTheSelector clearSelector;
 
     public delegate void BallOwnerChange(FootBallAthlete ballOwner);
     public event BallOwnerChange ballOwnerChange;
@@ -29,7 +35,17 @@ public class GameManager : MonoBehaviour
 
     [HideInInspector] public Oline[] oLine;
             [HideInInspector] public Dline[] dLine;
+    internal static GameManager instance;
 
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Debug.Log("two gamemanagers");
+        }
+        instance = this;
+
+    }
     void Start()
     {
         oLine = FindObjectsOfType<Oline>();
@@ -37,10 +53,15 @@ public class GameManager : MonoBehaviour
         cameraFollow = FindObjectOfType<CameraFollow>();
     }
 
+    internal FootBallAthlete WhoHasBall()
+    {
+        return ballAthlete;
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if(ballOwner != null)
+       // if(ballOwner != null)
         {
 
         }
@@ -54,7 +75,7 @@ public class GameManager : MonoBehaviour
     {
         hikeTheBall(true);
         isHiked = true;
-        ballOwner = FindObjectOfType<QB>(); //todo find better solution of getting the ball owner 
+        //ballOwner = FindObjectOfType<QB>(); //todo find better solution of getting the ball owner 
     }
     public void PassPlay()
     {
@@ -72,10 +93,10 @@ public class GameManager : MonoBehaviour
     {
         FootBallAthlete ballCarrier = newOwner.GetComponent<FootBallAthlete>();
         prevOwner.transform.tag = "OffPlayer";
-    
         ballCarrier.SetUserControl();
         cameraFollow.ResetPlayer();
-        ballOwner = ballCarrier;
+        //ballOwner = ballCarrier;
+        ballAthlete = newOwner.GetComponent<FootBallAthlete>();
         ballOwnerChange(ballCarrier);
     }
     public void ThrowTheBall(QB ballThrower, WR ballReciever,FootBall ball , Vector3 impactPos, float arcType, float power, bool isComplete)
@@ -86,5 +107,18 @@ public class GameManager : MonoBehaviour
     {
         passAttempt(ballThrower, ballReciever, ball, arcType, power);
     }
+    internal void SetSelector(GameObject go)
+    {
+        selector = go;
+    }
+    internal void ClearSelector()
+    {
+        selector = null;
+        clearSelector(true);
+    }
 
+    internal void TipDrill()
+    {
+        Debug.Log("tipdrill");
+    }
 }

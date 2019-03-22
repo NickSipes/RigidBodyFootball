@@ -3,14 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityStandardAssets.Characters.ThirdPerson;
+
 using UnityStandardAssets.CrossPlatformInput;
 
 public class QB : FootBallAthlete {
     //CharacterController controller;
     public float speed = 5;
     public float gravity = -5;
-   
+    private Color rayColor = Color.cyan;
     private GameObject throwingHand;
     private ThrowingHand throwingHandScript;
     private bool hasBall = true;
@@ -49,6 +49,13 @@ public class QB : FootBallAthlete {
         defBacks = FindObjectsOfType<DB>();
         oLine = FindObjectsOfType<Oline>();
         dLine = FindObjectsOfType<Dline>();
+
+        gameManager.onBallThrown += BallThrown;
+    }
+
+    private void BallThrown(QB thrower, WR reciever, FootBall footBall, Vector3 impactPos, float arcType, float power, bool isComplete)
+    {
+        
     }
 
 
@@ -79,17 +86,36 @@ public class QB : FootBallAthlete {
     }
     private void FixedUpdate()
     {
-        if (!gameManager.isHiked) return;
-        // read inputs
-        if (gameManager.isPass)
-        {
-
-          
-        }   
-        
+        RaycastForward();
     }
 
-   
+    internal void RaycastForward()
+    {
+      
+        Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
+        Debug.DrawRay(transform.position, forward, rayColor);
+
+        RaycastHit[] hits;
+        hits = Physics.RaycastAll(transform.position, transform.forward, 100.0F);
+        //if(hits.Length != 0)Debug.Log(hits.Length);
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            RaycastHit hit = hits[i];
+            if (hit.collider.isTrigger)
+            {
+                Transform zoneObject = hit.collider.transform;
+                if (zoneObject)
+                {
+
+                }
+            }
+
+        }
+    }
+  
+
+
 
     public void HikeTrigger() // called from UI button
     {
@@ -204,7 +230,7 @@ public class QB : FootBallAthlete {
         var thrownBall = Instantiate(footBall, throwingHand.transform.position, lookAt); //todo put footballs in hierarchy container
         FootBall thrownBallScript = thrownBall.GetComponent<FootBall>();
         thrownBallScript.PassFootBallToMovingTarget(this, targetWr, thrownBallScript, throwArc, throwPower);
-        Destroy(thrownBall, 3f); //todo get better solution to removing footballs
+        //Destroy(thrownBall, 3f); //todo get better solution to removing footballs
     }
 
 } 

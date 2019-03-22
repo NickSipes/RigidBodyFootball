@@ -20,7 +20,8 @@ while worrying about refactoring and optimizing after mechanics are working. Cur
 The first set of videos are being pushed to youtube.
 
 Mid March: 
-
+Ran into a bit of a gameplay developement block as I worked through bad code and reworked some ugly things that were bothering me.
+Specifically to clean up the DB script, which had become a cascade of nested ifs. 
 
 Completed Tasks
 02/25/19 - Add run game mechanics, allow selection between hand off and pass, Add reset scene and hike ball mechanic
@@ -29,14 +30,15 @@ Completed Tasks
 08/28/19 - Learn how to make the QB standing with ball animation loop (Bad Loop, but works. Fix root rotation issue) 
 03/05/19 - Add o-line /d-line mechanics 
 03/11/19 - Add catching / pass defense mechanics / Add mechanic to run through the catch, and for zone defenders to see incoming routes
+03/21/19 - Finish ability for defenders to see incoming routes
 
 Current Timeline (anticipated date of feature deployment):
-03/12/19 - Finish ability for defenders to see incoming routes
-03/14/19 - Add tackling mechanics
-03/18/19 - Fumble & interception mechanics / implement some IK animations like look at ball
+
+03/24/19 - Add tackling mechanics
+03/30/19 - Fumble & interception mechanics / implement some IK animations like look at ball
 04/08/19 - Begin game mechanics review 
 
 Current Timeline for Tutorial Videos (anticipated record date):
-03/13/19 - Exploring Unitys Layout, creating gameObjects, terrian, and scripts. Importing standard assets, and asset store.
-03/14/19 - Creating terran, navmesh Agents,  getting Ethan imported and animated, writing first script, camera follow
-03/15/19 - Importing Maximo animations, finding Football fbx on web, 
+04/13/19 - Exploring Unitys Layout, creating gameObjects, terrian, and scripts. Importing standard assets, and asset store.
+04/14/19 - Creating terran, navmesh Agents,  getting Ethan imported and animated, writing first script, camera follow
+04/15/19 - Importing Maximo animations, finding Football fbx on web, 

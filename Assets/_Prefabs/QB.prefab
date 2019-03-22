@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 136884001363606144}
   - component: {fileID: 114036973220166040}
   - component: {fileID: 123875910}
+  - component: {fileID: 1014315521399687}
   m_Layer: 0
   m_Name: QB
   m_TagString: Player
@@ -143,9 +144,9 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 84
   m_CollisionDetection: 0
 --- !u!136 &136884001363606144
 CapsuleCollider:
@@ -174,7 +175,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startGoal: {fileID: 0}
+  route: {fileID: 0}
   materialRenderer: {fileID: 0}
+  iK: {fileID: 0}
   qb: {fileID: 0}
   startColor: {r: 0, g: 0, b: 0, a: 0}
   navMeshAgent: {fileID: 0}
@@ -182,7 +185,6 @@ MonoBehaviour:
   navStartAccel: 0
   highlightColor: {r: 0, g: 0, b: 0, a: 0}
   LineColor: {r: 0, g: 0, b: 0, a: 0}
-  aiCharacter: {fileID: 0}
   rb: {fileID: 0}
   anim: {fileID: 0}
   passTarget: {x: 0, y: 0, z: 0}
@@ -200,18 +202,19 @@ MonoBehaviour:
   oLine: []
   dLine: []
   startTarget: {fileID: 0}
-  zoneSize: 0
-  zoneCenter: {x: 0, y: 0, z: 0}
-  zoneCenterGO: {fileID: 0}
+  defZoneSize: 0
+  zone: {fileID: 0}
   targetWr: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
   isMan: 0
   isZone: 0
   isPressing: 0
-  userControl: {fileID: 0}
-  thirdPerson: {fileID: 0}
+  isCatching: 0
   cameraFollow: {fileID: 0}
+  userControl: {fileID: 0}
+  cameraRaycaster: {fileID: 0}
+  isSelected: 0
   speed: 10
   gravity: -5
 --- !u!195 &123875910
@@ -236,6 +239,18 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &1014315521399687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1014315521399686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c13277d34ad31154998551f04756b97c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1028447992150660
 GameObject:
   m_ObjectHideFlags: 0

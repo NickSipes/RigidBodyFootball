@@ -7,8 +7,19 @@ public class CameraFollow : MonoBehaviour {
 
     GameObject player;
     GameObject football;
-	// Use this for initialization
-	void Start () {
+    internal static CameraFollow instance;
+
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Debug.Log("two followers");
+        }
+        instance = this;
+
+    }
+    // Use this for initialization
+    void Start () {
         player = GameObject.FindGameObjectWithTag("Player");
 	}
 	//todo add a function to zoom in on qb when ball is thrown to easy transistion.

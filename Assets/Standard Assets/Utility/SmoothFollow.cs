@@ -5,13 +5,13 @@ namespace UnityStandardAssets.Utility
 	public class SmoothFollow : MonoBehaviour
 	{
 
-		// The target we are following
+		// The circuitTarget we are following
 		[SerializeField]
-		private Transform target;
-		// The distance in the x-z plane to the target
+		private Transform circuitTarget;
+		// The distance in the x-z plane to the circuitTarget
 		[SerializeField]
 		private float distance = 10.0f;
-		// the height we want the camera to be above the target
+		// the height we want the camera to be above the circuitTarget
 		[SerializeField]
 		private float height = 5.0f;
 
@@ -26,13 +26,13 @@ namespace UnityStandardAssets.Utility
 		// Update is called once per frame
 		void LateUpdate()
 		{
-			// Early out if we don't have a target
-			if (!target)
+			// Early out if we don't have a circuitTarget
+			if (!circuitTarget)
 				return;
 
 			// Calculate the current rotation angles
-			var wantedRotationAngle = target.eulerAngles.y;
-			var wantedHeight = target.position.y + height;
+			var wantedRotationAngle = circuitTarget.eulerAngles.y;
+			var wantedHeight = circuitTarget.position.y + height;
 
 			var currentRotationAngle = transform.eulerAngles.y;
 			var currentHeight = transform.position.y;
@@ -47,15 +47,15 @@ namespace UnityStandardAssets.Utility
 			var currentRotation = Quaternion.Euler(0, currentRotationAngle, 0);
 
 			// Set the position of the camera on the x-z plane to:
-			// distance meters behind the target
-			transform.position = target.position;
+			// distance meters behind the circuitTarget
+			transform.position = circuitTarget.position;
 			transform.position -= currentRotation * Vector3.forward * distance;
 
 			// Set the height of the camera
 			transform.position = new Vector3(transform.position.x ,currentHeight , transform.position.z);
 
-			// Always look at the target
-			transform.LookAt(target);
+			// Always look at the circuitTarget
+			transform.LookAt(circuitTarget);
 		}
 	}
 }

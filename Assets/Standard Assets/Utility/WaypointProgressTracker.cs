@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace UnityStandardAssets.Utility
@@ -42,12 +43,17 @@ namespace UnityStandardAssets.Utility
         public WaypointCircuit.RoutePoint speedPoint { get; private set; }
         public WaypointCircuit.RoutePoint progressPoint { get; private set; }
 
-        public Transform target;
+        [CanBeNull] public Transform target;
 
         private float progressDistance; // The progress round the route, used in smooth mode.
         private int progressNum; // the current waypoint number, used in point-to-point mode.
         private Vector3 lastPosition; // Used to calculate current speed (since we may not have a rigidbody component)
         private float speed; // current speed of this object (calculated from delta since last frame)
+
+        public WaypointProgressTracker(WaypointCircuit circuit)
+        {
+            this.circuit = circuit;
+        }
 
         // setup script properties
         private void Start()

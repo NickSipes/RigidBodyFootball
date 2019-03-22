@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Experimental.UIElements;
-using UnityStandardAssets.Characters.ThirdPerson;
+
 
 public class HB : FootBallAthlete
 {
+    private Color rayColor = Color.green;
 
     // Use this for initialization
     void Start()
@@ -42,6 +43,39 @@ public class HB : FootBallAthlete
         {
 
         }
+    }
+    private void FixedUpdate()
+    {
+        RaycastForward();
+    }
+
+    internal void RaycastForward()
+    {
+     
+        Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
+        Debug.DrawRay(transform.position, forward, rayColor);
+
+        RaycastHit[] hits;
+        hits = Physics.RaycastAll(transform.position, transform.forward, 100.0F);
+        //if(hits.Length != 0)Debug.Log(hits.Length);
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            RaycastHit hit = hits[i];
+            if (hit.collider.isTrigger)
+            {
+                Transform zoneObject = hit.collider.transform;
+                if (zoneObject)
+                {
+
+                }
+            }
+
+        }
+    }
+    Color SetRaycastColor()
+    {
+        return materialRenderer.material.color;
     }
 }
    

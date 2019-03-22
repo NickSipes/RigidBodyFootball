@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityStandardAssets.Characters.ThirdPerson;
+
 
 public class Oline : FootBallAthlete
 {
+    private Color rayColor = Color.magenta;
 
-    public FootBallAthlete ballCarrier;
 
     void Start()
     {
@@ -47,8 +47,39 @@ public class Oline : FootBallAthlete
         {
             RunProtection();
         }
+    }
+    private void FixedUpdate()
+    {
+        RaycastForward();
+    }
 
+    internal void RaycastForward()
+    {
+      
+        Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
+        Debug.DrawRay(transform.position, forward, rayColor);
 
+        RaycastHit[] hits;
+        hits = Physics.RaycastAll(transform.position, transform.forward, 100.0F);
+        //if(hits.Length != 0)Debug.Log(hits.Length);
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            RaycastHit hit = hits[i];
+            if (hit.collider.isTrigger)
+            {
+                Transform zoneObject = hit.collider.transform;
+                if (zoneObject)
+                {
+
+                }
+            }
+
+        }
+    }
+    Color SetRaycastColor()
+    {
+        return materialRenderer.material.color;
     }
     public void HikeTheBall(bool wasHiked)
     {

@@ -8,6 +8,7 @@ TagManager:
   - OffPlayer
   - DefPlayer
   - ZoneObject
+  - ClickCollider
   layers:
   - Default
   - TransparentFX
@@ -17,8 +18,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - ZoneObject
+  - Reciever
   - 
   - 
   - 
