@@ -144,7 +144,8 @@ public class FootBallAthlete : MonoBehaviour
     }
     internal void EnableNavMeshAgent()
     {
-        navMeshAgent.enabled = true;
+        if (!navMeshAgent.enabled)
+            navMeshAgent.enabled = true;
     }
 
     internal Transform GetClosestHb(HB[] enemies)

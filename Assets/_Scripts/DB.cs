@@ -340,14 +340,12 @@ public class DB : FootBallAthlete
 
             if ((transform.position - impactPos).magnitude < 5) // todo create range variableStat
             {
-                if (!navMeshAgent.enabled) EnableNavMeshAgent();
-
+                EnableNavMeshAgent();
                 StopAllCoroutines();
                 navMeshAgent.speed += power; // todo fix this terrible code, basically speeds up character to get in position
                 SetDestination(impactPos);
                 Debug.Log("PassBlock");
                 StartCoroutine("BlockPass", ball);
-                
                 ball.isComplete = false;
             }
 
