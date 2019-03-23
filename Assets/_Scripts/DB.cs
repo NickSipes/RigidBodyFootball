@@ -7,7 +7,6 @@ using UnityEngine.AI;
 public class DB : FootBallAthlete
 {
 
-    private Color rayColor = Color.yellow;
     //todo create class between Off and Def based on FootballAthlete
 
 
@@ -15,6 +14,8 @@ public class DB : FootBallAthlete
     [SerializeField] float maxRadius;
 
     internal bool isWrIncoming = false;
+
+    internal bool isBlockingPass = false;
     //todo HOW ARE WE GOING TO HANDLE JUMP ANIMATIONS
     //todo defenders need to determine LOS and where to lineup
     //todo DB State Machine
@@ -25,6 +26,7 @@ public class DB : FootBallAthlete
     [SerializeField] internal int zoneLayer = 8;
     void Start()
     {
+        rayColor = Color.yellow;
         gameManager = FindObjectOfType<GameManager>();
         wideRecievers = FindObjectsOfType<WR>();
         hbs = FindObjectsOfType<HB>();
@@ -73,7 +75,9 @@ public class DB : FootBallAthlete
         // ReSharper disable once InvertIf
         if (gameManager.isPass)
         {
+            if (isBlockingPass) return;
             if (isPressing) return;
+
             if (isZone)
             {
                 //todo this whole triple if statement sucks
@@ -105,40 +109,9 @@ public class DB : FootBallAthlete
 
     void FixedUpdate()
     {
-        RaycastForward();
+        base.FixedUpdate();
     }
-    internal void RaycastForward()
-    {
-        Vector3 angleFOV2 = Quaternion.AngleAxis(maxAngle, transform.up) * transform.forward * maxRadius;
-        Vector3 angleFOV1 = Quaternion.AngleAxis(-maxAngle, transform.up) * transform.forward * maxRadius;
-        Debug.DrawRay(transform.position, angleFOV2);
-        Debug.DrawRay(transform.position, angleFOV1);
-
-        Vector3 forward = transform.TransformDirection(Vector3.forward) * 5;
-        Debug.DrawRay(transform.position, forward, rayColor);
-
-        RaycastHit[] hits;
-        hits = Physics.RaycastAll(transform.position, transform.forward, 100.0F);
-        //if(hits.Length != 0)Debug.Log(hits.Length);
-
-        for (int i = 0; i < hits.Length; i++)
-        {
-            RaycastHit hit = hits[i];
-            if (hit.collider.isTrigger)
-            {
-                Transform zoneObject = hit.collider.transform;
-                if (zoneObject)
-                {
-
-                }
-            }
-
-        }
-    }
-    Color SetRaycastColor()
-    {
-        return materialRenderer.material.color;
-    }
+    
     private void SetTargetWr(Transform targetTransform)
     {
         EnableNavMeshAgent();
@@ -374,28 +347,25 @@ public class DB : FootBallAthlete
                 SetDestination(impactPos);
                 Debug.Log("PassBlock");
                 StartCoroutine("BlockPass", ball);
+                
                 ball.isComplete = false;
             }
 
         }
     }
 
-    private void EnableNavMeshAgent()
-    {
-        navMeshAgent.enabled = true;
-    }
-
     IEnumerator BlockPass(FootBall ball)
     {
+        isBlockingPass = true;
         anim.SetTrigger("BlockPass");
         while ((transform.position - ball.transform.position).magnitude > 2.7) //todo, this should be a calculation of anim time vs distance of football to target.
         {
             //Debug.Log((transform.position - ball.transform.position).magnitude);
             yield return new WaitForEndOfFrame();
         }
-
         ball.BlockBallTrajectory();
         navMeshAgent.speed = navStartSpeed;
+        isBlockingPass = false;
     }
 
     bool InVincintyOfPass(WR wR)
@@ -411,28 +381,6 @@ public class DB : FootBallAthlete
         else return false;
     }
 
-    private Transform GetClosestHb(HB[] HalfBacks)
-    {
-        Transform bestTarget = null;
-        float closestDistanceSqr = Mathf.Infinity;
-        Vector3 currentPosition = transform.position;
-
-        foreach (HB potentialTarget in HalfBacks)
-        {
-
-            Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
-            float dSqrToTarget = directionToTarget.sqrMagnitude;
-            if (dSqrToTarget < closestDistanceSqr)
-            {
-                closestDistanceSqr = dSqrToTarget;
-                bestTarget = potentialTarget.transform;
-                targetHb = potentialTarget;
-            }
-        }
-        return bestTarget;
-    }
-
-
 
     private void SetTargetHb(Transform targetTransform)
     {
@@ -441,47 +389,7 @@ public class DB : FootBallAthlete
         targetHb = targetTransform.GetComponentInParent<HB>();
         //Debug.Log("Target Changed");
     }
-
-
-
-    private void CheckIncomingRoutes()
-    {
-        //todo moved this function to widereciever event call
-        foreach (WR wR in wideRecievers)
-        {
-            wR.RayCastForward();
-
-        }
-    }
-
-    Transform GetClosestWr(WR[] enemies)
-    {
-        Transform bestTarget = null;
-        float closestDistanceSqr = Mathf.Infinity;
-        Vector3 currentPosition = transform.position;
-
-        foreach (WR potentialTarget in enemies)
-        {
-
-            Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
-            float dSqrToTarget = directionToTarget.sqrMagnitude;
-            if (dSqrToTarget < closestDistanceSqr)
-            {
-                closestDistanceSqr = dSqrToTarget;
-                bestTarget = potentialTarget.transform;
-            }
-        }
-
-        return bestTarget;
-    }
-
-
-    private void SetDestination(Vector3 dest)
-    {
-        EnableNavMeshAgent();
-        navMeshAgent.SetDestination(dest);
-    }
-
+  
     public bool CanBePressed() //todo rename to block
     {
         if (!beenPressed)

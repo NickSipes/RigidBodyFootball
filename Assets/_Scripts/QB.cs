@@ -10,7 +10,6 @@ public class QB : FootBallAthlete {
     //CharacterController controller;
     public float speed = 5;
     public float gravity = -5;
-    private Color rayColor = Color.cyan;
     private GameObject throwingHand;
     private ThrowingHand throwingHandScript;
     private bool hasBall = true;
@@ -30,6 +29,7 @@ public class QB : FootBallAthlete {
     {
         //controller = GetComponent<CharacterController>();
         FindComponents();
+        rayColor = Color.cyan;
 
     }
     private void FindComponents()
@@ -51,6 +51,12 @@ public class QB : FootBallAthlete {
         dLine = FindObjectsOfType<Dline>();
 
         gameManager.onBallThrown += BallThrown;
+        gameManager.hikeTheBall += HikeTheBall;
+    }
+
+    private void HikeTheBall(bool washiked)
+    {
+        gameManager.ballOwner = this;
     }
 
     private void BallThrown(QB thrower, WR reciever, FootBall footBall, Vector3 impactPos, float arcType, float power, bool isComplete)
@@ -71,7 +77,7 @@ public class QB : FootBallAthlete {
           
             if (hbTransform == null)
             {
-                hbTransform = GetClosestHB(hbs);
+                hbTransform = GetClosestHb(hbs);
                 SetTargetHB(hbTransform);
             }
             Vector3 directionToTarget = hbTransform.position - transform.position;
@@ -86,36 +92,9 @@ public class QB : FootBallAthlete {
     }
     private void FixedUpdate()
     {
+        base.FixedUpdate();
         RaycastForward();
     }
-
-    internal void RaycastForward()
-    {
-      
-        Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
-        Debug.DrawRay(transform.position, forward, rayColor);
-
-        RaycastHit[] hits;
-        hits = Physics.RaycastAll(transform.position, transform.forward, 100.0F);
-        //if(hits.Length != 0)Debug.Log(hits.Length);
-
-        for (int i = 0; i < hits.Length; i++)
-        {
-            RaycastHit hit = hits[i];
-            if (hit.collider.isTrigger)
-            {
-                Transform zoneObject = hit.collider.transform;
-                if (zoneObject)
-                {
-
-                }
-            }
-
-        }
-    }
-  
-
-
 
     public void HikeTrigger() // called from UI button
     {
@@ -134,54 +113,22 @@ public class QB : FootBallAthlete {
     }
     void SnapTheHike() //triggered by animation event
     {
-     
-        gameManager.Hike();
+      gameManager.Hike();
     }
-
-    public void SetPosition()
-    {
-        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-        AnimatorClipInfo[] clips = anim.GetCurrentAnimatorClipInfo(0);
-        transform.position = transform.position + new Vector3(0, 0.2f, -2);
-        Debug.Log(clips[0].clip.name);
-    }
-
   
     private void HandOffBall(Transform hb)
     {
-
         gameManager.ChangeBallOwner(gameObject, hb.gameObject);
         StandStill();
-
     }
 
     private void StandStill()
     {
       GameObject go = Instantiate(new GameObject(), transform.position + new Vector3(-2,0,0), Quaternion.identity);
-      
       navMeshAgent.SetDestination(go.transform.position);
     }
 
-    Transform GetClosestHB(HB[] enemies)
-    {
-        Transform bestTarget = null;
-        float closestDistanceSqr = Mathf.Infinity;
-        Vector3 currentPosition = transform.position;
-
-        foreach (HB potentialTarget in enemies)
-        {
-
-            Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
-            float dSqrToTarget = directionToTarget.sqrMagnitude;
-            if (dSqrToTarget < closestDistanceSqr)
-            {
-                closestDistanceSqr = dSqrToTarget;
-                bestTarget = potentialTarget.transform;
-            }
-        }
-
-        return bestTarget;
-    }
+   
 
     public void SetTargetHB(Transform targetSetter)
     {

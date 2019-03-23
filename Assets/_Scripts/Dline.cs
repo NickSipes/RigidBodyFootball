@@ -13,10 +13,10 @@ public class Dline : FootBallAthlete
     [SerializeField] Image blockBar;
     private float blockCooldown = 2f;
     [HideInInspector] public bool isBlocked;
-    private Color rayColor = Color.red;
     // Start is called before the first frame update
     void Start()
     {
+        rayColor = Color.red;
         FindComponents();
         RegesterEvents();
     }
@@ -61,37 +61,10 @@ public class Dline : FootBallAthlete
     }
     private void FixedUpdate()
     {
-        RaycastForward();
-    }
-
-    internal void RaycastForward()
-    {
+        base.FixedUpdate();
        
-        Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
-        Debug.DrawRay(transform.position, forward, rayColor);
-
-        RaycastHit[] hits;
-        hits = Physics.RaycastAll(transform.position, transform.forward, 100.0F);
-        //if(hits.Length != 0)Debug.Log(hits.Length);
-
-        for (int i = 0; i < hits.Length; i++)
-        {
-            RaycastHit hit = hits[i];
-            if (hit.collider.isTrigger)
-            {
-                Transform zoneObject = hit.collider.transform;
-                if (zoneObject)
-                {
-
-                }
-            }
-
-        }
     }
-    Color SetRaycastColor()
-    {
-        return materialRenderer.material.color;
-    }
+    
     IEnumerator BlockCoolDown()
     {
         yield return new WaitForSeconds(blockCooldown);

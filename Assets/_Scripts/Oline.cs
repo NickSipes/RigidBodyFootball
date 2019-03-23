@@ -7,11 +7,11 @@ using UnityEngine.AI;
 
 public class Oline : FootBallAthlete
 {
-    private Color rayColor = Color.magenta;
 
 
     void Start()
     {
+        rayColor = Color.magenta;
         FindComponents();
         gameManager.hikeTheBall += HikeTheBall;
     }
@@ -50,37 +50,10 @@ public class Oline : FootBallAthlete
     }
     private void FixedUpdate()
     {
-        RaycastForward();
+        base.FixedUpdate();
+    
     }
 
-    internal void RaycastForward()
-    {
-      
-        Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
-        Debug.DrawRay(transform.position, forward, rayColor);
-
-        RaycastHit[] hits;
-        hits = Physics.RaycastAll(transform.position, transform.forward, 100.0F);
-        //if(hits.Length != 0)Debug.Log(hits.Length);
-
-        for (int i = 0; i < hits.Length; i++)
-        {
-            RaycastHit hit = hits[i];
-            if (hit.collider.isTrigger)
-            {
-                Transform zoneObject = hit.collider.transform;
-                if (zoneObject)
-                {
-
-                }
-            }
-
-        }
-    }
-    Color SetRaycastColor()
-    {
-        return materialRenderer.material.color;
-    }
     public void HikeTheBall(bool wasHiked)
     {
         //Debug.Log("Oline Hike");
@@ -106,10 +79,8 @@ public class Oline : FootBallAthlete
                 StartCoroutine("BlockTarget", target);
             }
         }
-
     }
-
-    
+ 
     void RunProtection() //todo consolidate duplicate code
     {
         if (target == null)
@@ -133,19 +104,16 @@ public class Oline : FootBallAthlete
 
     private void SetTargetDlineRun(Transform target) //todo collapse into single function
     {
-
-        navMeshAgent.SetDestination(target.position); // todo centralize ball carrier, access ballcarrier instead of hard coded transform
+        SetDestination(target.position); // todo centralize ball carrier, access ballcarrier instead of hard coded transform
     }
 
     public void SetTargetDline(Transform targetSetter)
     {
-
-        navMeshAgent.SetDestination(qb.transform.position + (targetSetter.position - qb.transform.position) / 2); // todo centralize ball carrier, access ballcarrier instead of hard coded transform
+        SetDestination(qb.transform.position + (targetSetter.position - qb.transform.position) / 2); // todo centralize ball carrier, access ballcarrier instead of hard coded transform
     }
 
     IEnumerator BlockTarget(Transform target)
     {
-
         var lineMan = target.GetComponent<Dline>();
         float blockTime = 1f; // make setable variable
         float blockTimeNorm = 0;
@@ -162,7 +130,6 @@ public class Oline : FootBallAthlete
     }
     IEnumerator RunBlockTarget(Transform target)
     {
-
         var lineMan = target.GetComponent<Dline>();
         float blockTime = 1f; // make setable variable
         float blockTimeNorm = 0;
@@ -177,27 +144,4 @@ public class Oline : FootBallAthlete
         lineMan.ReleaseBlock();
         isBlocking = false;
     }
-
-    Transform GetClosestDline(Dline[] enemies)
-    {
-        Transform bestTarget = null;
-        float closestDistanceSqr = Mathf.Infinity;
-        Vector3 currentPosition = transform.position;
-
-        foreach (Dline potentialTarget in enemies)
-        {
-
-            Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
-            float dSqrToTarget = directionToTarget.sqrMagnitude;
-            if (dSqrToTarget < closestDistanceSqr)
-            {
-
-                closestDistanceSqr = dSqrToTarget;
-                bestTarget = potentialTarget.transform;
-            }
-        }
-
-        return bestTarget;
-    }
-    
 }

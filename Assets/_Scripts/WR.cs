@@ -6,11 +6,11 @@ public class WR : FootBallAthlete
     //todo rapid fire
     // Use this for initialization
     SphereCollider sphereCollider;
-    private Color rayColor = Color.cyan;
 
     void Start()
     {
 
+        rayColor = Color.cyan;
 
         gameManager = FindObjectOfType<GameManager>();
         qb = FindObjectOfType<QB>();
@@ -72,32 +72,12 @@ public class WR : FootBallAthlete
 
     }
 
+
     void FixedUpdate()
     {
-        DrawRaycast();
-      
+        base.FixedUpdate();
     }
-
-    internal void DrawRaycast()
-    {
-
-        Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
-        Debug.DrawRay(transform.position, forward, rayColor);
-    }
-
-    public void RayCastForward()
-    {
-        RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward, 100.0F);
-        //if(hits.Length != 0)Debug.Log(hits.Length);
-
-        for (int i = 0; i < hits.Length; i++)
-        {
-            RaycastHit hit = hits[i];
-            //todo stuff
-
-        }
-    }
-
+ 
 
     private void HikeTheBall(bool wasHiked) //event
     {
@@ -178,14 +158,6 @@ public class WR : FootBallAthlete
     private void SetTarget(Transform _target)
     {
         target = _target;
-    }
-
-    public void SetDestination(Vector3 targetSetter)
-    {
-        //Debug.Log(this + "Dest set " + targetSetter);
-        if (!navMeshAgent.enabled) navMeshAgent.enabled = true;
-        navMeshAgent.SetDestination(targetSetter);
-        //target = targetSetter;
     }
 
     private void GetTarget()
@@ -282,26 +254,6 @@ public class WR : FootBallAthlete
         isBlocking = false;
     }
 
-    Transform GetClosestDB(DB[] enemies)
-    {
-        Transform bestTarget = null;
-        float closestDistanceSqr = Mathf.Infinity;
-        Vector3 currentPosition = transform.position;
-
-        foreach (DB potentialTarget in enemies)
-        {
-            Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
-            float dSqrToTarget = directionToTarget.sqrMagnitude;
-            if (dSqrToTarget < closestDistanceSqr)
-            {
-                closestDistanceSqr = dSqrToTarget;
-                bestTarget = potentialTarget.transform;
-                targetDb = potentialTarget;
-            }
-        }
-        return bestTarget;
-    }
-       
     public bool CanBePressed()
     {
         if (!beenPressed)
@@ -327,7 +279,6 @@ public class WR : FootBallAthlete
         navMeshAgent.speed = navStartSpeed;
         navMeshAgent.acceleration = navStartAccel;
     }
-
 
 }
 

@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public Oline[] oLine;
             [HideInInspector] public Dline[] dLine;
     internal static GameManager instance;
+    public FootBallAthlete ballOwner;
 
     private void Awake()
     {
@@ -95,7 +96,7 @@ public class GameManager : MonoBehaviour
         prevOwner.transform.tag = "OffPlayer";
         ballCarrier.SetUserControl();
         cameraFollow.ResetPlayer();
-        //ballOwner = ballCarrier;
+        ballOwner = ballCarrier;
         ballAthlete = newOwner.GetComponent<FootBallAthlete>();
         ballOwnerChange(ballCarrier);
     }
