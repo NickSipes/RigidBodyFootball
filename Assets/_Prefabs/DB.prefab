@@ -1862,7 +1862,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startGoal: {fileID: 0}
-  route: {fileID: 0}
   materialRenderer: {fileID: 0}
   iK: {fileID: 0}
   qb: {fileID: 0}
@@ -1872,7 +1871,6 @@ MonoBehaviour:
   navStartSpeed: 0
   navStartAccel: 0
   highlightColor: {r: 0, g: 0, b: 0, a: 0}
-  LineColor: {r: 0, g: 0, b: 0, a: 0}
   rb: {fileID: 0}
   anim: {fileID: 0}
   passTarget: {x: 0, y: 0, z: 0}
