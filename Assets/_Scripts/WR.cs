@@ -280,6 +280,11 @@ public class WR : FootBallAthlete
         navMeshAgent.acceleration = navStartAccel;
     }
 
+    public void SetColor(Color color)
+    {
+        materialRenderer.material.color = color;
+        //throw new System.NotImplementedException();
+    }
 }
 
 

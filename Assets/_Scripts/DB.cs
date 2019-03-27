@@ -110,6 +110,11 @@ public class DB : FootBallAthlete
     void FixedUpdate()
     {
         base.FixedUpdate();
+        Vector3 angleFOV2 = Quaternion.AngleAxis(maxAngle, transform.up) * transform.forward * maxRadius;
+        Vector3 angleFOV1 = Quaternion.AngleAxis(-maxAngle, transform.up) * transform.forward * maxRadius;
+        Debug.DrawRay(transform.position, angleFOV2);
+        Debug.DrawRay(transform.position, angleFOV1);
+
     }
     
     private void SetTargetWr(Transform targetTransform)
@@ -327,6 +332,7 @@ public class DB : FootBallAthlete
         Vector3 fireVel, impactPos;
         Vector3 velocity = reciever.navMeshAgent.velocity;
 
+       
         //FTS Calculations https://github.com/forrestthewoods/lib_fts/tree/master/projects/unity/ballistic_trajectory
         float gravity;
 
@@ -346,6 +352,7 @@ public class DB : FootBallAthlete
                 SetDestination(impactPos);
                 Debug.Log("PassBlock");
                 StartCoroutine("BlockPass", ball);
+                reciever.SetColor(Color.red);
                 ball.isComplete = false;
             }
 
@@ -358,6 +365,7 @@ public class DB : FootBallAthlete
         anim.SetTrigger("BlockPass");
         while ((transform.position - ball.transform.position).magnitude > 2.7) //todo, this should be a calculation of anim time vs distance of football to target.
         {
+
             //Debug.Log((transform.position - ball.transform.position).magnitude);
             yield return new WaitForEndOfFrame();
         }

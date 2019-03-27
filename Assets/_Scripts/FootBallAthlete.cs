@@ -81,8 +81,9 @@ public class FootBallAthlete : MonoBehaviour
     void Start()
     {
        
-        //rayColor = materialRenderer.material.color;
+      
     }
+
     //protected virtual void FixedUpdate()
     //{
     //    RaycastForward();
@@ -113,6 +114,7 @@ public class FootBallAthlete : MonoBehaviour
 
     internal void FixedUpdate()
     {
+  
         Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
         Debug.DrawRay(transform.position, forward, rayColor);
         RaycastForward();

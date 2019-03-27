@@ -34,11 +34,15 @@ public class QB : FootBallAthlete {
     }
     private void FindComponents()
     {
+
+        materialRenderer = GetComponent<Renderer>();
+
         athlete = GetComponent<FootBallAthlete>();
         rb = GetComponent<Rigidbody>();
         throwingHandScript = FindObjectOfType<ThrowingHand>();
         gameManager = FindObjectOfType<GameManager>();
         navMeshAgent = GetComponent<NavMeshAgent>();
+
 
         cameraFollow = FindObjectOfType<CameraFollow>();
         anim = GetComponent<Animator>();
