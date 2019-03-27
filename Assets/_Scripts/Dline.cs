@@ -18,7 +18,7 @@ public class Dline : FootBallAthlete
     {
         rayColor = Color.red;
         FindComponents();
-        RegesterEvents();
+        AddEvents();
     }
 
 
@@ -39,7 +39,7 @@ public class Dline : FootBallAthlete
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
     }
-    private void RegesterEvents()
+    private void AddEvents()
     {
         gameManager.ballOwnerChange += BallOwnerChange;
         gameManager.hikeTheBall += HikeTheBall;
@@ -61,31 +61,27 @@ public class Dline : FootBallAthlete
     }
     private void FixedUpdate()
     {
-        base.FixedUpdate();
-       
+       base.FixedUpdate();  
     }
-    
+
+
     IEnumerator BlockCoolDown()
     {
         yield return new WaitForSeconds(blockCooldown);
         wasBlocked = false;
-
     }
 
     public void SetTarget(Transform targetSetter)
     {
-       
        navMeshAgent.SetDestination(targetSetter.position);
-        target = targetSetter;
-
+       target = targetSetter;
     }
 
     public void HikeTheBall(bool wasHiked)
     {
         anim.SetTrigger("HikeTrigger");
     }
-
-
+    
     public void Block(float blockTimeNorm, Oline blocker)
     {
         canvas.enabled = true;
@@ -110,6 +106,5 @@ public class Dline : FootBallAthlete
     public void BallOwnerChange(FootBallAthlete ballOwner)
     {
         SetTarget(ballOwner.transform);
-
     }
 }

@@ -2018,6 +2018,7 @@ MonoBehaviour:
   iK: {fileID: 0}
   qb: {fileID: 0}
   startColor: {r: 0, g: 0, b: 0, a: 0}
+  rayColor: {r: 0, g: 0, b: 0, a: 0}
   navMeshAgent: {fileID: 0}
   navStartSpeed: 0
   navStartAccel: 0

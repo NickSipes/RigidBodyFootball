@@ -9,9 +9,10 @@ public class DB : FootBallAthlete
 
     //todo create class between Off and Def based on FootballAthlete
 
-
     [SerializeField] float maxAngle;
     [SerializeField] float maxRadius;
+    [SerializeField] internal int zoneLayer = 8;
+
 
     internal bool isWrIncoming = false;
 
@@ -23,7 +24,6 @@ public class DB : FootBallAthlete
     //todo scramble mechanics
     //todo Man coverage
     // Use this for initialization
-    [SerializeField] internal int zoneLayer = 8;
     void Start()
     {
         rayColor = Color.yellow;
@@ -31,7 +31,7 @@ public class DB : FootBallAthlete
         wideRecievers = FindObjectsOfType<WR>();
         hbs = FindObjectsOfType<HB>();
         navMeshAgent = GetComponent<NavMeshAgent>();
-
+        
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
         anim = GetComponent<Animator>();
@@ -363,15 +363,17 @@ public class DB : FootBallAthlete
     {
         isBlockingPass = true;
         anim.SetTrigger("BlockPass");
+        canvas.gameObject.SetActive(true);
+       
         while ((transform.position - ball.transform.position).magnitude > 2.7) //todo, this should be a calculation of anim time vs distance of football to target.
         {
-
             //Debug.Log((transform.position - ball.transform.position).magnitude);
             yield return new WaitForEndOfFrame();
         }
         ball.BlockBallTrajectory();
         navMeshAgent.speed = navStartSpeed;
         isBlockingPass = false;
+        canvas.gameObject.SetActive(false);
     }
 
     bool InVincintyOfPass(WR wR)

@@ -23,7 +23,6 @@ public class QB : FootBallAthlete {
     Transform hbTransform;
 
     bool isRapidFire;
-   
 
     void Start ()
     {

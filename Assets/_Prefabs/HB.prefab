@@ -2008,6 +2008,7 @@ GameObject:
   - component: {fileID: 7586528049521305361}
   - component: {fileID: 7586528049521305450}
   - component: {fileID: 1988934566}
+  - component: {fileID: 2113174001625150406}
   m_Layer: 0
   m_Name: HB
   m_TagString: OffPlayer
@@ -2122,6 +2123,7 @@ MonoBehaviour:
   iK: {fileID: 0}
   qb: {fileID: 0}
   startColor: {r: 0, g: 0, b: 0, a: 0}
+  rayColor: {r: 0, g: 0, b: 0, a: 0}
   navMeshAgent: {fileID: 0}
   navStartSpeed: 0
   navStartAccel: 0
@@ -2158,6 +2160,18 @@ MonoBehaviour:
   cameraRaycaster: {fileID: 0}
   isSelected: 0
 --- !u!114 &1988934566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7586528049521305367}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c13277d34ad31154998551f04756b97c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2113174001625150406
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -1289,8 +1289,8 @@ GameObject:
   - component: {fileID: 114601096298828610}
   - component: {fileID: 7954969319134554546}
   - component: {fileID: 6379663420362412516}
-  - component: {fileID: 302167118}
   - component: {fileID: 302167119}
+  - component: {fileID: 302167118}
   m_Layer: 0
   m_Name: WR
   m_TagString: Untagged
@@ -1392,6 +1392,7 @@ MonoBehaviour:
   iK: {fileID: 0}
   qb: {fileID: 0}
   startColor: {r: 0, g: 0, b: 0, a: 0}
+  rayColor: {r: 0, g: 0, b: 0, a: 0}
   navMeshAgent: {fileID: 195593887730924228}
   navStartSpeed: 0
   navStartAccel: 0
@@ -1454,6 +1455,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c13277d34ad31154998551f04756b97c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!136 &302167119
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398987617140480}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 1.7463064
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.8498473, z: 0}
 --- !u!208 &302167118
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -1470,20 +1485,6 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 1, z: 0}
   m_TimeToStationary: 0.5
---- !u!136 &302167119
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1398987617140480}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 1.7463064
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.8498473, z: 0}
 --- !u!1 &1428451670434370
 GameObject:
   m_ObjectHideFlags: 0

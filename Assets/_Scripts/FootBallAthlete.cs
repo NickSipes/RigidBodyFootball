@@ -8,21 +8,20 @@ public class FootBallAthlete : MonoBehaviour
 {
 
     public RouteManager startGoal;
-    public Routes route;
-    //todo clean up inheritance and add setters and getters instead of public variables. Seperate OffPlayers variables from DefPlayers variables
+    //todo clean up inheritance and add setters and getters instead of public variables. Separate OffPlayers variables from DefPlayers variables
     public Renderer materialRenderer;
     [HideInInspector] public IKControl iK;
 
     [HideInInspector] public QB qb; 
 
     [HideInInspector] public Color startColor;
-    public Color rayColor;
+    [HideInInspector] public Color rayColor;
 
     [HideInInspector] public NavMeshAgent navMeshAgent;
     [HideInInspector] public float navStartSpeed;
     [HideInInspector] public float navStartAccel;
     public Color highlightColor;
-    [HideInInspector] public Color LineColor;
+  
 
     [HideInInspector] public Rigidbody rb;
     [HideInInspector] public Animator anim;
@@ -30,12 +29,12 @@ public class FootBallAthlete : MonoBehaviour
 
     [HideInInspector] public Vector3 passTarget;
     [HideInInspector] public bool beenPressed = false;
-    public FootBall footBall;
+    [HideInInspector] public FootBall footBall;
     public Canvas canvas;
     public Image pressBar;
     [HideInInspector] public bool isHiked = false;
-    public Transform target;
-    public GameManager gameManager;
+    [HideInInspector] public Transform target;
+    [HideInInspector] public GameManager gameManager;
 
     [HideInInspector] public bool isBlocking;
 
@@ -66,7 +65,7 @@ public class FootBallAthlete : MonoBehaviour
 
     [HideInInspector] public UserControl userControl;
     [HideInInspector] public CameraRaycaster cameraRaycaster;
-    public bool isSelected;
+    [HideInInspector] public bool isSelected;
 
 
     //todo create virtual start 
@@ -105,11 +104,20 @@ public class FootBallAthlete : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         var collGO = collision.gameObject;
-        Debug.Log("Collision");
-        ContactPoint contact = collision.contacts[0];
-        Debug.DrawLine(transform.position, contact.point);
-       // if()
-        
+        Debug.Log("Collision " + collGO.name + " and " + name);
+        ContactPoint contacts = collision.contacts[0];
+        Debug.DrawLine(transform.position, contacts.point);
+        foreach (ContactPoint contact in collision.contacts)
+        {
+            Debug.DrawRay(contact.point, contact.normal, Color.white);
+        }
+
+        if (collision.relativeVelocity.magnitude > 2)
+        {
+            Debug.Log("Collision magnitude");
+        }
+        // if()
+
     }
 
     internal void FixedUpdate()
