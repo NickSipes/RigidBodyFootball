@@ -405,11 +405,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Goal
       objectReference: {fileID: 0}
-    - target: {fileID: 6721712466264937430, guid: 2c4dc4769e505384b9107dc3f8c213c0,
-        type: 3}
-      propertyPath: wayPointFollower
-      value: 
-      objectReference: {fileID: 1643161807}
     - target: {fileID: 1959798614, guid: 2c4dc4769e505384b9107dc3f8c213c0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 8.48
@@ -859,18 +854,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d0aba557f5c71e44b5d8b15411a77da, type: 3}
---- !u!114 &1643161807 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1959798616, guid: 2c4dc4769e505384b9107dc3f8c213c0,
-    type: 3}
-  m_PrefabInstance: {fileID: 695029239}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 647c0d09b54a3ac41816b20e70966e6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1700669290 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114036973220166040, guid: bb3399e9e41561f4cb723e5eb8211cbb,
@@ -1194,11 +1177,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 5712946768223445602}
-    - target: {fileID: 5276027287133210069, guid: b56336840749ed24794ea948db953428,
-        type: 3}
-      propertyPath: m_AdditionalShaderChannelsFlag
-      value: 25
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b56336840749ed24794ea948db953428, type: 3}
 --- !u!114 &5712946768223445602 stripped

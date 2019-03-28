@@ -2015,6 +2015,7 @@ MonoBehaviour:
   startGoal: {fileID: 0}
   materialRenderer: {fileID: 0}
   iK: {fileID: 0}
+  terrain: {fileID: 0}
   qb: {fileID: 0}
   startColor: {r: 0, g: 0, b: 0, a: 0}
   rayColor: {r: 0, g: 0, b: 0, a: 0}
