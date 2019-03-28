@@ -11,7 +11,7 @@ public class FootBallAthlete : MonoBehaviour
     //todo clean up inheritance and add setters and getters instead of public variables. Separate OffPlayers variables from DefPlayers variables
     public Renderer materialRenderer;
     [HideInInspector] public IKControl iK;
-
+    [HideInInspector] public Terrain terrain;
     [HideInInspector] public QB qb; 
 
     [HideInInspector] public Color startColor;
@@ -79,15 +79,20 @@ public class FootBallAthlete : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       
-      
+
     }
 
     //protected virtual void FixedUpdate()
     //{
     //    RaycastForward();
     //}
-
+    void GetTerrain()
+    {
+        if (terrain == null)
+        {
+            terrain = FindObjectOfType<Terrain>();
+        }
+    }
     public void SetUserControl()
     {
         tag = "Player";
@@ -103,21 +108,38 @@ public class FootBallAthlete : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        var collGO = collision.gameObject;
-        Debug.Log("Collision " + collGO.name + " and " + name);
+        GetTerrain();
+        var collGo = collision.gameObject;
+        if (collGo.transform == terrain.transform)return;
+        
+        Debug.Log("Collision " + collGo.name + " and " + name);
         ContactPoint contacts = collision.contacts[0];
         Debug.DrawLine(transform.position, contacts.point);
         foreach (ContactPoint contact in collision.contacts)
         {
             Debug.DrawRay(contact.point, contact.normal, Color.white);
         }
-
+        if (collGo == GameManager.instance.ballOwner.gameObject)
+        {
+            //todo check if player is facing ballowner
+            //todo make sure its a defensive player
+            Tackle(GameManager.instance.ballOwner);
+            Debug.Log("Got Here");
+        }
         if (collision.relativeVelocity.magnitude > 2)
         {
             Debug.Log("Collision magnitude");
         }
         // if()
 
+    }
+
+    internal void Tackle(FootBallAthlete instanceBallOwner)
+    {
+        anim.SetTrigger("TackleTrigger");
+      
+        
+        throw new System.NotImplementedException();
     }
 
     internal void FixedUpdate()
@@ -157,7 +179,6 @@ public class FootBallAthlete : MonoBehaviour
         if (!navMeshAgent.enabled)
             navMeshAgent.enabled = true;
     }
-
     internal Transform GetClosestHb(HB[] enemies)
     {
         Transform bestTarget = null;
@@ -178,7 +199,6 @@ public class FootBallAthlete : MonoBehaviour
 
         return bestTarget;
     }
-
     internal Transform GetClosestWr(WR[] enemies)
     {
         Transform bestTarget = null;
@@ -220,7 +240,6 @@ public class FootBallAthlete : MonoBehaviour
 
         return bestTarget;
     }
-
     internal Transform GetClosestDB(DB[] enemies)
     {
         Transform bestTarget = null;
