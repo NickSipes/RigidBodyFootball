@@ -108,7 +108,7 @@ public class FootBallAthlete : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        GetTerrain();
+        if(!terrain)GetTerrain();
         var collGo = collision.gameObject;
         if (collGo.transform == terrain.transform)return;
         
@@ -123,23 +123,23 @@ public class FootBallAthlete : MonoBehaviour
         {
             //todo check if player is facing ballowner
             //todo make sure its a defensive player
-            Tackle(GameManager.instance.ballOwner);
+           
+            StartCoroutine("Tackle",GameManager.instance.ballOwner);
             Debug.Log("Got Here");
         }
         if (collision.relativeVelocity.magnitude > 2)
         {
             Debug.Log("Collision magnitude");
         }
-        // if()
+    
 
     }
 
-    internal void Tackle(FootBallAthlete instanceBallOwner)
+    internal IEnumerator Tackle(FootBallAthlete instanceBallOwner)
     {
         anim.SetTrigger("TackleTrigger");
-      
+        yield return new WaitForSeconds(2);
         
-        throw new System.NotImplementedException();
     }
 
     internal void FixedUpdate()

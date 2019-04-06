@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
     public delegate void ClearTheSelector(bool isCleared);
     public event ClearTheSelector clearSelector;
 
+    public delegate void HikeTrigger();
+    public event HikeTrigger hikeTrigger;
+
     public delegate void BallOwnerChange(FootBallAthlete ballOwner);
     public event BallOwnerChange ballOwnerChange;
 
@@ -71,7 +74,11 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-  
+
+    public void CallForSnap()
+    {
+        hikeTrigger();
+    }
     public void Hike() 
     {
         hikeTheBall(true);

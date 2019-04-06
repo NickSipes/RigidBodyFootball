@@ -55,6 +55,7 @@ public class QB : FootBallAthlete {
 
         gameManager.onBallThrown += BallThrown;
         gameManager.hikeTheBall += HikeTheBall;
+        gameManager.hikeTrigger += HikeTrigger;
     }
 
     private void HikeTheBall(bool washiked)
@@ -97,7 +98,7 @@ public class QB : FootBallAthlete {
         RaycastForward();
     }
 
-    public void HikeTrigger() // called from UI button
+    public void HikeTrigger() // called from UI button on gamemanger
     {
             navMeshAgent.enabled = true;
         if (gameManager.isPass)
