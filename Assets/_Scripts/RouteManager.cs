@@ -23,7 +23,7 @@ public class RouteManager : MonoBehaviour
     {
         if (wr == null) return;
 
-        if (wr.target == transform)
+        if (wr.targetPlayer == transform)
         {
             wayPointFollower.currentSpeed = wr.navMeshAgent.speed;
         }

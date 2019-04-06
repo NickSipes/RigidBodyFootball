@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 // ReSharper disable All
 
-public class DB : FootBallAthlete
+public class DB : DefPlayer
 {
 
     //todo create class between Off and Def based on FootballAthlete
@@ -90,9 +90,9 @@ public class DB : FootBallAthlete
                     }
                     else
                     {
-                        Debug.Log("target out of zone");
+                        //Debug.Log("targetPlayer out of zone");
                         targetWr = null;
-                        target = null;
+                        targetPlayer = null;
                     }
                 }
                 PlayZone();
@@ -101,8 +101,8 @@ public class DB : FootBallAthlete
             // ReSharper disable once InvertIf
             if (gameManager.isRun)
             {
-                target = GetClosestHb(hbs);
-                SetTargetHb(target);
+                targetPlayer = GetClosestHb(hbs);
+                SetTargetHb(targetPlayer);
             }
         }
     }
@@ -121,7 +121,7 @@ public class DB : FootBallAthlete
     {
         EnableNavMeshAgent();
         SetDestination(targetTransform.position);
-        target = targetTransform;
+        targetPlayer = targetTransform;
         targetWr = targetTransform.GetComponentInParent<WR>();
         //Debug.Log("Target Changed");
     }
@@ -211,12 +211,12 @@ public class DB : FootBallAthlete
 
         while ((transform.position - zone.transform.position).magnitude > 1)
         {
-            //Vector3 dir = target.position - transform.position;
+            //Vector3 dir = targetPlayer.position - transform.position;
             BackOff(wr);
             yield return new WaitForFixedUpdate();
         }
         StartCoroutine("TurnTowardsLOS");
-        Debug.Log("zone center reached");
+        //Debug.Log("zone center reached");
         isPressing = false;
         //Vector3 moveLeft = transform.position + new Vector3(2, 0, 0);
         //todo this needs a stat machine to determine if the DB needs to chase the WR past the Zone, Does he have overhead help
@@ -250,7 +250,7 @@ public class DB : FootBallAthlete
         DisableNavmeshAgent();
 
         float speed = 3; //todo needs to be a calculation of WR release and DB press
-        Vector3 dir = (target.position + target.transform.forward - transform.position).normalized * speed;
+        Vector3 dir = (targetPlayer.position + targetPlayer.transform.forward - transform.position).normalized * speed;
         float v = dir.z;
         float h = dir.x;
 
@@ -277,7 +277,7 @@ public class DB : FootBallAthlete
         // turn around and run, cut left, or cut right
 
         float speed = 5; //todo this should be a calculation of wr release vs db press
-        Vector3 dir = (target.position + target.transform.forward - transform.position).normalized * speed;
+        Vector3 dir = (targetPlayer.position + targetPlayer.transform.forward - transform.position).normalized * speed;
         float v = dir.z;
         float h = dir.x;
 
@@ -365,7 +365,7 @@ public class DB : FootBallAthlete
         anim.SetTrigger("BlockPass");
         canvas.gameObject.SetActive(true);
        
-        while ((transform.position - ball.transform.position).magnitude > 2.7) //todo, this should be a calculation of anim time vs distance of football to target.
+        while ((transform.position - ball.transform.position).magnitude > 2.7) //todo, this should be a calculation of anim time vs distance of football to targetPlayer.
         {
             //Debug.Log((transform.position - ball.transform.position).magnitude);
             yield return new WaitForEndOfFrame();
@@ -385,7 +385,7 @@ public class DB : FootBallAthlete
 
     private bool IsTargetInZone(Transform coverTarget)
     {
-        if ((coverTarget.transform.position - zone.transform.position).magnitude <= zone.zoneSize) return true; //target is inside zone
+        if ((coverTarget.transform.position - zone.transform.position).magnitude <= zone.zoneSize) return true; //targetPlayer is inside zone
         else return false;
     }
 
@@ -393,7 +393,7 @@ public class DB : FootBallAthlete
     private void SetTargetHb(Transform targetTransform)
     {
         SetDestination(targetTransform.position);
-        target = targetTransform;
+        targetPlayer = targetTransform;
         targetHb = targetTransform.GetComponentInParent<HB>();
         //Debug.Log("Target Changed");
     }

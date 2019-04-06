@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class FootBall : MonoBehaviour
 {
 
-    //todo Make function to get football time to target
+    //todo Make function to get football time to targetPlayer
     // distance from qb to impactPos 
     // speed is velocity
     // time = distance/speed
@@ -104,7 +104,7 @@ public class FootBall : MonoBehaviour
         Vector3 diff = targetPos - transform.position;
         Vector3 diffGround = new Vector3(diff.x, 0f, diff.z);
         Vector3 fireVel, impactPos;
-        Debug.Log("Block Ballistics");
+        Debug.Log("BeBlocked Ballistics");
         //FTS Calculations https://github.com/forrestthewoods/lib_fts/tree/master/projects/unity/ballistic_trajectory
         float gravity;
 
@@ -130,8 +130,8 @@ public class FootBall : MonoBehaviour
 
 
 /*
- *  function BallisticVel(target: Transform, angle: float): Vector3 {
-     var dir = target.position - transform.position;  // get target direction
+ *  function BallisticVel(targetPlayer: Transform, angle: float): Vector3 {
+     var dir = targetPlayer.position - transform.position;  // get targetPlayer direction
      var h = dir.y;  // get height difference
      dir.y = 0;  // retain only the horizontal direction
      var dist = dir.magnitude ;  // get horizontal distance
@@ -143,7 +143,7 @@ public class FootBall : MonoBehaviour
      return vel * dir.normalized;
  }
  
- var myTarget: Transform;  // drag the target here
+ var myTarget: Transform;  // drag the targetPlayer here
  var cannonball: GameObject;  // drag the cannonball prefab here
  var shootAngle: float = 30;  // elevation angle
  

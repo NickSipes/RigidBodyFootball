@@ -36,6 +36,9 @@ public class GameManager : MonoBehaviour
     public delegate void OnBallThrown(QB thrower, WR reciever,FootBall footBall , Vector3 impactPos, float arcType, float power, bool isComplete);
     public event OnBallThrown onBallThrown;
 
+    public delegate void ShedBlock(FootBallAthlete brokeBlock);
+    public event ShedBlock shedBlock;
+
     [HideInInspector] public Oline[] oLine;
             [HideInInspector] public Dline[] dLine;
     internal static GameManager instance;
@@ -114,6 +117,11 @@ public class GameManager : MonoBehaviour
     public void AttemptPass(QB ballThrower, WR ballReciever, FootBall ball,float arcType, float power)
     {
         passAttempt(ballThrower, ballReciever, ball, arcType, power);
+    }
+    
+    public void RaiseShedBlock(FootBallAthlete brokeBlock)
+    {
+        shedBlock(brokeBlock);
     }
     internal void SetSelector(GameObject go)
     {

@@ -14,10 +14,10 @@
 //   https://medium.com/@ForrestTheWoods/solving-ballistic-trajectories-b0165523348c
 //
 // API
-//    int solve_ballistic_arc(Vector3 proj_pos, float proj_speed, Vector3 target, float gravity, out Vector3 low, out Vector3 high);
-//    int solve_ballistic_arc(Vector3 proj_pos, float proj_speed, Vector3 target, Vector3 target_velocity, float gravity, out Vector3 s0, out Vector3 s1, out Vector3 s2, out Vector3 s3);
-//    bool solve_ballistic_arc_lateral(Vector3 proj_pos, float lateral_speed, Vector3 target, float max_height, out float vertical_speed, out float gravity);
-//    bool solve_ballistic_arc_lateral(Vector3 proj_pos, float lateral_speed, Vector3 target, Vector3 target_velocity, float max_height_offset, out Vector3 fire_velocity, out float gravity, out Vector3 impact_point);
+//    int solve_ballistic_arc(Vector3 proj_pos, float proj_speed, Vector3 targetPlayer, float gravity, out Vector3 low, out Vector3 high);
+//    int solve_ballistic_arc(Vector3 proj_pos, float proj_speed, Vector3 targetPlayer, Vector3 target_velocity, float gravity, out Vector3 s0, out Vector3 s1, out Vector3 s2, out Vector3 s3);
+//    bool solve_ballistic_arc_lateral(Vector3 proj_pos, float lateral_speed, Vector3 targetPlayer, float max_height, out float vertical_speed, out float gravity);
+//    bool solve_ballistic_arc_lateral(Vector3 proj_pos, float lateral_speed, Vector3 targetPlayer, Vector3 target_velocity, float max_height_offset, out Vector3 fire_velocity, out float gravity, out Vector3 impact_point);
 //
 //    float ballistic_range(float speed, float gravity, float initial_height);
 //
@@ -279,7 +279,7 @@ public class Ballistics
     //
     // proj_pos (Vector3): point projectile will fire from
     // proj_speed (float): scalar speed of projectile
-    // target (Vector3): point projectile is trying to hit
+    // targetPlayer (Vector3): point projectile is trying to hit
     // gravity (float): force of gravity, positive down
     //
     // s0 (out Vector3): firing solution (low angle) 
@@ -342,12 +342,12 @@ public class Ballistics
         return numSolutions;
     }
 
-    // Solve firing angles for a ballistic projectile with speed and gravity to hit a target moving with constant, linear velocity.
+    // Solve firing angles for a ballistic projectile with speed and gravity to hit a targetPlayer moving with constant, linear velocity.
     //
     // proj_pos (Vector3): point projectile will fire from
     // proj_speed (float): scalar speed of projectile
-    // target (Vector3): point projectile is trying to hit
-    // target_velocity (Vector3): velocity of target
+    // targetPlayer (Vector3): point projectile is trying to hit
+    // target_velocity (Vector3): velocity of targetPlayer
     // gravity (float): force of gravity, positive down
     //
     // s0 (out Vector3): firing solution (fastest time impact) 
@@ -478,7 +478,7 @@ public class Ballistics
 
         fire_velocity = diffXZ.normalized * lateral_speed;
 
-        // System of equations. Hit max_height at t=.5*time. Hit target at t=time.
+        // System of equations. Hit max_height at t=.5*time. Hit targetPlayer at t=time.
         //
         // peak = y0 + vertical_speed*halfTime + .5*gravity*halfTime^2
         // end = y0 + vertical_speed*time + .5*gravity*time^s
@@ -503,7 +503,7 @@ public class Ballistics
     //
     // fire_velocity (out Vector3): firing velocity
     // gravity (out float): gravity necessary to projectile to hit precisely max_height
-    // impact_point (out Vector3): point where moving target will be hit
+    // impact_point (out Vector3): point where moving targetPlayer will be hit
     //
     // return (bool): true if a valid solution was found
     public static bool solve_ballistic_arc_lateral(Vector3 proj_pos, float lateral_speed, Vector3 target, Vector3 target_velocity, float max_height_offset, out Vector3 fire_velocity, out float gravity, out Vector3 impact_point)
@@ -552,7 +552,7 @@ public class Ballistics
         Vector3 dir = impact_point - proj_pos;
         fire_velocity = new Vector3(dir.x, 0f, dir.z).normalized * lateral_speed;
 
-        // Solve system of equations. Hit max_height at t=.5*time. Hit target at t=time.
+        // Solve system of equations. Hit max_height at t=.5*time. Hit targetPlayer at t=time.
         //
         // peak = y0 + vertical_speed*halfTime + .5*gravity*halfTime^2
         // end = y0 + vertical_speed*time + .5*gravity*time^s

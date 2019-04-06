@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using UnityEngine.XR.WSA.Input;
 
 public class FootBallAthlete : MonoBehaviour
 {
@@ -33,7 +34,7 @@ public class FootBallAthlete : MonoBehaviour
     public Canvas canvas;
     public Image pressBar;
     [HideInInspector] public bool isHiked = false;
-    [HideInInspector] public Transform target;
+    [HideInInspector] public Transform targetPlayer;
     [HideInInspector] public GameManager gameManager;
 
     [HideInInspector] public bool isBlocking;
@@ -67,25 +68,6 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public CameraRaycaster cameraRaycaster;
     [HideInInspector] public bool isSelected;
 
-
-    //todo create virtual start 
-    //https://stackoverflow.com/questions/53076669/how-to-correctly-inherit-unitys-callback-functions-like-awake-start-and-up
-    //protected virtual void Start()
-    //{
-    //    whatIsGround = LayerMask.GetMask("Ground");
-    //    groundRadius = 0.01f;
-    //}
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    //protected virtual void FixedUpdate()
-    //{
-    //    RaycastForward();
-    //}
     void GetTerrain()
     {
         if (terrain == null)
@@ -93,6 +75,7 @@ public class FootBallAthlete : MonoBehaviour
             terrain = FindObjectOfType<Terrain>();
         }
     }
+
     public void SetUserControl()
     {
         tag = "Player";
@@ -108,6 +91,7 @@ public class FootBallAthlete : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        if(this is OffPlayer)return;
         if(!terrain)GetTerrain();
         var collGo = collision.gameObject;
         if (collGo.transform == terrain.transform)return;
@@ -121,11 +105,14 @@ public class FootBallAthlete : MonoBehaviour
         }
         if (collGo == GameManager.instance.ballOwner.gameObject)
         {
-            //todo check if player is facing ballowner
-            //todo make sure its a defensive player
-           
-            StartCoroutine("Tackle",GameManager.instance.ballOwner);
-            Debug.Log("Got Here");
+            //todo check if player is facing ballowner is targetPlayer in 'tackle angle'
+
+            FootBallAthlete playerType = collGo.GetComponent<FootBallAthlete>();
+            if (playerType is OffPlayer)
+            {
+                Tackle( GameManager.instance.ballOwner);
+          
+            }
         }
         if (collision.relativeVelocity.magnitude > 2)
         {
@@ -135,16 +122,22 @@ public class FootBallAthlete : MonoBehaviour
 
     }
 
-    internal IEnumerator Tackle(FootBallAthlete instanceBallOwner)
+    internal void Tackle(FootBallAthlete instanceBallOwner)
     {
-        anim.SetTrigger("TackleTrigger");
-        yield return new WaitForSeconds(2);
-        
+        //need off vs def check
+        //anim.SetTrigger("TackleTrigger");
+        instanceBallOwner.StartCoroutine("BeTackled");
+     
     }
 
+    internal IEnumerator BeTackled()
+    {
+        materialRenderer.material.color = Color.red;
+        yield return new WaitForSeconds(.5f);
+        materialRenderer.material.color = startColor;
+    }
     internal void FixedUpdate()
     {
-  
         Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
         Debug.DrawRay(transform.position, forward, rayColor);
         RaycastForward();
@@ -259,6 +252,156 @@ public class FootBallAthlete : MonoBehaviour
         }
         return bestTarget;
     }
+    internal Transform GetClosestDefPlayer(DefPlayer[] enemies)
+    {
+        Transform bestTarget = null;
+        float closestDistanceSqr = Mathf.Infinity;
+        Vector3 currentPosition = transform.position;
+
+        foreach (DefPlayer potentialTarget in enemies)
+        {
+
+            Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
+            float dSqrToTarget = directionToTarget.sqrMagnitude;
+            if (dSqrToTarget < closestDistanceSqr)
+            {
+
+                closestDistanceSqr = dSqrToTarget;
+                bestTarget = potentialTarget.transform;
+            }
+        }
+
+        return bestTarget;
+    }
+    
+}
+
+public class OffPlayer : FootBallAthlete
+{
+    public float blockCoolDown = 1f;
+    public bool canBlock = true;
+    internal bool isBlocker;
+    internal void BlockProtection() //todo consolidate duplicate code
+    {
+        if(!canBlock)return;;
+        //todo change code to be moving forward with blocks, get to the second level after shedding first defender
+        if (targetPlayer == null)
+        {
+           targetPlayer = GetClosestDefPlayer(FindObjectsOfType<DefPlayer>());
+        }
+        Vector3 directionToTarget = targetPlayer.position - transform.position;
+        transform.LookAt(targetPlayer);
+        
+        if(gameManager.isRun)SetTargetDlineRun(targetPlayer);
+        if(gameManager.isPass)SetTargetDline(targetPlayer);
+
+        float dSqrToTarget = directionToTarget.sqrMagnitude;
+        if (dSqrToTarget < 3)//todo setup block range variable
+        {
+            var defPlayer = targetPlayer.GetComponent<DefPlayer>();
+            if(!isBlocking) StartCoroutine("BlockTarget", targetPlayer);
+        }
+    }
+
+
+    private void SetTargetDlineRun(Transform target) //todo collapse into single function
+    {
+     
+        SetDestination(target.position); // 
+    }
+
+    public void SetTargetDline(Transform target)
+    {
+        //if (isBlocking) return;
+        SetDestination(qb.transform.position + (target.position - qb.transform.position) / 2); // todo centralize ball carrier, access ballcarrier instead of hard coded transform
+    }
+
+    IEnumerator BlockTarget(Transform target)
+    {
+        //todo 
+        var defPlayer = target.GetComponent<DefPlayer>();
+
+        if (defPlayer.blockPlayers.Contains(this))yield break;
+
+        float blockTime = 1f; //todo make public variable
+        float blockTimeNorm = 0;
+        while (blockTimeNorm <= 1f) //todo this counter is ugly and needs to be better
+        {
+            isBlocking = true;
+            blockTimeNorm += Time.deltaTime / blockTime;
+            defPlayer.BeBlocked(blockTimeNorm, this);
+            yield return new WaitForEndOfFrame();
+        }
+        defPlayer.ReleaseBlock(this);
+        isBlocking = false;
+        canBlock = false;
+        StartCoroutine(BlockCoolDown());
+    }
+
+    IEnumerator BlockCoolDown()
+    {
+        yield return new WaitForSeconds(blockCoolDown);
+        canBlock = true;
+    }
+
+    
+}
+
+public class DefPlayer : FootBallAthlete
+{
+    [HideInInspector] public bool isBlocked;
+    public bool wasBlocked = false;
+    [SerializeField] Image blockBar;
+    internal float blockCooldown = 2f;
+    internal List<OffPlayer> blockPlayers = new List<OffPlayer>();
+
+    public void BeBlocked(float blockTimeNorm, OffPlayer blocker)
+    {
+        canvas.enabled = true;
+        canvas.transform.LookAt(Camera.main.transform);
+
+        //todo make way around multiple defenders
+        SetTargetPlayer(blocker.transform);
+        blockBar.fillAmount = blockTimeNorm;
+        navMeshAgent.acceleration = 0f;
+        navMeshAgent.speed = 0f;
+        isBlocked = true;
+
+
+
+        if (!blockPlayers.Contains(blocker))
+        {
+            print(blocker.name + " added to list");
+            blockPlayers.Add(blocker);
+        }
+
+    }
+
+    public void ReleaseBlock(OffPlayer blocker)
+    {
+        canvas.enabled = !canvas.enabled;
+        isBlocked = false;
+        wasBlocked = true;
+        SetTargetPlayer(GameObject.FindGameObjectWithTag("Player").transform);
+        navMeshAgent.speed = navStartSpeed;
+        navMeshAgent.acceleration = navStartAccel;
+        gameManager.RaiseShedBlock(this);
+        blockPlayers.Remove(blocker);
+    }
+
+    public void SetTargetPlayer(Transform targetSetter)
+    {
+        navMeshAgent.SetDestination(targetSetter.position);
+        targetPlayer = targetSetter;
+    }
+
+    IEnumerator BlockCoolDown()
+    {
+        yield return new WaitForSeconds(blockCooldown);
+        wasBlocked = false;
+    }
+
+
 }
 
 

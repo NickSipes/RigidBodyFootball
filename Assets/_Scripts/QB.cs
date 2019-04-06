@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 using UnityStandardAssets.CrossPlatformInput;
 
-public class QB : FootBallAthlete {
+public class QB : OffPlayer {
     //CharacterController controller;
     public float speed = 5;
     public float gravity = -5;
@@ -34,8 +34,9 @@ public class QB : FootBallAthlete {
     private void FindComponents()
     {
 
-        materialRenderer = GetComponent<Renderer>();
-
+        materialRenderer = GetComponentInChildren<Renderer>();
+        startColor = materialRenderer.material.color;
+     
         athlete = GetComponent<FootBallAthlete>();
         rb = GetComponent<Rigidbody>();
         throwingHandScript = FindObjectOfType<ThrowingHand>();

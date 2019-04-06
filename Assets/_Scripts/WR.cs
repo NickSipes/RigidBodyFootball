@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class WR : FootBallAthlete
+public class WR : OffPlayer
 {
     //todo rapid fire
     // Use this for initialization
@@ -22,7 +22,7 @@ public class WR : FootBallAthlete
         startColor = materialRenderer.material.color;
         cameraFollow = FindObjectOfType<CameraFollow>();
         cameraRaycaster = CameraRaycaster.instance;
-        //target = startGoal.transform;
+        //targetPlayer = startGoal.transform;
         //lr.material.color = LineColor;
         navMeshAgent.destination = transform.position;
 
@@ -66,8 +66,8 @@ public class WR : FootBallAthlete
                 StartCoroutine(DbBlock(targetDb));
             return;
         }
-        if (!target) GetTarget();
-        SetDestination(target.transform.position);
+        if (!targetPlayer) GetTarget();
+        SetDestination(targetPlayer.transform.position);
 
 
     }
@@ -86,7 +86,7 @@ public class WR : FootBallAthlete
 
     public void BallThrown(QB thrower, WR reciever, FootBall ball, Vector3 impactPos, float arcType, float power, bool isComplete) //event
     {
-        //todo move reciever to a through pass target
+        //todo move reciever to a through pass targetPlayer
         if (reciever == this)
         {
             StartCoroutine("GetToImpactPos", impactPos);
@@ -149,7 +149,7 @@ public class WR : FootBallAthlete
     public void ResetRoute() // Called from anim event
     {
         footBall = null;
-        target = null;
+        targetPlayer = null;
         isCatching = false;
         iK.isActive = false;
         StopAllCoroutines();
@@ -157,26 +157,26 @@ public class WR : FootBallAthlete
 
     private void SetTarget(Transform _target)
     {
-        target = _target;
+        targetPlayer = _target;
     }
 
     private void GetTarget()
     {
-        if(target == null)
+        if(targetPlayer == null)
         {
             SetTarget(startGoal.transform);
             SetDestination(startGoal.transform.position);
         }
 
-        //if ((navMeshAgent.destination - transform.position).magnitude < 1 && target == null)
+        //if ((navMeshAgent.destination - transform.position).magnitude < 1 && targetPlayer == null)
         //{
-        //    SetTarget(startGoal.transform);
+        //    SetTargetPlayer(startGoal.transform);
         //    SetDestination(startGoal.transform.position);
         //}
 
-        if (navMeshAgent.hasPath && navMeshAgent.remainingDistance < 2 && target != null)
+        if (navMeshAgent.hasPath && navMeshAgent.remainingDistance < 2 && targetPlayer != null)
         {
-            var ball = target.GetComponent<FootBall>(); //todo this is all bad, attempting to destroy the football and set destination to the route 
+            var ball = targetPlayer.GetComponent<FootBall>(); //todo this is all bad, attempting to destroy the football and set destination to the route 
             if (ball != null)
             {
                SetDestination(startGoal.transform.position);
@@ -238,7 +238,7 @@ public class WR : FootBallAthlete
 
     IEnumerator DbBlock(DB db)
     {
-        Debug.Log("Block DB");
+        Debug.Log("BeBlocked DB");
         float pressTime = 1f; // 3 seconds you can change this 
         //to whatever you want
         float pressTimeNorm = 0;

@@ -6,7 +6,7 @@ using UnityEngine.AI;
 using UnityEngine.Experimental.UIElements;
 
 
-public class HB : FootBallAthlete
+public class HB : OffPlayer
 {
 
     // Use this for initialization
@@ -22,11 +22,21 @@ public class HB : FootBallAthlete
         navMeshAgent = GetComponent<NavMeshAgent>();
 
         navMeshAgent.destination = transform.position;
-        //target = startGoal.transform;
+        //targetPlayer = startGoal.transform;
         //lr.material.color = LineColor;
+        dLine = FindObjectsOfType<Dline>();
+
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
         gameManager.hikeTheBall += HikeTheBall;
+        gameManager.shedBlock += DefShedBlock;
+    }
+
+    private void DefShedBlock(FootBallAthlete brokeBlock)
+    {
+        //todo check assignment
+        isBlocker = true;
+        BlockProtection();
     }
 
     private void HikeTheBall(bool wasHiked)
@@ -38,11 +48,18 @@ public class HB : FootBallAthlete
     void Update()
     {
         if (!gameManager.isHiked) return;
+        if (gameManager.isRun) return;
+       
 
-        if (gameManager.isRun)
+        
+        if (gameManager.isPass)
         {
-
+            if (isBlocker)
+            {
+                BlockProtection();
+            }
         }
+
     }
     private void FixedUpdate()
     {

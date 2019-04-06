@@ -130,7 +130,7 @@ public class WaypointFollower : MonoBehaviour
 
         Vector3 nextPosition, nextDelta;
         do
-        { // Making sure our target point is far enough ahead on the route.
+        { // Making sure our targetPlayer point is far enough ahead on the route.
             progressDistance += Time.deltaTime * currentSpeed * .8f;
             nextPosition = circuit.GetRoutePoint(progressDistance).position;
             nextDelta = nextPosition - transform.position;

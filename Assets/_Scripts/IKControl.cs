@@ -27,7 +27,7 @@ public class IKControl : MonoBehaviour
             if (isActive)
             {
 
-                // Set the look target position, if one has been assigned
+                // Set the look targetPlayer position, if one has been assigned
                 if (lookObj != null)
                 {
                     //Debug.Log("Look at " + lookObj);
@@ -35,7 +35,7 @@ public class IKControl : MonoBehaviour
                     animator.SetLookAtPosition(lookObj.position);
                 }
 
-                // Set the right hand target position and rotation, if one has been assigned
+                // Set the right hand targetPlayer position and rotation, if one has been assigned
                 if (rightHandObj != null)
                 {
                     animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);

@@ -6,13 +6,10 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 
 
-public class Dline : FootBallAthlete
+public class Dline : DefPlayer
 {
 
-    public bool wasBlocked = false;
-    [SerializeField] Image blockBar;
-    private float blockCooldown = 2f;
-    [HideInInspector] public bool isBlocked;
+   
     // Start is called before the first frame update
     void Start()
     {
@@ -50,14 +47,14 @@ public class Dline : FootBallAthlete
     {
         if (!gameManager.isHiked) return;
 
-        if (target == null)
+        if (targetPlayer == null)
         {
-            target = GameObject.FindGameObjectWithTag("Player").transform;
+            targetPlayer = GameObject.FindGameObjectWithTag("Player").transform;
         }
-        SetTarget(target);
+        SetTargetPlayer(targetPlayer);
 
         if (wasBlocked && !isBlocked)
-            StartCoroutine(BlockCoolDown()); 
+            StartCoroutine("BlockCoolDown"); 
     }
     private void FixedUpdate()
     {
@@ -65,46 +62,17 @@ public class Dline : FootBallAthlete
     }
 
 
-    IEnumerator BlockCoolDown()
-    {
-        yield return new WaitForSeconds(blockCooldown);
-        wasBlocked = false;
-    }
-
-    public void SetTarget(Transform targetSetter)
-    {
-       navMeshAgent.SetDestination(targetSetter.position);
-       target = targetSetter;
-    }
-
     public void HikeTheBall(bool wasHiked)
     {
         anim.SetTrigger("HikeTrigger");
     }
     
-    public void Block(float blockTimeNorm, Oline blocker)
-    {
-        canvas.enabled = true;
-        canvas.transform.LookAt(Camera.main.transform);
-        SetTarget(blocker.transform);
-        blockBar.fillAmount = blockTimeNorm;
-        navMeshAgent.acceleration = 0f;
-        navMeshAgent.speed = 0f;
-        isBlocked = true;
-    }
+   
 
-    public void ReleaseBlock()
-    {
-        canvas.enabled = !canvas.enabled;
-        isBlocked = false;
-        wasBlocked = true;
-        SetTarget(GameObject.FindGameObjectWithTag("Player").transform);
-        navMeshAgent.speed = navStartSpeed;
-        navMeshAgent.acceleration = navStartAccel;
-    }
+   
 
     public void BallOwnerChange(FootBallAthlete ballOwner)
     {
-        SetTarget(ballOwner.transform);
+        SetTargetPlayer(ballOwner.transform);
     }
 }
