@@ -109,6 +109,7 @@ public class QB : OffPlayer {
         if (gameManager.isRun)
         {
             Debug.Log("Run Play");
+            userControl.enabled = false;
             gameManager.Hike();
        
         }

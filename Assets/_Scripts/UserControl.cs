@@ -17,6 +17,7 @@ public class UserControl : MonoBehaviour
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         gameManager = FindObjectOfType<GameManager>();
+        controlPlayer = GetComponent<FootBallAthlete>();
     }
 
     // Update is called once per frame
@@ -24,6 +25,7 @@ public class UserControl : MonoBehaviour
     {
         
         if (!gameManager.isHiked) return;
+        if (controlPlayer.userControl == false) return;
              
         float speed = 5; // todo make setable variable
         float h = CrossPlatformInputManager.GetAxis("Horizontal");
@@ -33,6 +35,7 @@ public class UserControl : MonoBehaviour
     }
     public void StrafeMove(float h, float v, float speed)
     {
+        if (controlPlayer.userControl == false) return;
         anim.SetFloat("VelocityX", h * speed);
         anim.SetFloat("VelocityZ", v * speed);
         rb.velocity = new Vector3(h * speed, 0, v * speed);
