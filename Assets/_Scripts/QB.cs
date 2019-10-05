@@ -179,6 +179,7 @@ public class QB : OffPlayer {
         var thrownBall = Instantiate(footBall, throwingHand.transform.position, lookAt); //todo put footballs in hierarchy container
         FootBall thrownBallScript = thrownBall.GetComponent<FootBall>();
         thrownBallScript.PassFootBallToMovingTarget(this, targetWr, thrownBallScript, throwArc, throwPower);
+        gameManager.isPassStarted = true;
         //Destroy(thrownBall, 3f); //todo get better solution to removing footballs
     }
 

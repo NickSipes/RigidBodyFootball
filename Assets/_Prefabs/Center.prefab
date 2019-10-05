@@ -328,7 +328,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: bb0a9b506cb871749ad0d3295d91bcf2, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -349,7 +349,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!136 &3088913700424050467
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -375,7 +375,7 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 10
-  m_Acceleration: 8
+  m_Acceleration: 38
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 1
@@ -398,25 +398,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7158e21f68c173408644ae34e4e3329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startGoal: {fileID: 0}
   materialRenderer: {fileID: 0}
+  iK: {fileID: 0}
+  terrain: {fileID: 0}
   qb: {fileID: 0}
   startColor: {r: 0, g: 0, b: 0, a: 0}
+  rayColor: {r: 0, g: 0, b: 0, a: 0}
   navMeshAgent: {fileID: 0}
   navStartSpeed: 0
   navStartAccel: 0
   highlightColor: {r: 0, g: 0, b: 0, a: 0}
-  LineColor: {r: 0, g: 0, b: 0, a: 0}
-  aiCharacter: {fileID: 0}
   rb: {fileID: 0}
   anim: {fileID: 0}
-  startGoal: {fileID: 0}
   passTarget: {x: 0, y: 0, z: 0}
   beenPressed: 0
   footBall: {fileID: 0}
   canvas: {fileID: 0}
   pressBar: {fileID: 0}
   isHiked: 0
-  target: {fileID: 0}
+  targetPlayer: {fileID: 0}
   gameManager: {fileID: 0}
   isBlocking: 0
   wideRecievers: []
@@ -425,18 +426,21 @@ MonoBehaviour:
   oLine: []
   dLine: []
   startTarget: {fileID: 0}
-  zoneSize: 0
-  zoneCenter: {x: 0, y: 0, z: 0}
-  zoneCenterGO: {fileID: 0}
+  defZoneSize: 0
+  zone: {fileID: 0}
   targetWr: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
   isMan: 0
   isZone: 0
   isPressing: 0
-  userControl: {fileID: 0}
-  thirdPerson: {fileID: 0}
+  isCatching: 0
   cameraFollow: {fileID: 0}
+  userControl: {fileID: 0}
+  cameraRaycaster: {fileID: 0}
+  isSelected: 0
+  blockCoolDown: 1
+  canBlock: 1
 --- !u!1 &3088913700437291918
 GameObject:
   m_ObjectHideFlags: 0

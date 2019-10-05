@@ -48,10 +48,13 @@ public class HB : OffPlayer
     void Update()
     {
         if (!gameManager.isHiked) return;
-        if (gameManager.isRun) return;
-       
 
-        
+        if (gameManager.isRun && gameManager.ballOwner == this)
+        {
+            transform.forward = Vector3.forward;
+            navMeshAgent.enabled = false;
+        }
+
         if (gameManager.isPass)
         {
             if (isBlocker)

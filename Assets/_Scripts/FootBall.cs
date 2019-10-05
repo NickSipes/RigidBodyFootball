@@ -53,7 +53,6 @@ public class FootBall : MonoBehaviour
         if (rb == null)
         {
             rb = GetComponent<Rigidbody>();
-     
         }
 
         //targetPos = GetPositionIn(2, wr);

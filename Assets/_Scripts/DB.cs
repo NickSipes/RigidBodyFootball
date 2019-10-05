@@ -9,8 +9,6 @@ public class DB : DefPlayer
 
     //todo create class between Off and Def based on FootballAthlete
 
-    [SerializeField] float maxAngle;
-    [SerializeField] float maxRadius;
     [SerializeField] internal int zoneLayer = 8;
 
 
@@ -110,10 +108,10 @@ public class DB : DefPlayer
     void FixedUpdate()
     {
         base.FixedUpdate();
-        Vector3 angleFOV2 = Quaternion.AngleAxis(maxAngle, transform.up) * transform.forward * maxRadius;
-        Vector3 angleFOV1 = Quaternion.AngleAxis(-maxAngle, transform.up) * transform.forward * maxRadius;
-        Debug.DrawRay(transform.position, angleFOV2);
-        Debug.DrawRay(transform.position, angleFOV1);
+        //Vector3 angleFOV2 = Quaternion.AngleAxis(maxAngle, transform.up) * transform.forward * maxRadius;
+        //Vector3 angleFOV1 = Quaternion.AngleAxis(-maxAngle, transform.up) * transform.forward * maxRadius;
+        //Debug.DrawRay(transform.position, angleFOV2);
+        //Debug.DrawRay(transform.position, angleFOV1);
 
     }
     
@@ -184,7 +182,7 @@ public class DB : DefPlayer
     IEnumerator WrPress(WR wr)
     {
         isPressing = true;
-        float pressTime = 1f;
+        float pressTime = .5f;
         anim.SetTrigger("PressTrigger");
         SetDestination(wr.transform.position + transform.forward);
         float pressTimeNorm = 0;

@@ -140,6 +140,7 @@ public class WR : OffPlayer
             navMeshAgent.ResetPath();
             navMeshAgent.enabled = false;
             gameManager.ChangeBallOwner(GameObject.FindGameObjectWithTag("Player"), gameObject);
+            gameManager.isPassStarted = false;
 
         }
         ResetRoute();

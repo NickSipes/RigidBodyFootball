@@ -71,8 +71,4 @@ public class Dline : DefPlayer
 
    
 
-    public void BallOwnerChange(FootBallAthlete ballOwner)
-    {
-        SetTargetPlayer(ballOwner.transform);
-    }
 }

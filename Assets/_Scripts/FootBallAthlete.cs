@@ -28,6 +28,11 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public Animator anim;
     //public LineRenderer lr;
 
+
+
+    [SerializeField] float maxAngle = 35;
+    [SerializeField] float maxRadius = 5;
+
     [HideInInspector] public Vector3 passTarget;
     [HideInInspector] public bool beenPressed = false;
     [HideInInspector] public FootBall footBall;
@@ -96,7 +101,7 @@ public class FootBallAthlete : MonoBehaviour
         var collGo = collision.gameObject;
         if (collGo.transform == terrain.transform)return;
         
-        Debug.Log("Collision " + collGo.name + " and " + name);
+        //Debug.Log("Collision " + collGo.name + " and " + name);
         ContactPoint contacts = collision.contacts[0];
         Debug.DrawLine(transform.position, contacts.point);
         foreach (ContactPoint contact in collision.contacts)
@@ -110,7 +115,7 @@ public class FootBallAthlete : MonoBehaviour
             FootBallAthlete playerType = collGo.GetComponent<FootBallAthlete>();
             if (playerType is OffPlayer)
             {
-                Tackle( GameManager.instance.ballOwner);
+                Tackle(GameManager.instance.ballOwner);
           
             }
         }
@@ -127,21 +132,29 @@ public class FootBallAthlete : MonoBehaviour
         //need off vs def check
         //anim.SetTrigger("TackleTrigger");
         instanceBallOwner.StartCoroutine("BeTackled");
-     
     }
 
     internal IEnumerator BeTackled()
     {
         materialRenderer.material.color = Color.red;
         yield return new WaitForSeconds(.5f);
+        
+        if(gameManager.isPassStarted == false && !gameManager.isRapidfire) gameManager.ResetScene();
+
         materialRenderer.material.color = startColor;
     }
+
     internal void FixedUpdate()
     {
-        Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
-        Debug.DrawRay(transform.position, forward, rayColor);
+        //Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
+        //Debug.DrawRay(transform.position, forward, rayColor);
+        Vector3 angleFOV2 = Quaternion.AngleAxis(maxAngle, transform.up) * transform.forward * maxRadius;
+        Vector3 angleFOV1 = Quaternion.AngleAxis(-maxAngle, transform.up) * transform.forward * maxRadius;
+        Debug.DrawRay(transform.position, angleFOV2, rayColor);
+        Debug.DrawRay(transform.position, angleFOV1, rayColor);
         RaycastForward();
     }
+    
     internal void RaycastForward()
     {
         RaycastHit[] hits;
@@ -212,27 +225,27 @@ public class FootBallAthlete : MonoBehaviour
 
         return bestTarget;
     }
-    internal Transform GetClosestDline(Dline[] enemies)
-    {
-        Transform bestTarget = null;
-        float closestDistanceSqr = Mathf.Infinity;
-        Vector3 currentPosition = transform.position;
+    //internal Transform GetClosestDline(Dline[] enemies)
+    //{
+    //    Transform bestTarget = null;
+    //    float closestDistanceSqr = Mathf.Infinity;
+    //    Vector3 currentPosition = transform.position;
 
-        foreach (Dline potentialTarget in enemies)
-        {
+    //    foreach (Dline potentialTarget in enemies)
+    //    {
 
-            Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
-            float dSqrToTarget = directionToTarget.sqrMagnitude;
-            if (dSqrToTarget < closestDistanceSqr)
-            {
+    //        Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
+    //        float dSqrToTarget = directionToTarget.sqrMagnitude;
+    //        if (dSqrToTarget < closestDistanceSqr)
+    //        {
 
-                closestDistanceSqr = dSqrToTarget;
-                bestTarget = potentialTarget.transform;
-            }
-        }
+    //            closestDistanceSqr = dSqrToTarget;
+    //            bestTarget = potentialTarget.transform;
+    //        }
+    //    }
 
-        return bestTarget;
-    }
+    //    return bestTarget;
+    //}
     internal Transform GetClosestDB(DB[] enemies)
     {
         Transform bestTarget = null;
@@ -278,6 +291,7 @@ public class FootBallAthlete : MonoBehaviour
 
 public class OffPlayer : FootBallAthlete
 {
+    public float blockRange = 3;
     public float blockCoolDown = 1f;
     public bool canBlock = true;
     internal bool isBlocker;
@@ -285,9 +299,21 @@ public class OffPlayer : FootBallAthlete
     {
         if(!canBlock)return;;
         //todo change code to be moving forward with blocks, get to the second level after shedding first defender
+
+        //sudo get positions of all other blockers
+        var blockTargets = gameManager.defPlayers;
+        
+        foreach (var defender in blockTargets)
+        {
+            if ((defender.transform.position - transform.position).magnitude < blockRange)
+            {
+
+            };
+        }
+
         if (targetPlayer == null)
         {
-           targetPlayer = GetClosestDefPlayer(FindObjectsOfType<DefPlayer>());
+           targetPlayer = GetClosestDefPlayer(gameManager.defPlayers);
         }
         Vector3 directionToTarget = targetPlayer.position - transform.position;
         transform.LookAt(targetPlayer);
@@ -371,7 +397,7 @@ public class DefPlayer : FootBallAthlete
 
         if (!blockPlayers.Contains(blocker))
         {
-            print(blocker.name + " added to list");
+            //print(blocker.name + " added to list");
             blockPlayers.Add(blocker);
         }
 
@@ -401,6 +427,10 @@ public class DefPlayer : FootBallAthlete
         wasBlocked = false;
     }
 
+    public void BallOwnerChange(FootBallAthlete ballOwner)
+    {
+        SetTargetPlayer(ballOwner.transform);
+    }
 
 }
 

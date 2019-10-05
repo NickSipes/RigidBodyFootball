@@ -11,9 +11,15 @@ public class GameManager : MonoBehaviour
 
     FootBallAthlete ballAthlete;
     [HideInInspector] public GameObject selector;
+    public GameObject UIStuff;
     public bool isRun = false;
     public bool isPass = false;
     public bool isHiked = false;
+
+
+    public bool isRapidfire;
+    
+    [HideInInspector] public bool isPassStarted = false;
     //public Object ballOwner;
     // Start is called before the first frame update
     public CameraFollow cameraFollow;
@@ -39,11 +45,12 @@ public class GameManager : MonoBehaviour
     public delegate void ShedBlock(FootBallAthlete brokeBlock);
     public event ShedBlock shedBlock;
 
-    [HideInInspector] public Oline[] oLine;
-            [HideInInspector] public Dline[] dLine;
+    [HideInInspector] public OffPlayer[] offPlayers;
+    [HideInInspector] public DefPlayer[] defPlayers;
     internal static GameManager instance;
     public FootBallAthlete ballOwner;
 
+    //todo instantiate UIStuff at runtime
     private void Awake()
     {
         if (instance != null)
@@ -55,8 +62,8 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        oLine = FindObjectsOfType<Oline>();
-        dLine = FindObjectsOfType<Dline>();
+        offPlayers = FindObjectsOfType<OffPlayer>();
+        defPlayers = FindObjectsOfType<DefPlayer>();
         cameraFollow = FindObjectOfType<CameraFollow>();
     }
 
@@ -68,7 +75,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       // if(ballOwner != null)
+        if(ballOwner != null)
         {
 
         }

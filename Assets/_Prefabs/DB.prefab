@@ -1812,7 +1812,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 84
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!136 &136194979405383736
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1880,7 +1880,7 @@ MonoBehaviour:
   canvas: {fileID: 303529278}
   pressBar: {fileID: 0}
   isHiked: 0
-  target: {fileID: 0}
+  targetPlayer: {fileID: 0}
   gameManager: {fileID: 0}
   isBlocking: 0
   wideRecievers: []
@@ -1902,6 +1902,9 @@ MonoBehaviour:
   userControl: {fileID: 0}
   cameraRaycaster: {fileID: 0}
   isSelected: 0
+  isBlocked: 0
+  wasBlocked: 0
+  blockBar: {fileID: 0}
   maxAngle: 20
   maxRadius: 10
   zoneLayer: 8
