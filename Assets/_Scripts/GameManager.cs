@@ -123,6 +123,7 @@ public class GameManager : MonoBehaviour
     }
     public void AttemptPass(QB ballThrower, WR ballReciever, FootBall ball,float arcType, float power)
     {
+        
         passAttempt(ballThrower, ballReciever, ball, arcType, power);
     }
     

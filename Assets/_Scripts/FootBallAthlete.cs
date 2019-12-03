@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
-using UnityEngine.XR.WSA.Input;
 
 public class FootBallAthlete : MonoBehaviour
 {
@@ -13,7 +11,7 @@ public class FootBallAthlete : MonoBehaviour
     public Renderer materialRenderer;
     [HideInInspector] public IKControl iK;
     [HideInInspector] public Terrain terrain;
-    [HideInInspector] public QB qb; 
+    [HideInInspector] public QB qb;
 
     [HideInInspector] public Color startColor;
     [HideInInspector] public Color rayColor;
@@ -24,7 +22,7 @@ public class FootBallAthlete : MonoBehaviour
     //[HideInInspector] public Seeker seeker;
     //[HideInInspector] public RichAI ai;
     public Color highlightColor;
-  
+
 
     [HideInInspector] public Rigidbody rb;
     [HideInInspector] public Animator anim;
@@ -49,7 +47,8 @@ public class FootBallAthlete : MonoBehaviour
     public Routes[] routes;
     public Routes myRoute;
     internal int totalCuts;
-    internal bool isAtLastCut = false;
+    internal Vector3 lastCutVector;
+    internal bool wasAtLastCut = false;
     internal int currentRouteIndex = 0;
     internal float routeCutTolerance = 1f;
     internal float timeSinceArrivedAtRouteCut;
@@ -64,13 +63,13 @@ public class FootBallAthlete : MonoBehaviour
 
     [Range(5, 10)]
     public float defZoneSize; //todo should this be determined by the Zone? //Maybe awareness checks
-  
+
     [HideInInspector] public Zones zone;
     [HideInInspector] public WR targetWr;
     [HideInInspector] public HB targetHb;
     [HideInInspector] public DB targetDb;
 
-    
+
     public bool isMan;
     public bool isZone;
 
@@ -107,11 +106,11 @@ public class FootBallAthlete : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if(this is OffPlayer)return;
-        if(!terrain)GetTerrain();
+        if (this is OffPlayer) return;
+        if (!terrain) GetTerrain();
         var collGo = collision.gameObject;
-        if (collGo.transform == terrain.transform)return;
-        
+        if (collGo.transform == terrain.transform) return;
+
         //Debug.Log("Collision " + collGo.name + " and " + name);
         ContactPoint contacts = collision.contacts[0];
         Debug.DrawLine(transform.position, contacts.point);
@@ -127,14 +126,14 @@ public class FootBallAthlete : MonoBehaviour
             if (playerType is OffPlayer)
             {
                 Tackle(GameManager.instance.ballOwner);
-          
+
             }
         }
         if (collision.relativeVelocity.magnitude > 2)
         {
             Debug.Log("Collision magnitude");
         }
-    
+
 
     }
 
@@ -149,8 +148,8 @@ public class FootBallAthlete : MonoBehaviour
     {
         materialRenderer.material.color = Color.red;
         yield return new WaitForSeconds(.5f);
-        
-        if(gameManager.isPassStarted == false && !gameManager.isRapidfire) gameManager.ResetScene();
+
+        if (gameManager.isPassStarted == false && !gameManager.isRapidfire) gameManager.ResetScene();
 
         materialRenderer.material.color = startColor;
     }
@@ -165,7 +164,7 @@ public class FootBallAthlete : MonoBehaviour
         Debug.DrawRay(transform.position, angleFOV1, rayColor);
         RaycastForward();
     }
-    
+
     internal void RaycastForward()
     {
         RaycastHit[] hits;
@@ -297,7 +296,7 @@ public class FootBallAthlete : MonoBehaviour
 
         return bestTarget;
     }
-    
+
 }
 
 public class OffPlayer : FootBallAthlete
@@ -308,12 +307,12 @@ public class OffPlayer : FootBallAthlete
     internal bool isBlocker;
     internal void BlockProtection() //todo consolidate duplicate code
     {
-        if(!canBlock)return;;
+        if (!canBlock) return; ;
         //todo change code to be moving forward with blocks, get to the second level after shedding first defender
 
         //sudo get positions of all other blockers
         var blockTargets = gameManager.defPlayers;
-        
+
         foreach (var defender in blockTargets)
         {
             if ((defender.transform.position - transform.position).magnitude < blockRange)
@@ -324,26 +323,26 @@ public class OffPlayer : FootBallAthlete
 
         if (targetPlayer == null)
         {
-           targetPlayer = GetClosestDefPlayer(gameManager.defPlayers);
+            targetPlayer = GetClosestDefPlayer(gameManager.defPlayers);
         }
         Vector3 directionToTarget = targetPlayer.position - transform.position;
         transform.LookAt(targetPlayer);
-        
-        if(gameManager.isRun)SetTargetDlineRun(targetPlayer);
-        if(gameManager.isPass)SetTargetDline(targetPlayer);
+
+        if (gameManager.isRun) SetTargetDlineRun(targetPlayer);
+        if (gameManager.isPass) SetTargetDline(targetPlayer);
 
         float dSqrToTarget = directionToTarget.sqrMagnitude;
         if (dSqrToTarget < 3)//todo setup block range variable
         {
             var defPlayer = targetPlayer.GetComponent<DefPlayer>();
-            if(!isBlocking) StartCoroutine("BlockTarget", targetPlayer);
+            if (!isBlocking) StartCoroutine("BlockTarget", targetPlayer);
         }
     }
 
 
     private void SetTargetDlineRun(Transform target) //todo collapse into single function
     {
-     
+
         SetDestination(target.position); // 
     }
 
@@ -358,7 +357,7 @@ public class OffPlayer : FootBallAthlete
         //todo 
         var defPlayer = target.GetComponent<DefPlayer>();
 
-        if (defPlayer.blockPlayers.Contains(this))yield break;
+        if (defPlayer.blockPlayers.Contains(this)) yield break;
 
         float blockTime = 1f; //todo make public variable
         float blockTimeNorm = 0;
@@ -381,7 +380,7 @@ public class OffPlayer : FootBallAthlete
         canBlock = true;
     }
 
-    
+
 }
 
 public class DefPlayer : FootBallAthlete

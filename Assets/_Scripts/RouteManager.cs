@@ -9,7 +9,9 @@ public class RouteManager : MonoBehaviour
     public Routes routes;
     private WR[] wrs;
     private WR wr;
+
     GameManager gameManager;
+
     // Use this for initialization
     void Start()
     {
@@ -17,13 +19,11 @@ public class RouteManager : MonoBehaviour
         wrs = FindObjectsOfType<WR>();
         routes = this.GetComponentInChildren<Routes>();
     }
-
-    // Update is called once per frame
     void Update()
     {
         if (wr == null) return;
 
-      }
+    }
     public void SetWr(WR wR)
     {
         wr = wR;

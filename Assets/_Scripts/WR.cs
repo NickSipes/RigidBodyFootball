@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using System.Xml.Schema;
-using UnityEditor;
 using UnityEngine;
 
 public class WR : OffPlayer
@@ -42,7 +40,7 @@ public class WR : OffPlayer
 
         AddClickCollider();
         //start goal set by inspector
-    
+
     }
 
     private void AddClickCollider()
@@ -51,32 +49,45 @@ public class WR : OffPlayer
         sphereCollider.radius = 3f;//todo make inspector settable
         sphereCollider.isTrigger = true;
         sphereCollider.tag = "ClickCollider";
-        
+
     }
 
     // Update is called once per frame
-    
+
     void Update()
     {
 
         if (!gameManager.isHiked)
         {
-            navMeshAgent.isStopped = true;
+            StopNavMeshAgent();
             if (myRoute == null)
-                {
-                    GetRoute();
-                }
-            
+            {
+                GetRoute();
+            }
+
 
             return;
         }
+        if (wasAtLastCut)
+        {
+            StopNavMeshAgent();
+            Debug.Log("last cut");
+            return;
+        }
+
         if (gameManager.WhoHasBall() == this) return;
         if (isCatching) return;
         if (gameManager.isPass)
         {
-            if(isAtLastCut) return;
 
-            RunRoute();
+            if (IsEndOfRoute())
+            {
+                navMeshAgent.isStopped = true;
+                Debug.Log("EndOfRoute Update");
+                return;
+            }
+
+            if (!IsEndOfRoute()) RunRoute();
             timeSinceArrivedAtRouteCut += Time.deltaTime;
         }
         if (gameManager.isRun)
@@ -88,43 +99,56 @@ public class WR : OffPlayer
                 StartCoroutine(DbBlock(targetDb));
             return;
         }
-       
+
 
 
     }
 
+    private void StopNavMeshAgent()
+    {
+        if (!navMeshAgent.isStopped)
+        {
+            navMeshAgent.isStopped = true;
+            Debug.Log("NavAgent Stopped");
+        }
+    }
+
     private void RunRoute()
     {
-        
+
         if (myRoute != null)
         {
-           
+
             if (AtRouteCut())
             {
-                if (IsEndofRoute())
+                if (AtLastRouteCut())
                 {
-                    navMeshAgent.acceleration = 0;
-                    navMeshAgent.speed = 0;
-                    isAtLastCut = true;
+
+                    navMeshAgent.SetDestination(transform.localPosition);
                     navMeshAgent.velocity = Vector3.zero;
-                    navMeshAgent.isStopped = true;
-                    navMeshAgent.enabled = false;
-                    navMeshAgent.enabled = true;
+                    //navMeshAgent.acceleration = 0;
+                    //navMeshAgent.speed = 0;
+                    //navMeshAgent.ResetPath();
                     //navMeshAgent.enabled = false;
-                    Debug.Log("Stop nav agent");
+                    //navMeshAgent.enabled = true;
+                    //navMeshAgent.enabled = false;
+                    //ResetRoute();
+                    //rb.velocity = Vector3.zero;
+
+                    navMeshAgent.isStopped = true;
+                    wasAtLastCut = true;
+                    Debug.Log("set last cut true");
                     return;
                 }
                 timeSinceArrivedAtRouteCut = 0;
                 CycleRouteCut();
             }
-          
+
             nextPosition = GetCurrentRouteCut();
         }
 
         if (timeSinceArrivedAtRouteCut > myRoute.routeCutDwellTime)
         {
-            //ai.destination = nextPosition;
-            //ai.SearchPath();
             navMeshAgent.destination = nextPosition;
             navMeshAgent.isStopped = false;
             Debug.Log("start navemesh agent");
@@ -133,21 +157,29 @@ public class WR : OffPlayer
 
     private void CycleRouteCut()
     {
-        if (IsEndofRoute()) return;
+        if (IsEndOfRoute()) return;
 
         currentRouteIndex = myRoute.GetNextIndex(currentRouteIndex);
     }
 
-    private bool IsEndofRoute()
+    private bool IsEndOfRoute()
     {
-        return totalCuts == currentRouteIndex;
+        var endOfRoute = (totalCuts == currentRouteIndex && (transform.position - navMeshAgent.destination).sqrMagnitude <= 1);
+        Debug.Log("End of Route? = " + endOfRoute);
+        return endOfRoute;
     }
 
     private bool AtRouteCut()
     {
         float distanceToCut = Vector3.Distance(transform.position, GetCurrentRouteCut());
         return distanceToCut < routeCutTolerance;
-        
+
+
+    }
+    private bool AtLastRouteCut()
+    {
+        float distanceLastCut = Vector3.Distance(transform.position, (myRoute.transform.GetChild(totalCuts).position));
+        return distanceLastCut < routeCutTolerance;
     }
 
     private Vector3 GetCurrentRouteCut()
@@ -160,6 +192,7 @@ public class WR : OffPlayer
     {
         myRoute = routes[0];
         totalCuts = myRoute.transform.childCount - 1; //todo had to subtract 1 because arrays start at 0
+        lastCutVector = myRoute.transform.GetChild(totalCuts).position;
         Debug.Log("total cuts " + totalCuts);
         Debug.Log(myRoute.transform.name);
 
@@ -170,7 +203,7 @@ public class WR : OffPlayer
     {
         base.FixedUpdate();
     }
- 
+
 
     private void HikeTheBall(bool wasHiked) //event
     {
@@ -260,7 +293,7 @@ public class WR : OffPlayer
         if (!gameManager.isPass) return;
         if (wr != this) { materialRenderer.material.color = startColor; return; }
         //Debug.Log("MouseOverWR");
-    
+
         materialRenderer.material.color = highlightColor;
         gameManager.SetSelector(gameObject);
         //todo this is terrible, maybe a switch?  Plus should we really be calling a pass from the WR???
@@ -286,7 +319,7 @@ public class WR : OffPlayer
 
         if (mouseButton == 1) // Touch Pass
         {
-             passTarget = transform.position;
+            passTarget = transform.position;
             qb.BeginThrowAnim(passTarget, this, 2.3f, 20f);
         }
 
@@ -303,7 +336,7 @@ public class WR : OffPlayer
     void ClearSelector(bool isClear)
     {
         if (materialRenderer.material.color != startColor)
-        materialRenderer.material.color = startColor;
+            materialRenderer.material.color = startColor;
     }
 
     IEnumerator DbBlock(DB db)
