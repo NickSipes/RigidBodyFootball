@@ -12,7 +12,6 @@ public class WR : OffPlayer
 
         rayColor = Color.cyan;
         routes = FindObjectsOfType<Routes>();
-
         gameManager = FindObjectOfType<GameManager>();
         qb = FindObjectOfType<QB>();
         defBacks = FindObjectsOfType<DB>();
@@ -25,6 +24,7 @@ public class WR : OffPlayer
         cameraRaycaster = CameraRaycaster.instance;
         //targetPlayer = startGoal.transform;
         //lr.material.color = LineColor;
+        navMeshAgent.destination = transform.position;
 
         gameManager.clearSelector += ClearSelector;
         gameManager.onBallThrown += BallThrown;
@@ -33,13 +33,10 @@ public class WR : OffPlayer
 
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
-        navMeshAgent.destination = transform.position;
-
-        //seeker = GetComponent<Seeker>();
-        //ai = GetComponent<RichAI>();
 
         AddClickCollider();
         //start goal set by inspector
+        
 
     }
 
@@ -56,6 +53,7 @@ public class WR : OffPlayer
 
     void Update()
     {
+
 
         if (!gameManager.isHiked)
         {
@@ -90,6 +88,12 @@ public class WR : OffPlayer
             if (!IsEndOfRoute()) RunRoute();
             timeSinceArrivedAtRouteCut += Time.deltaTime;
         }
+
+        if (!gameManager.isHiked) return;
+        if (gameManager.WhoHasBall() == this) return;
+        if (isCatching) return;
+
+
         if (gameManager.isRun)
         {
             canvas.transform.LookAt(Camera.main.transform);
@@ -99,6 +103,7 @@ public class WR : OffPlayer
                 StartCoroutine(DbBlock(targetDb));
             return;
         }
+
 
 
 
@@ -191,10 +196,15 @@ public class WR : OffPlayer
     private void GetRoute()
     {
         myRoute = routes[0];
-        totalCuts = myRoute.transform.childCount - 1; //todo had to subtract 1 because arrays start at 0
+        var childCount = myRoute.transform.childCount;
+        totalCuts = childCount - 1; //todo had to subtract 1 because arrays start at 0
+        
         lastCutVector = myRoute.transform.GetChild(totalCuts).position;
-        Debug.Log("total cuts " + totalCuts);
+        Debug.Log("total cuts " + totalCuts + "Child Count " + (childCount - 1));
         Debug.Log(myRoute.transform.name);
+
+        if (!targetPlayer) GetTarget();
+        SetDestination(myRoute.GetWaypoint(currentRouteIndex));
 
     }
 
@@ -287,6 +297,29 @@ public class WR : OffPlayer
         targetPlayer = _target;
     }
 
+    private void GetTarget()
+    {
+        if(targetPlayer == null)
+        {
+          SetDestination(myRoute.GetWaypoint(currentRouteIndex));
+        }
+
+        //if ((navMeshAgent.destination - transform.position).magnitude < 1 && targetPlayer == null)
+        //{
+        //    SetTargetPlayer(startGoal.transform);
+        //    SetDestination(startGoal.transform.position);
+        //}
+
+        if (navMeshAgent.hasPath && navMeshAgent.remainingDistance < 2 && targetPlayer != null)
+        {
+            var ball = targetPlayer.GetComponent<FootBall>(); //todo this is all bad, attempting to destroy the football and set destination to the route 
+            if (ball != null)
+            {
+               SetDestination(myRoute.GetWaypoint(currentRouteIndex));
+            }
+        }
+        //DrawPath();
+    }
 
     void OnMouseOverWr(WR wr)
     {

@@ -126,7 +126,7 @@ public class DB : DefPlayer
 
     void PlayZone()
     {
-        //todo access WR routes to see if it will pass through zone and then move towards intercept point
+        //todo access WR route to see if it will pass through zone and then move towards intercept point
         if (targetWr == null)
         {
            //has return if enemy set
@@ -204,7 +204,7 @@ public class DB : DefPlayer
     }
     IEnumerator BackOffPress(WR wr)
     {
-        //read receiver routes, move backwards, release reciever to new defender, moves towards next receiver
+        //read receiver route, move backwards, release reciever to new defender, moves towards next receiver
 
 
         while ((transform.position - zone.transform.position).magnitude > 1)

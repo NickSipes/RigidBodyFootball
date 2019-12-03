@@ -88,7 +88,6 @@ GameObject:
   - component: {fileID: 114036973220166040}
   - component: {fileID: 123875910}
   - component: {fileID: 1014315521399687}
-  - component: {fileID: 2538698909825066548}
   m_Layer: 0
   m_Name: QB
   m_TagString: Player
@@ -176,9 +175,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startGoal: {fileID: 0}
-  route: {fileID: 0}
   materialRenderer: {fileID: 0}
   iK: {fileID: 0}
+  terrain: {fileID: 0}
   qb: {fileID: 0}
   startColor: {r: 0, g: 0, b: 0, a: 0}
   rayColor: {r: 0, g: 0, b: 0, a: 0}
@@ -186,18 +185,21 @@ MonoBehaviour:
   navStartSpeed: 0
   navStartAccel: 0
   highlightColor: {r: 0, g: 0, b: 0, a: 0}
-  LineColor: {r: 0, g: 0, b: 0, a: 0}
   rb: {fileID: 0}
   anim: {fileID: 0}
+  maxAngle: 35
+  maxRadius: 5
   passTarget: {x: 0, y: 0, z: 0}
   beenPressed: 0
   footBall: {fileID: 114875198895940586, guid: 056b4f200a2c2f74eb7c26762be412ec, type: 3}
   canvas: {fileID: 0}
   pressBar: {fileID: 0}
   isHiked: 0
-  target: {fileID: 0}
+  targetPlayer: {fileID: 0}
   gameManager: {fileID: 0}
   isBlocking: 0
+  routes: []
+  myRoute: {fileID: 0}
   wideRecievers: []
   defBacks: []
   hbs: []
@@ -217,6 +219,9 @@ MonoBehaviour:
   userControl: {fileID: 0}
   cameraRaycaster: {fileID: 0}
   isSelected: 0
+  blockRange: 3
+  blockCoolDown: 1
+  canBlock: 1
   speed: 10
   gravity: -5
 --- !u!195 &123875910
@@ -242,18 +247,6 @@ NavMeshAgent:
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &1014315521399687
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1014315521399686}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c13277d34ad31154998551f04756b97c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2538698909825066548
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -552,6 +545,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4114218988466344}
+  - component: {fileID: 149656510165604337}
   m_Layer: 0
   m_Name: EthanRightHand
   m_TagString: Untagged
@@ -578,6 +572,18 @@ Transform:
   m_Father: {fileID: 4071291897441606}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &149656510165604337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1097033251243774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 008c0f978c1fc0341a86ec3c80cbf484, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1135923537990048
 GameObject:
   m_ObjectHideFlags: 0
@@ -1095,6 +1101,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2078,6 +2085,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0

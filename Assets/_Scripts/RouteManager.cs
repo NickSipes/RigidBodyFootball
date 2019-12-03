@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class RouteManager : MonoBehaviour
 {
-    //todo collapse into Routes
+    //todo collapse into waypoint follower
 
-    public Routes routes;
     private WR[] wrs;
     private WR wr;
 
@@ -17,13 +16,8 @@ public class RouteManager : MonoBehaviour
     {
         gameManager = FindObjectOfType<GameManager>();
         wrs = FindObjectsOfType<WR>();
-        routes = this.GetComponentInChildren<Routes>();
     }
-    void Update()
-    {
-        if (wr == null) return;
 
-    }
     public void SetWr(WR wR)
     {
         wr = wR;

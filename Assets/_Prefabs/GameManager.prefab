@@ -43,9 +43,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef8aaf4de9743894683022625ceac9ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selector: {fileID: 0}
+  UIStuff: {fileID: 0}
   isRun: 0
   isPass: 0
   isHiked: 0
-  BallOwner: {fileID: 0}
-  oLine: []
-  dLine: []
+  isRapidfire: 1
+  isPassStarted: 0
+  cameraFollow: {fileID: 0}
+  offPlayers: []
+  defPlayers: []
+  ballOwner: {fileID: 0}
