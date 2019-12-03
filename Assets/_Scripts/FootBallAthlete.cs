@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using UnityEngine.XR.WSA.Input;
 
 public class FootBallAthlete : MonoBehaviour
 {
 
-    public RouteManager startGoal;
     //todo clean up inheritance and add setters and getters instead of public variables. Separate OffPlayers variables from DefPlayers variables
     public Renderer materialRenderer;
     [HideInInspector] public IKControl iK;
@@ -21,6 +21,8 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public NavMeshAgent navMeshAgent;
     [HideInInspector] public float navStartSpeed;
     [HideInInspector] public float navStartAccel;
+    //[HideInInspector] public Seeker seeker;
+    //[HideInInspector] public RichAI ai;
     public Color highlightColor;
   
 
@@ -43,6 +45,15 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public GameManager gameManager;
 
     [HideInInspector] public bool isBlocking;
+
+    public Routes[] routes;
+    public Routes myRoute;
+    internal int totalCuts;
+    internal bool isAtLastCut = false;
+    internal int currentRouteIndex = 0;
+    internal float routeCutTolerance = 1f;
+    internal float timeSinceArrivedAtRouteCut;
+    internal Vector3 nextPosition;
 
     [HideInInspector] public WR[] wideRecievers;
     [HideInInspector] public DB[] defBacks;

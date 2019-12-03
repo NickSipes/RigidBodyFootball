@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class RouteManager : MonoBehaviour
 {
-    //todo collapse into waypoint follower
+    //todo collapse into Routes
 
-    public WaypointFollower wayPointFollower;
+    public Routes routes;
     private WR[] wrs;
     private WR wr;
     GameManager gameManager;
@@ -15,7 +15,7 @@ public class RouteManager : MonoBehaviour
     {
         gameManager = FindObjectOfType<GameManager>();
         wrs = FindObjectsOfType<WR>();
-        wayPointFollower = GetComponent<WaypointFollower>();
+        routes = this.GetComponentInChildren<Routes>();
     }
 
     // Update is called once per frame
@@ -23,13 +23,7 @@ public class RouteManager : MonoBehaviour
     {
         if (wr == null) return;
 
-        if (wr.targetPlayer == transform)
-        {
-            wayPointFollower.currentSpeed = wr.navMeshAgent.speed;
-        }
-
-
-    }
+      }
     public void SetWr(WR wR)
     {
         wr = wR;
