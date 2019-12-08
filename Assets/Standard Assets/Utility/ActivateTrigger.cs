@@ -53,8 +53,8 @@ namespace UnityStandardAssets.Utility
                             if (targetGameObject != null)
                             {
                                 Instantiate(source, targetGameObject.transform.position,
-                                            targetGameObject.transform.rotation);
-                                DestroyObject(targetGameObject);
+                                            targetGameObject.transform.rotation); 
+                                Object.Destroy(targetGameObject);
                             }
                         }
                         break;

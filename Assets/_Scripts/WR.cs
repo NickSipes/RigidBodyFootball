@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Experimental.XR;
+using UnityEngine.UIElements;
 
 public class WR : OffPlayer
 {
@@ -30,13 +33,13 @@ public class WR : OffPlayer
         gameManager.onBallThrown += BallThrown;
         gameManager.hikeTheBall += HikeTheBall;
         cameraRaycaster.onMouseOverWr += OnMouseOverWr;
+        routeManager = FindObjectOfType<RouteManager>();
 
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
 
         AddClickCollider();
         //start goal set by inspector
-        
 
     }
 
@@ -50,10 +53,13 @@ public class WR : OffPlayer
     }
 
     // Update is called once per frame
+    void FixedUpdate()
+    {
+        base.FixedUpdate();
+    }
 
     void Update()
     {
-
 
         if (!gameManager.isHiked)
         {
@@ -62,38 +68,35 @@ public class WR : OffPlayer
             {
                 GetRoute();
             }
-
-
             return;
         }
         if (wasAtLastCut)
         {
-            StopNavMeshAgent();
+            WatchQb();
             Debug.Log("last cut");
             return;
         }
 
         if (gameManager.WhoHasBall() == this) return;
         if (isCatching) return;
+
         if (gameManager.isPass)
         {
 
             if (IsEndOfRoute())
             {
-                navMeshAgent.isStopped = true;
+                StopNavMeshAgent();
                 Debug.Log("EndOfRoute Update");
                 return;
             }
 
             if (!IsEndOfRoute()) RunRoute();
-            timeSinceArrivedAtRouteCut += Time.deltaTime;
+
         }
 
         if (!gameManager.isHiked) return;
         if (gameManager.WhoHasBall() == this) return;
         if (isCatching) return;
-
-
         if (gameManager.isRun)
         {
             canvas.transform.LookAt(Camera.main.transform);
@@ -104,66 +107,88 @@ public class WR : OffPlayer
             return;
         }
 
-
-
-
     }
 
     private void StopNavMeshAgent()
     {
-        if (!navMeshAgent.isStopped)
-        {
-            navMeshAgent.isStopped = true;
-            Debug.Log("NavAgent Stopped");
-        }
+        //if (!navMeshAgent.isStopped)
+        //{
+        //    navMeshAgent.isStopped = true;
+        //    Debug.Log("NavAgent Stopped");
+        //}
     }
+
+    private void GetRoute()
+    {
+        myRoute = Instantiate(routeManager.allRoutes[routeSelection],transform.position, transform.rotation).GetComponent<Routes>(); //todo get route index selection
+        myRoute.transform.name = routeManager.allRoutes[routeSelection].name;
+
+        // myRoute.transform.position = transform.position;
+
+        var childCount = myRoute.transform.childCount;
+        totalCuts = childCount - 1; //todo had to subtract 1 because arrays start at 0
+
+        lastCutVector = myRoute.transform.GetChild(totalCuts).position;
+        Debug.Log("total cuts " + totalCuts + "Child Count " + (childCount - 1));
+        Debug.Log(myRoute.transform.name);
+
+        if (!targetPlayer) GetTarget();
+        SetDestination(myRoute.GetWaypoint(currentRouteIndex));
+
+    }
+
 
     private void RunRoute()
     {
 
         if (myRoute != null)
         {
+            if (!AtRouteCut()) return;
 
-            if (AtRouteCut())
+            if (timeSinceArrivedAtRouteCut > myRoute.routeCutDwellTime)
             {
-                if (AtLastRouteCut())
-                {
-
-                    navMeshAgent.SetDestination(transform.localPosition);
-                    navMeshAgent.velocity = Vector3.zero;
-                    //navMeshAgent.acceleration = 0;
-                    //navMeshAgent.speed = 0;
-                    //navMeshAgent.ResetPath();
-                    //navMeshAgent.enabled = false;
-                    //navMeshAgent.enabled = true;
-                    //navMeshAgent.enabled = false;
-                    //ResetRoute();
-                    //rb.velocity = Vector3.zero;
-
-                    navMeshAgent.isStopped = true;
-                    wasAtLastCut = true;
-                    Debug.Log("set last cut true");
-                    return;
-                }
-                timeSinceArrivedAtRouteCut = 0;
                 CycleRouteCut();
+                nextPosition = GetCurrentRouteCut();
+                navMeshAgent.destination = nextPosition;
+                timeSinceArrivedAtRouteCut = 0;
+                Debug.Log("start NavMeshAgent");
+
+                if (!AtLastRouteCut()) return;
+                wasAtLastCut = true;
+                WatchQb();
+                Debug.Log("set last cut true");
+                return;
+
             }
 
-            nextPosition = GetCurrentRouteCut();
+            timeSinceArrivedAtRouteCut += Time.deltaTime;
         }
+    }
 
-        if (timeSinceArrivedAtRouteCut > myRoute.routeCutDwellTime)
-        {
-            navMeshAgent.destination = nextPosition;
-            navMeshAgent.isStopped = false;
-            Debug.Log("start navemesh agent");
-        }
+    void WatchQb()
+    {
+        EnableNavMeshAgent();
+        navMeshAgent.SetDestination(lastCutVector);
+        anim.SetTrigger("WatchQBTrigger");
+        //var speed = navStartSpeed;
+        //if (navMeshAgent.enabled)
+        //{
+        //    navMeshAgent.ResetPath();
+        //    navMeshAgent.enabled = false;
+        //}
+
+        //Vector3 dir = ((lastCutVector) - transform.position).normalized * speed;
+        //float v = dir.z;
+        //float h = dir.x;
+        //anim.SetFloat("VelocityX", h * speed);
+        //anim.SetFloat("VelocityZ", v * speed);
+        //rb.velocity = dir;
+        transform.LookAt(qb.transform.position);
+
     }
 
     private void CycleRouteCut()
     {
-        if (IsEndOfRoute()) return;
-
         currentRouteIndex = myRoute.GetNextIndex(currentRouteIndex);
     }
 
@@ -186,34 +211,11 @@ public class WR : OffPlayer
         float distanceLastCut = Vector3.Distance(transform.position, (myRoute.transform.GetChild(totalCuts).position));
         return distanceLastCut < routeCutTolerance;
     }
-
     private Vector3 GetCurrentRouteCut()
     {
         return myRoute.GetWaypoint(currentRouteIndex);
 
     }
-
-    private void GetRoute()
-    {
-        myRoute = routes[0];
-        var childCount = myRoute.transform.childCount;
-        totalCuts = childCount - 1; //todo had to subtract 1 because arrays start at 0
-        
-        lastCutVector = myRoute.transform.GetChild(totalCuts).position;
-        Debug.Log("total cuts " + totalCuts + "Child Count " + (childCount - 1));
-        Debug.Log(myRoute.transform.name);
-
-        if (!targetPlayer) GetTarget();
-        SetDestination(myRoute.GetWaypoint(currentRouteIndex));
-
-    }
-
-
-    void FixedUpdate()
-    {
-        base.FixedUpdate();
-    }
-
 
     private void HikeTheBall(bool wasHiked) //event
     {
@@ -239,6 +241,7 @@ public class WR : OffPlayer
             StartCoroutine("GetToImpactPos", impactPos);
         }
     }
+
 
     IEnumerator GetToImpactPos(Vector3 impact)
     {
@@ -273,8 +276,13 @@ public class WR : OffPlayer
                 cameraFollow.FollowBall(ball);
                 yield return new WaitForEndOfFrame();
             }
-            navMeshAgent.ResetPath();
-            navMeshAgent.enabled = false;
+
+            if (navMeshAgent.enabled == true)
+            {
+                navMeshAgent.ResetPath();
+                navMeshAgent.enabled = false;
+            }
+
             gameManager.ChangeBallOwner(GameObject.FindGameObjectWithTag("Player"), gameObject);
             gameManager.isPassStarted = false;
 
@@ -285,6 +293,7 @@ public class WR : OffPlayer
 
     public void ResetRoute() // Called from anim event
     {
+        myRoute = null;
         footBall = null;
         targetPlayer = null;
         isCatching = false;
@@ -299,9 +308,9 @@ public class WR : OffPlayer
 
     private void GetTarget()
     {
-        if(targetPlayer == null)
+        if (targetPlayer == null)
         {
-          SetDestination(myRoute.GetWaypoint(currentRouteIndex));
+            SetDestination(myRoute.GetWaypoint(currentRouteIndex));
         }
 
         //if ((navMeshAgent.destination - transform.position).magnitude < 1 && targetPlayer == null)
@@ -315,7 +324,7 @@ public class WR : OffPlayer
             var ball = targetPlayer.GetComponent<FootBall>(); //todo this is all bad, attempting to destroy the football and set destination to the route 
             if (ball != null)
             {
-               SetDestination(myRoute.GetWaypoint(currentRouteIndex));
+                SetDestination(myRoute.GetWaypoint(currentRouteIndex));
             }
         }
         //DrawPath();

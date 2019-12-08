@@ -29,7 +29,7 @@ public class DB : DefPlayer
         wideRecievers = FindObjectsOfType<WR>();
         hbs = FindObjectsOfType<HB>();
         navMeshAgent = GetComponent<NavMeshAgent>();
-        
+
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
         anim = GetComponent<Animator>();
@@ -64,6 +64,20 @@ public class DB : DefPlayer
         return transform.position + new Vector3(5, 0, 0); //todo this needs to be dependent on player responsibilities
     }
 
+    private void HikeTheBall(bool wasHiked)
+    {
+        anim.SetTrigger("HikeTrigger");
+        //todo move press code here!
+        var potientialTarget = GetClosestWr(wideRecievers);
+        if ((potientialTarget.transform.position - transform.position).magnitude < 5f)
+        {
+            SetTargetWr(potientialTarget);
+            if (targetWr.CanBePressed())
+                StartCoroutine(WrPress(targetWr));
+            //todo press range variable
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -74,6 +88,7 @@ public class DB : DefPlayer
         if (gameManager.isPass)
         {
             if (isBlockingPass) return;
+
             if (isPressing) return;
 
             if (isZone)
@@ -114,7 +129,7 @@ public class DB : DefPlayer
         //Debug.DrawRay(transform.position, angleFOV1);
 
     }
-    
+
     private void SetTargetWr(Transform targetTransform)
     {
         EnableNavMeshAgent();
@@ -129,8 +144,8 @@ public class DB : DefPlayer
         //todo access WR route to see if it will pass through zone and then move towards intercept point
         if (targetWr == null)
         {
-           //has return if enemy set
-            if (CheckZone())return;
+            //has return if enemy set
+            if (CheckZone()) return;
         }
         SetDestination(zone.zoneCenter);
 
@@ -152,7 +167,7 @@ public class DB : DefPlayer
         {
             RaycastHit[] hits = Physics.RaycastAll(reciever.transform.position, reciever.transform.forward, 100.0F);
             //if(hits.Length != 0)Debug.Log(hits.Length);
-           
+
             for (int i = 0; i < hits.Length; i++)
             {
                 RaycastHit hit = hits[i];
@@ -162,13 +177,13 @@ public class DB : DefPlayer
 
                     if (zoneObject == zone)
                     {
-                      //Maybe Method
-                     SetDestination(hit.point);
-                     Debug.DrawLine(transform.position, hit.point, Color.red);
-                     return true;
-                        
+                        //Maybe Method
+                        SetDestination(hit.point);
+                        Debug.DrawLine(transform.position, hit.point, Color.red);
+                        return true;
+
                     }
-                    
+
                 }
 
             }
@@ -197,27 +212,28 @@ public class DB : DefPlayer
         }
         anim.SetTrigger("ReleaseTrigger");
         StartCoroutine("BackOffPress", wr);
-
         wr.ReleasePress();
-
+        isPressing = false;
 
     }
     IEnumerator BackOffPress(WR wr)
     {
         //read receiver route, move backwards, release reciever to new defender, moves towards next receiver
-
-
         while ((transform.position - zone.transform.position).magnitude > 1)
         {
             //Vector3 dir = targetPlayer.position - transform.position;
-            BackOff(wr);
+            if (targetPlayer != null)
+            {
+                BackOff(wr);
+            }
             yield return new WaitForFixedUpdate();
         }
         StartCoroutine("TurnTowardsLOS");
-        //Debug.Log("zone center reached");
-        isPressing = false;
-        //Vector3 moveLeft = transform.position + new Vector3(2, 0, 0);
+        anim.SetTrigger("InZoneTrigger");
+        
         //todo this needs a stat machine to determine if the DB needs to chase the WR past the Zone, Does he have overhead help
+        //Debug.Log("zone center reached");
+        //Vector3 moveLeft = transform.position + new Vector3(2, 0, 0);
         //while ((transform.position - moveLeft).magnitude > 1)
         //{
         //    float speed = 3;
@@ -236,7 +252,6 @@ public class DB : DefPlayer
         //}
         //DisableNavmeshAgent();
         //navMeshAgent.ResetPath();
-        anim.SetTrigger("InZoneTrigger");
     }
     IEnumerator TurnTowardsLOS()
     {
@@ -263,14 +278,13 @@ public class DB : DefPlayer
     private void DisableNavmeshAgent()
     {
         navMeshAgent.enabled = false;
-     
     }
 
     private void BackOff(WR wr)
     {
 
 
-       DisableNavmeshAgent();
+        DisableNavmeshAgent();
 
         // turn around and run, cut left, or cut right
 
@@ -285,20 +299,6 @@ public class DB : DefPlayer
         //Vector3 tempVect = new Vector3(h, 0, v);
         //tempVect = tempVect.normalized * speed * Time.deltaTime;
         rb.velocity = dir;
-    }
-
-    private void HikeTheBall(bool wasHiked)
-    {
-        anim.SetTrigger("HikeTrigger");
-        //todo move press code here!
-        var potientialTarget = GetClosestWr(wideRecievers);
-        if ((potientialTarget.transform.position - transform.position).magnitude < 5f)
-        {
-            SetTargetWr(potientialTarget);
-            if (targetWr.CanBePressed())
-                StartCoroutine(WrPress(targetWr));
-            //todo press range variable
-        }
     }
 
     private void BallThrown(QB thrower, WR reciever, FootBall ball, Vector3 impactPos, float arcType, float power, bool isComplete)
@@ -330,7 +330,7 @@ public class DB : DefPlayer
         Vector3 fireVel, impactPos;
         Vector3 velocity = reciever.navMeshAgent.velocity;
 
-       
+
         //FTS Calculations https://github.com/forrestthewoods/lib_fts/tree/master/projects/unity/ballistic_trajectory
         float gravity;
 
@@ -362,7 +362,7 @@ public class DB : DefPlayer
         isBlockingPass = true;
         anim.SetTrigger("BlockPass");
         canvas.gameObject.SetActive(true);
-       
+
         while ((transform.position - ball.transform.position).magnitude > 2.7) //todo, this should be a calculation of anim time vs distance of football to targetPlayer.
         {
             //Debug.Log((transform.position - ball.transform.position).magnitude);
@@ -395,7 +395,7 @@ public class DB : DefPlayer
         targetHb = targetTransform.GetComponentInParent<HB>();
         //Debug.Log("Target Changed");
     }
-  
+
     public bool CanBePressed() //todo rename to block
     {
         if (!beenPressed)

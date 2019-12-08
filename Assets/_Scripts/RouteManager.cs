@@ -4,22 +4,12 @@ using UnityEngine;
 
 public class RouteManager : MonoBehaviour
 {
-    //todo collapse into waypoint follower
-
-    private WR[] wrs;
-    private WR wr;
-
+    [SerializeField] public Routes[] allRoutes;
     GameManager gameManager;
 
     // Use this for initialization
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
-        wrs = FindObjectsOfType<WR>();
-    }
-
-    public void SetWr(WR wR)
-    {
-        wr = wR;
     }
 }

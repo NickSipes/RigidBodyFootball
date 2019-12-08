@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class FootBallAthlete : MonoBehaviour
 {
 
-    public RouteManager startGoal;
+    //public RouteManager startGoal;
     //todo clean up inheritance and add setters and getters instead of public variables. Separate OffPlayers variables from DefPlayers variables
     public Renderer materialRenderer;
     [HideInInspector] public IKControl iK;
@@ -40,7 +40,7 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public bool isHiked = false;
     [HideInInspector] public Transform targetPlayer;
     [HideInInspector] public GameManager gameManager;
-
+    [HideInInspector] public RouteManager routeManager;
     [HideInInspector] public bool isBlocking;
 
 
@@ -307,9 +307,11 @@ public class OffPlayer : FootBallAthlete
     public float blockCoolDown = 1f;
     public bool canBlock = true;
     internal bool isBlocker;
+
     internal void BlockProtection() //todo consolidate duplicate code
     {
-        if (!canBlock) return; ;
+        if (!canBlock) return;
+        ;
         //todo change code to be moving forward with blocks, get to the second level after shedding first defender
 
         //sudo get positions of all other blockers
@@ -320,13 +322,16 @@ public class OffPlayer : FootBallAthlete
             if ((defender.transform.position - transform.position).magnitude < blockRange)
             {
 
-            };
+            }
+
+            ;
         }
 
         if (targetPlayer == null)
         {
             targetPlayer = GetClosestDefPlayer(gameManager.defPlayers);
         }
+
         Vector3 directionToTarget = targetPlayer.position - transform.position;
         transform.LookAt(targetPlayer);
 
@@ -334,7 +339,7 @@ public class OffPlayer : FootBallAthlete
         if (gameManager.isPass) SetTargetDline(targetPlayer);
 
         float dSqrToTarget = directionToTarget.sqrMagnitude;
-        if (dSqrToTarget < 3)//todo setup block range variable
+        if (dSqrToTarget < 3) //todo setup block range variable
         {
             var defPlayer = targetPlayer.GetComponent<DefPlayer>();
             if (!isBlocking) StartCoroutine("BlockTarget", targetPlayer);
@@ -351,7 +356,9 @@ public class OffPlayer : FootBallAthlete
     public void SetTargetDline(Transform target)
     {
         //if (isBlocking) return;
-        SetDestination(qb.transform.position + (target.position - qb.transform.position) / 2); // todo centralize ball carrier, access ballcarrier instead of hard coded transform
+        SetDestination(qb.transform.position +
+                       (target.position - qb.transform.position) /
+                       2); // todo centralize ball carrier, access ballcarrier instead of hard coded transform
     }
 
     IEnumerator BlockTarget(Transform target)
@@ -370,6 +377,7 @@ public class OffPlayer : FootBallAthlete
             defPlayer.BeBlocked(blockTimeNorm, this);
             yield return new WaitForEndOfFrame();
         }
+
         defPlayer.ReleaseBlock(this);
         isBlocking = false;
         canBlock = false;
@@ -382,7 +390,7 @@ public class OffPlayer : FootBallAthlete
         canBlock = true;
     }
 
-
+    public int routeSelection;
 }
 
 public class DefPlayer : FootBallAthlete
