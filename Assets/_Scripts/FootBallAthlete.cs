@@ -30,7 +30,7 @@ public class FootBallAthlete : MonoBehaviour
 
 
     [SerializeField] float maxAngle = 35;
-    [SerializeField] float maxRadius = 5;
+    [SerializeField] float maxRadius = 1;
 
     [HideInInspector] public Vector3 passTarget;
     [HideInInspector] public bool beenPressed = false;
@@ -160,8 +160,8 @@ public class FootBallAthlete : MonoBehaviour
     {
         //Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
         //Debug.DrawRay(transform.position, forward, rayColor);
-        Vector3 angleFOV2 = Quaternion.AngleAxis(maxAngle, transform.up) * transform.forward * maxRadius;
-        Vector3 angleFOV1 = Quaternion.AngleAxis(-maxAngle, transform.up) * transform.forward * maxRadius;
+        Vector3 angleFOV2 = Quaternion.AngleAxis(maxAngle, transform.up) * transform.forward;
+        Vector3 angleFOV1 = Quaternion.AngleAxis(-maxAngle, transform.up) * transform.forward;
         Debug.DrawRay(transform.position, angleFOV2, rayColor);
         Debug.DrawRay(transform.position, angleFOV1, rayColor);
         RaycastForward();

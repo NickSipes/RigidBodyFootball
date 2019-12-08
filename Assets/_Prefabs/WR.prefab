@@ -1384,7 +1384,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfdd3e2139f86ea438dfbbd4c59ceac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startGoal: {fileID: 0}
   materialRenderer: {fileID: 137472182022256350}
   iK: {fileID: 0}
   terrain: {fileID: 0}
@@ -1407,6 +1406,7 @@ MonoBehaviour:
   isHiked: 0
   targetPlayer: {fileID: 0}
   gameManager: {fileID: 0}
+  routeManager: {fileID: 0}
   isBlocking: 0
   routes: []
   myRoute: {fileID: 0}
@@ -1432,6 +1432,7 @@ MonoBehaviour:
   blockRange: 3
   blockCoolDown: 1
   canBlock: 1
+  routeSelection: 1
 --- !u!114 &7954969319134554546
 MonoBehaviour:
   m_ObjectHideFlags: 0

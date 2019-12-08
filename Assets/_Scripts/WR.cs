@@ -61,9 +61,11 @@ public class WR : OffPlayer
     void Update()
     {
 
+        if (gameManager.WhoHasBall() == this) return;
+
         if (!gameManager.isHiked)
         {
-            StopNavMeshAgent();
+            //StopNavMeshAgent();
             if (myRoute == null)
             {
                 GetRoute();
@@ -77,7 +79,6 @@ public class WR : OffPlayer
             return;
         }
 
-        if (gameManager.WhoHasBall() == this) return;
         if (isCatching) return;
 
         if (gameManager.isPass)
@@ -94,9 +95,6 @@ public class WR : OffPlayer
 
         }
 
-        if (!gameManager.isHiked) return;
-        if (gameManager.WhoHasBall() == this) return;
-        if (isCatching) return;
         if (gameManager.isRun)
         {
             canvas.transform.LookAt(Camera.main.transform);
@@ -111,19 +109,19 @@ public class WR : OffPlayer
 
     private void StopNavMeshAgent()
     {
-        //if (!navMeshAgent.isStopped)
-        //{
-        //    navMeshAgent.isStopped = true;
-        //    Debug.Log("NavAgent Stopped");
-        //}
+        if (!navMeshAgent.isStopped)
+        {
+            navMeshAgent.isStopped = true;
+            //Debug.Log("NavAgent Stopped");
+        }
     }
 
     private void GetRoute()
     {
-        myRoute = Instantiate(routeManager.allRoutes[routeSelection],transform.position, transform.rotation).GetComponent<Routes>(); //todo get route index selection
+        myRoute = Instantiate(routeManager.allRoutes[routeSelection], transform.position, transform.rotation).GetComponent<Routes>(); //todo get route index selection
         myRoute.transform.name = routeManager.allRoutes[routeSelection].name;
 
-        // myRoute.transform.position = transform.position;
+        //myRoute.transform.position = transform.position;
 
         var childCount = myRoute.transform.childCount;
         totalCuts = childCount - 1; //todo had to subtract 1 because arrays start at 0
@@ -132,6 +130,8 @@ public class WR : OffPlayer
         Debug.Log("total cuts " + totalCuts + "Child Count " + (childCount - 1));
         Debug.Log(myRoute.transform.name);
 
+        navMeshAgent.autoBraking = true;
+        navMeshAgent.stoppingDistance = 0f;
         if (!targetPlayer) GetTarget();
         SetDestination(myRoute.GetWaypoint(currentRouteIndex));
 
@@ -170,19 +170,6 @@ public class WR : OffPlayer
         EnableNavMeshAgent();
         navMeshAgent.SetDestination(lastCutVector);
         anim.SetTrigger("WatchQBTrigger");
-        //var speed = navStartSpeed;
-        //if (navMeshAgent.enabled)
-        //{
-        //    navMeshAgent.ResetPath();
-        //    navMeshAgent.enabled = false;
-        //}
-
-        //Vector3 dir = ((lastCutVector) - transform.position).normalized * speed;
-        //float v = dir.z;
-        //float h = dir.x;
-        //anim.SetFloat("VelocityX", h * speed);
-        //anim.SetFloat("VelocityZ", v * speed);
-        //rb.velocity = dir;
         transform.LookAt(qb.transform.position);
 
     }
@@ -190,6 +177,7 @@ public class WR : OffPlayer
     private void CycleRouteCut()
     {
         currentRouteIndex = myRoute.GetNextIndex(currentRouteIndex);
+
     }
 
     private bool IsEndOfRoute()
