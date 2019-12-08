@@ -67,14 +67,22 @@ public class DB : DefPlayer
     private void HikeTheBall(bool wasHiked)
     {
         anim.SetTrigger("HikeTrigger");
-        //todo move press code here!
-        var potientialTarget = GetClosestWr(wideRecievers);
-        if ((potientialTarget.transform.position - transform.position).magnitude < 5f)
+        if (gameManager.isRun)
         {
-            SetTargetWr(potientialTarget);
-            if (targetWr.CanBePressed())
-                StartCoroutine(WrPress(targetWr));
-            //todo press range variable
+
+        }
+
+        if (gameManager.isPass)
+        {
+            //todo move press code here!
+            var potientialTarget = GetClosestWr(wideRecievers);
+            if ((potientialTarget.transform.position - transform.position).magnitude < 5f)
+            {
+                SetTargetWr(potientialTarget);
+                if (targetWr.CanBePressed())
+                    StartCoroutine(WrPress(targetWr));
+                //todo press range variable
+            }
         }
     }
 
@@ -84,6 +92,11 @@ public class DB : DefPlayer
         if (!gameManager.isHiked)
             return;
 
+        if (gameManager.isRun)
+        {
+            PlayReact();
+
+        }
         // ReSharper disable once InvertIf
         if (gameManager.isPass)
         {
@@ -112,17 +125,23 @@ public class DB : DefPlayer
             }
 
             // ReSharper disable once InvertIf
-            if (gameManager.isRun)
-            {
-                targetPlayer = GetClosestHb(hbs);
-                SetTargetHb(targetPlayer);
-            }
         }
+       
+    }
+
+    private void PlayReact()
+    {
+        var reactTime = 0f;
+        while (reactTime < 1.5f)
+        {
+            reactTime += Time.deltaTime;
+        }
+        targetPlayer = GetClosestHb(hbs);
+        SetTargetHb(targetPlayer);
     }
 
 #pragma warning disable 108,114
     void FixedUpdate()
-#pragma warning restore 108,114
     {
         base.FixedUpdate();
         //Vector3 angleFOV2 = Quaternion.AngleAxis(maxAngle, transform.up) * transform.forward * maxRadius;
@@ -232,7 +251,7 @@ public class DB : DefPlayer
         }
         StartCoroutine("TurnTowardsLOS");
         anim.SetTrigger("InZoneTrigger");
-        
+
         //todo this needs a stat machine to determine if the DB needs to chase the WR past the Zone, Does he have overhead help
         //Debug.Log("zone center reached");
         //Vector3 moveLeft = transform.position + new Vector3(2, 0, 0);
@@ -411,6 +430,7 @@ public class DB : DefPlayer
     public void Press(float pressTimeNorm)
     {
         //pressBar.fillAmount = pressTimeNorm;
+        DisableNavmeshAgent();
         navMeshAgent.acceleration = 0f;
         navMeshAgent.speed = 0f;
     }
@@ -418,6 +438,7 @@ public class DB : DefPlayer
     public void ReleasePress()
     {
         //canvas.enabled = !canvas.enabled;
+        EnableNavMeshAgent();
         navMeshAgent.speed = navStartSpeed;
         navMeshAgent.acceleration = navStartAccel;
     }

@@ -92,9 +92,12 @@ public class WR : OffPlayer
         {
             canvas.transform.LookAt(Camera.main.transform);
             Transform blockTarget = GetClosestDB(defBacks);
+            isBlocker = true;
+            targetDb = blockTarget.GetComponent<DB>();
+            navMeshAgent.isStopped = false;
             SetDestination(blockTarget.transform.position);
             if (targetDb.CanBePressed())
-                StartCoroutine(DbBlock(targetDb));
+                StartCoroutine("DbBlock", (targetDb));
             return;
         }
 
@@ -407,7 +410,7 @@ public class WR : OffPlayer
 
     IEnumerator DbBlock(DB db)
     {
-        Debug.Log("BeBlocked DB");
+        Debug.Log("BeBlocked " + "");
         float pressTime = 1f; // 3 seconds you can change this 
         //to whatever you want
         float pressTimeNorm = 0;
