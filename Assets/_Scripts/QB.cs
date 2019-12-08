@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.AI;
 
 using UnityStandardAssets.CrossPlatformInput;
+// ReSharper disable UnusedMember.Local
+#pragma warning disable 108,114
 
 public class QB : OffPlayer {
     //CharacterController controller;

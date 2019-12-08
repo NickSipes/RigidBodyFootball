@@ -120,7 +120,9 @@ public class DB : DefPlayer
         }
     }
 
+#pragma warning disable 108,114
     void FixedUpdate()
+#pragma warning restore 108,114
     {
         base.FixedUpdate();
         //Vector3 angleFOV2 = Quaternion.AngleAxis(maxAngle, transform.up) * transform.forward * maxRadius;

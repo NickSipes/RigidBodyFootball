@@ -16,9 +16,13 @@ public class GameManager : MonoBehaviour
     public bool isPass = false;
     public bool isHiked = false;
 
+    [HideInInspector] public OffPlay[] allOffPlays;
+    [HideInInspector] public DefPlay[] allDefPlays;
+    [HideInInspector] public RouteManager routeManager;
+    [HideInInspector] public OffPlay currentOffPlay;
 
     public bool isRapidfire;
-    
+
     [HideInInspector] public bool isPassStarted = false;
     //public Object ballOwner;
     // Start is called before the first frame update
@@ -36,14 +40,17 @@ public class GameManager : MonoBehaviour
     public delegate void BallOwnerChange(FootBallAthlete ballOwner);
     public event BallOwnerChange ballOwnerChange;
 
-    public delegate void PassAttempt(QB thrower, WR reciever,FootBall footBall, float arcType, float power);
+    public delegate void PassAttempt(QB thrower, WR reciever, FootBall footBall, float arcType, float power);
     public event PassAttempt passAttempt;
 
-    public delegate void OnBallThrown(QB thrower, WR reciever,FootBall footBall , Vector3 impactPos, float arcType, float power, bool isComplete);
+    public delegate void OnBallThrown(QB thrower, WR reciever, FootBall footBall, Vector3 impactPos, float arcType, float power, bool isComplete);
     public event OnBallThrown onBallThrown;
 
     public delegate void ShedBlock(FootBallAthlete brokeBlock);
     public event ShedBlock shedBlock;
+
+    public delegate void OffPlayChange(OffPlay pffPlay);
+    public event OffPlayChange offPlayChange;
 
     [HideInInspector] public OffPlayer[] offPlayers;
     [HideInInspector] public DefPlayer[] defPlayers;
@@ -65,6 +72,9 @@ public class GameManager : MonoBehaviour
         offPlayers = FindObjectsOfType<OffPlayer>();
         defPlayers = FindObjectsOfType<DefPlayer>();
         cameraFollow = FindObjectOfType<CameraFollow>();
+        allDefPlays = FindObjectsOfType<DefPlay>();
+        allOffPlays = FindObjectsOfType<OffPlay>();
+        routeManager = FindObjectOfType<RouteManager>();
     }
 
     internal FootBallAthlete WhoHasBall()
@@ -75,7 +85,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(ballOwner != null)
+        if (ballOwner != null)
         {
 
         }
@@ -89,7 +99,7 @@ public class GameManager : MonoBehaviour
     {
         hikeTrigger();
     }
-    public void Hike() 
+    public void Hike()
     {
         hikeTheBall(true);
         isHiked = true;
@@ -117,16 +127,16 @@ public class GameManager : MonoBehaviour
         ballAthlete = newOwner.GetComponent<FootBallAthlete>();
         ballOwnerChange(ballCarrier);
     }
-    public void ThrowTheBall(QB ballThrower, WR ballReciever,FootBall ball , Vector3 impactPos, float arcType, float power, bool isComplete)
+    public void ThrowTheBall(QB ballThrower, WR ballReciever, FootBall ball, Vector3 impactPos, float arcType, float power, bool isComplete)
     {
-        onBallThrown(ballThrower, ballReciever,ball, impactPos, arcType, power, isComplete);
+        onBallThrown(ballThrower, ballReciever, ball, impactPos, arcType, power, isComplete);
     }
-    public void AttemptPass(QB ballThrower, WR ballReciever, FootBall ball,float arcType, float power)
+    public void AttemptPass(QB ballThrower, WR ballReciever, FootBall ball, float arcType, float power)
     {
-        
+
         passAttempt(ballThrower, ballReciever, ball, arcType, power);
     }
-    
+
     public void RaiseShedBlock(FootBallAthlete brokeBlock)
     {
         shedBlock(brokeBlock);
@@ -145,4 +155,21 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("tipdrill");
     }
+
+    public void ChangeOffPlay(OffPlay offPlay)
+    {
+        currentOffPlay = offPlay;
+        if (currentOffPlay.isPass)
+        {
+            PassPlay();
+            offPlayChange?.Invoke(currentOffPlay);
+        }
+        else
+        {
+            RunPlay();
+            offPlayChange?.Invoke(currentOffPlay);
+        }
+    }
+
+    
 }

@@ -1,8 +1,11 @@
 ﻿
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.Experimental.XR;
 using UnityEngine.UIElements;
+// ReSharper disable ArrangeTypeMemberModifiers
+#pragma warning disable 108,114
 
 public class WR : OffPlayer
 {
@@ -32,6 +35,7 @@ public class WR : OffPlayer
         gameManager.clearSelector += ClearSelector;
         gameManager.onBallThrown += BallThrown;
         gameManager.hikeTheBall += HikeTheBall;
+        gameManager.offPlayChange += ChangeOffRoute;
         cameraRaycaster.onMouseOverWr += OnMouseOverWr;
         routeManager = FindObjectOfType<RouteManager>();
 
@@ -40,7 +44,6 @@ public class WR : OffPlayer
 
         AddClickCollider();
         //start goal set by inspector
-
     }
 
     private void AddClickCollider()
@@ -49,10 +52,10 @@ public class WR : OffPlayer
         sphereCollider.radius = 3f;//todo make inspector settable
         sphereCollider.isTrigger = true;
         sphereCollider.tag = "ClickCollider";
-
     }
 
     // Update is called once per frame
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     void FixedUpdate()
     {
         base.FixedUpdate();
@@ -62,16 +65,22 @@ public class WR : OffPlayer
     {
 
         if (gameManager.WhoHasBall() == this) return;
+        if (isCatching) return;
 
         if (!gameManager.isHiked)
         {
-            //StopNavMeshAgent();
-            if (myRoute == null)
+            if (gameManager.isRun) return;
+            if (gameManager.isPass)
             {
-                GetRoute();
+                if (myRoute == null)
+                {
+                    GetRoute();
+                }
+
+                return;
             }
-            return;
         }
+
         if (wasAtLastCut)
         {
             WatchQb();
@@ -79,7 +88,15 @@ public class WR : OffPlayer
             return;
         }
 
-        if (isCatching) return;
+        if (gameManager.isRun)
+        {
+            canvas.transform.LookAt(Camera.main.transform);
+            Transform blockTarget = GetClosestDB(defBacks);
+            SetDestination(blockTarget.transform.position);
+            if (targetDb.CanBePressed())
+                StartCoroutine(DbBlock(targetDb));
+            return;
+        }
 
         if (gameManager.isPass)
         {
@@ -94,17 +111,6 @@ public class WR : OffPlayer
             if (!IsEndOfRoute()) RunRoute();
 
         }
-
-        if (gameManager.isRun)
-        {
-            canvas.transform.LookAt(Camera.main.transform);
-            Transform blockTarget = GetClosestDB(defBacks);
-            SetDestination(blockTarget.transform.position);
-            if (targetDb.CanBePressed())
-                StartCoroutine(DbBlock(targetDb));
-            return;
-        }
-
     }
 
     private void StopNavMeshAgent()
@@ -114,6 +120,37 @@ public class WR : OffPlayer
             navMeshAgent.isStopped = true;
             //Debug.Log("NavAgent Stopped");
         }
+    }
+
+    void ChangeOffRoute(OffPlay offPlay)
+    {
+        if (gameManager.isRun)
+        {
+            if (myRoute != null) Destroy(myRoute);
+            StopNavMeshAgent();
+            return;
+        }
+        var wrName = this.name;
+        switch (wrName)
+        {
+            case "WR1":
+                routeSelection = offPlay.wrRoutes[0];
+                break;
+            case "WR2":
+                routeSelection = offPlay.wrRoutes[1];
+                break;
+            case "WR3":
+                routeSelection = offPlay.wrRoutes[2];
+                break;
+            case "WR4":
+                routeSelection = offPlay.wrRoutes[3];
+                break;
+            default:
+                routeSelection = offPlay.HbRoute[0];
+                break;
+        }
+        Destroy(myRoute);
+        GetRoute();
     }
 
     private void GetRoute()
@@ -145,7 +182,7 @@ public class WR : OffPlayer
         {
             if (!AtRouteCut()) return;
 
-            if (timeSinceArrivedAtRouteCut > myRoute.routeCutDwellTime)
+            if (timeSinceArrivedAtRouteCut > myRoute.routeCutDwellTime[0])
             {
                 CycleRouteCut();
                 nextPosition = GetCurrentRouteCut();
@@ -177,7 +214,6 @@ public class WR : OffPlayer
     private void CycleRouteCut()
     {
         currentRouteIndex = myRoute.GetNextIndex(currentRouteIndex);
-
     }
 
     private bool IsEndOfRoute()

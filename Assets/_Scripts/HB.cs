@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.AI;
+#pragma warning disable 108,114
 
 
 public class HB : OffPlayer
 {
     public bool isReciever;
+    SphereCollider sphereCollider;
+
     // Use this for initialization
     void Start()
     {
@@ -29,8 +33,16 @@ public class HB : OffPlayer
         navStartAccel = navMeshAgent.acceleration;
         gameManager.hikeTheBall += HikeTheBall;
         gameManager.shedBlock += DefShedBlock;
+        gameManager.offPlayChange += ChangeOffRoute;
     }
+    private void AddClickCollider()
+    {
+        sphereCollider = gameObject.AddComponent<SphereCollider>();
+        sphereCollider.radius = 3f;//todo make inspector settable
+        sphereCollider.isTrigger = true;
+        sphereCollider.tag = "ClickCollider";
 
+    }
     private void DefShedBlock(FootBallAthlete brokeBlock)
     {
         //todo check assignment
@@ -70,6 +82,10 @@ public class HB : OffPlayer
 
             if (isReciever)
             {
+                if (sphereCollider == null)
+                {
+                    AddClickCollider();
+                }
                 if (wasAtLastCut)
                 {
                     WatchQb();
@@ -92,6 +108,33 @@ public class HB : OffPlayer
         }
     }
 
+    void ChangeOffRoute(OffPlay offPlay)
+    {
+        if (gameManager.isRun)
+        {
+            Destroy(myRoute);
+            isReciever = false;
+            return;
+        }
+        var hbNumber = this.name;
+        switch (hbNumber)
+        {
+            case "HB1":
+                routeSelection = offPlay.HbRoute[0];
+                isBlocker = offPlay.isHbBlock[0];
+                break;
+            case "HB2":
+                routeSelection = offPlay.HbRoute[1];
+                isBlocker = offPlay.isHbBlock[1];
+                break;
+            default:
+                routeSelection = offPlay.HbRoute[0];
+                isBlocker = offPlay.isHbBlock[0];
+                break;
+        }
+        Destroy(myRoute);
+        GetRoute();
+    }
     private void GetRoute()
     {
         myRoute = Instantiate(routeManager.allRoutes[routeSelection], transform.position, transform.rotation).GetComponent<Routes>(); //todo get route index selection
@@ -141,7 +184,7 @@ public class HB : OffPlayer
         {
             if (!AtRouteCut()) return;
 
-            if (timeSinceArrivedAtRouteCut > myRoute.routeCutDwellTime)
+            if (timeSinceArrivedAtRouteCut > myRoute.routeCutDwellTime[currentRouteIndex])
             {
                 CycleRouteCut();
                 nextPosition = GetCurrentRouteCut();
@@ -212,6 +255,7 @@ public class HB : OffPlayer
             //Debug.Log("NavAgent Stopped");
         }
     }
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private void FixedUpdate()
     {
         base.FixedUpdate();

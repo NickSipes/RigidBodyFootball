@@ -46,7 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ae67a640d9e82d47a3103ad4811f07e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  routeCutDwellTime: 0.05
+  routeCutDwellTime:
+  - 0
 --- !u!1 &2600420783857252176
 GameObject:
   m_ObjectHideFlags: 0

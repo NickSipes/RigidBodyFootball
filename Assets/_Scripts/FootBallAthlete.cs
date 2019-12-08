@@ -42,10 +42,11 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public GameManager gameManager;
     [HideInInspector] public RouteManager routeManager;
     [HideInInspector] public bool isBlocking;
-
+    [HideInInspector] public OffPlay offPlay;
 
     public Routes[] routes;
     public Routes myRoute;
+    [HideInInspector] public int routeSelection;
     internal int totalCuts;
     internal Vector3 lastCutVector;
     internal bool wasAtLastCut = false;
@@ -61,7 +62,6 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public HB[] hbs;
     [HideInInspector] public Oline[] oLine;
     [HideInInspector] public Dline[] dLine;
-    [HideInInspector] public Transform startTarget;
 
     [Range(5, 10)]
     public float defZoneSize; //todo should this be determined by the Zone? //Maybe awareness checks
@@ -196,6 +196,8 @@ public class FootBallAthlete : MonoBehaviour
     {
         if (!navMeshAgent.enabled)
             navMeshAgent.enabled = true;
+        if (navMeshAgent.isStopped)
+            navMeshAgent.isStopped = false;
     }
     internal Transform GetClosestHb(HB[] enemies)
     {
@@ -390,7 +392,6 @@ public class OffPlayer : FootBallAthlete
         canBlock = true;
     }
 
-    public int routeSelection;
 }
 
 public class DefPlayer : FootBallAthlete

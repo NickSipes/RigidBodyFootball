@@ -3,8 +3,14 @@
 [System.Serializable]
 public class Routes : MonoBehaviour
 {
+    private LineRenderer lineRenderer;
     const float waypointGizmoRadius = 0.3f;
-    public float routeCutDwellTime = .05f;
+    public float[] routeCutDwellTime;
+
+    void Start()
+    {
+        lineRenderer = gameObject.AddComponent<LineRenderer>();
+    }
     private void OnDrawGizmos()
     {
         for (int i = 0; i < transform.childCount; i++)
