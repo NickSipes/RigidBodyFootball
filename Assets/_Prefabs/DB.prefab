@@ -72,7 +72,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 303529270}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 0
@@ -94,7 +94,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 303529270}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1301386320, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreReversedGraphics: 1
@@ -127,6 +127,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -218,8 +219,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: Block
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -256,7 +255,6 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_textAlignment: 257
-  m_isAlignmentEnumConverted: 1
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -283,6 +281,7 @@ MonoBehaviour:
   m_verticalMapping: 0
   m_uvLineOffset: 0
   m_geometrySortingOrder: 0
+  m_VertexBufferAutoSizeReduction: 1
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
@@ -297,12 +296,9 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
-  m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
   - {fileID: 0}
@@ -528,6 +524,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1583,6 +1580,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1755,7 +1753,7 @@ GameObject:
   - component: {fileID: 1516126011}
   m_Layer: 0
   m_Name: DB
-  m_TagString: Untagged
+  m_TagString: DefPlayer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1861,8 +1859,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50695e554f318a04697f9955bd570857, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startGoal: {fileID: 0}
-  materialRenderer: {fileID: 0}
+  materialRenderer: {fileID: 137732589740493876}
   iK: {fileID: 0}
   terrain: {fileID: 0}
   qb: {fileID: 0}
@@ -1874,6 +1871,8 @@ MonoBehaviour:
   highlightColor: {r: 0, g: 0, b: 0, a: 0}
   rb: {fileID: 0}
   anim: {fileID: 0}
+  maxAngle: 20
+  maxRadius: 10
   passTarget: {x: 0, y: 0, z: 0}
   beenPressed: 0
   footBall: {fileID: 0}
@@ -1882,16 +1881,20 @@ MonoBehaviour:
   isHiked: 0
   targetPlayer: {fileID: 0}
   gameManager: {fileID: 0}
+  routeManager: {fileID: 0}
   isBlocking: 0
+  offPlay: {fileID: 0}
+  routes: []
+  myRoute: {fileID: 0}
+  routeSelection: 0
   wideRecievers: []
   defBacks: []
   hbs: []
   oLine: []
   dLine: []
-  startTarget: {fileID: 0}
   defZoneSize: 7.7
   zone: {fileID: 0}
-  targetWr: {fileID: 0}
+  targetReciever: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
   isMan: 0
@@ -1905,8 +1908,6 @@ MonoBehaviour:
   isBlocked: 0
   wasBlocked: 0
   blockBar: {fileID: 0}
-  maxAngle: 20
-  maxRadius: 10
   zoneLayer: 8
 --- !u!1 &1439487981675300
 GameObject:

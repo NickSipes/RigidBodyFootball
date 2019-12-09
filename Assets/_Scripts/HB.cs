@@ -10,37 +10,19 @@ using UnityEngine.AI;
 public class HB : OffPlayer
 {
     public bool isReciever;
-    SphereCollider sphereCollider;
-
+  
     // Use this for initialization
     void Start()
     {
+        base.Start();
         rayColor = Color.green;
-        gameManager = FindObjectOfType<GameManager>();
-        qb = FindObjectOfType<QB>();
-        hbs = FindObjectsOfType<HB>();
-        rb = GetComponent<Rigidbody>();
-        startColor = materialRenderer.material.color;
-        anim = GetComponent<Animator>();
-        navMeshAgent = GetComponent<NavMeshAgent>();
-        routeManager = FindObjectOfType<RouteManager>();
-        navMeshAgent.destination = transform.position;
-        //targetPlayer = startGoal.transform;
-        //lr.material.color = LineColor;
-        dLine = FindObjectsOfType<Dline>();
-
-        navStartSpeed = navMeshAgent.speed;
-        navStartAccel = navMeshAgent.acceleration;
-        gameManager.hikeTheBall += HikeTheBall;
         gameManager.shedBlock += DefShedBlock;
         gameManager.offPlayChange += ChangeOffRoute;
     }
-    private void AddClickCollider()
+    
+    private void FixedUpdate()
     {
-        sphereCollider = gameObject.AddComponent<SphereCollider>();
-        sphereCollider.radius = 3f;//todo make inspector settable
-        sphereCollider.isTrigger = true;
-        sphereCollider.tag = "ClickCollider";
+        base.FixedUpdate();
 
     }
     private void DefShedBlock(FootBallAthlete brokeBlock)
@@ -60,9 +42,9 @@ public class HB : OffPlayer
     {
         if (!gameManager.isHiked)
         {
-            if (isReciever && myRoute == null)
+            if (gameManager.isPass)
             {
-                GetRoute();
+                AddClickCollider();
             }
             return;
         }
@@ -78,6 +60,7 @@ public class HB : OffPlayer
             if (isBlocker)
             {
                 BlockProtection();
+                return;
             }
 
             if (isReciever)
@@ -116,152 +99,30 @@ public class HB : OffPlayer
             isReciever = false;
             return;
         }
-        var hbNumber = this.name;
-        switch (hbNumber)
+
+        if (gameManager.isPass)
         {
-            case "HB1":
-                routeSelection = offPlay.HbRoute[0];
-                isBlocker = offPlay.isHbBlock[0];
-                break;
-            case "HB2":
-                routeSelection = offPlay.HbRoute[1];
-                isBlocker = offPlay.isHbBlock[1];
-                break;
-            default:
-                routeSelection = offPlay.HbRoute[0];
-                isBlocker = offPlay.isHbBlock[0];
-                break;
-        }
-        Destroy(myRoute);
-        GetRoute();
-    }
-    private void GetRoute()
-    {
-        myRoute = Instantiate(routeManager.allRoutes[routeSelection], transform.position, transform.rotation).GetComponent<Routes>(); //todo get route index selection
-        myRoute.transform.name = routeManager.allRoutes[routeSelection].name;
-
-        //myRoute.transform.position = transform.position;
-
-        var childCount = myRoute.transform.childCount;
-        totalCuts = childCount - 1; //todo had to subtract 1 because arrays start at 0
-
-        lastCutVector = myRoute.transform.GetChild(totalCuts).position;
-        Debug.Log("total cuts " + totalCuts + "Child Count " + (childCount - 1));
-        Debug.Log(myRoute.transform.name);
-
-        if (!targetPlayer) GetTarget();
-        SetDestination(myRoute.GetWaypoint(currentRouteIndex));
-
-    }
-    private void GetTarget()
-    {
-        if (targetPlayer == null)
-        {
-            SetDestination(myRoute.GetWaypoint(currentRouteIndex));
-        }
-
-        //if ((navMeshAgent.destination - transform.position).magnitude < 1 && targetPlayer == null)
-        //{
-        //    SetTargetPlayer(startGoal.transform);
-        //    SetDestination(startGoal.transform.position);
-        //}
-
-        if (navMeshAgent.hasPath && navMeshAgent.remainingDistance < 2 && targetPlayer != null)
-        {
-            var ball = targetPlayer.GetComponent<FootBall>(); //todo this is all bad, attempting to destroy the football and set destination to the route 
-            if (ball != null)
+            var hbNumber = this.name;
+            switch (hbNumber)
             {
-                SetDestination(myRoute.GetWaypoint(currentRouteIndex));
+                case "HB1":
+                    routeSelection = offPlay.HbRoute[0];
+                    isBlocker = offPlay.isHbBlock[0];
+                    break;
+                case "HB2":
+                    routeSelection = offPlay.HbRoute[1];
+                    isBlocker = offPlay.isHbBlock[1];
+                    break;
+                default:
+                    routeSelection = offPlay.HbRoute[0];
+                    isBlocker = offPlay.isHbBlock[0];
+                    break;
             }
-        }
-        //DrawPath();
-    }
-
-    private void RunRoute()
-    {
-
-        if (myRoute != null)
-        {
-            if (!AtRouteCut()) return;
-
-            if (timeSinceArrivedAtRouteCut > myRoute.routeCutDwellTime[currentRouteIndex])
-            {
-                CycleRouteCut();
-                nextPosition = GetCurrentRouteCut();
-                navMeshAgent.destination = nextPosition;
-                timeSinceArrivedAtRouteCut = 0;
-                Debug.Log("start NavMeshAgent");
-
-                if (!AtLastRouteCut()) return;
-                wasAtLastCut = true;
-                WatchQb();
-                Debug.Log("set last cut true");
-                return;
-
-            }
-
-            timeSinceArrivedAtRouteCut += Time.deltaTime;
+            if (!isBlocker) isReciever = true;
+            Destroy(myRoute);
+            GetRoute(routeSelection);
         }
     }
-
-    void WatchQb()
-    {
-        EnableNavMeshAgent();
-        navMeshAgent.SetDestination(lastCutVector);
-        anim.SetTrigger("WatchQBTrigger");
-        transform.LookAt(qb.transform.position);
-
-    }
-
-    private void CycleRouteCut()
-    {
-        currentRouteIndex = myRoute.GetNextIndex(currentRouteIndex);
-        if (currentRouteIndex == totalCuts)
-        {
-            navMeshAgent.autoBraking = true;
-            navMeshAgent.stoppingDistance = 0f;
-        }
-    }
-
-    private bool IsEndOfRoute()
-    {
-        var endOfRoute = (totalCuts == currentRouteIndex && (transform.position - navMeshAgent.destination).sqrMagnitude <= 1);
-        Debug.Log("End of Route? = " + endOfRoute);
-        return endOfRoute;
-    }
-
-    private bool AtRouteCut()
-    {
-        float distanceToCut = Vector3.Distance(transform.position, GetCurrentRouteCut());
-        return distanceToCut < routeCutTolerance;
-
-
-    }
-    private bool AtLastRouteCut()
-    {
-        float distanceLastCut = Vector3.Distance(transform.position, (myRoute.transform.GetChild(totalCuts).position));
-        return distanceLastCut < routeCutTolerance;
-    }
-    private Vector3 GetCurrentRouteCut()
-    {
-        return myRoute.GetWaypoint(currentRouteIndex);
-
-    }
-    private void StopNavMeshAgent()
-    {
-        if (!navMeshAgent.isStopped)
-        {
-            navMeshAgent.isStopped = true;
-            //Debug.Log("NavAgent Stopped");
-        }
-    }
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    private void FixedUpdate()
-    {
-        base.FixedUpdate();
-
-    }
-
 
 }
 

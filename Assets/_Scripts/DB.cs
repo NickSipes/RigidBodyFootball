@@ -9,12 +9,7 @@ public class DB : DefPlayer
 
     //todo create class between Off and Def based on FootballAthlete
 
-    [SerializeField] internal int zoneLayer = 8;
 
-
-    internal bool isWrIncoming = false;
-
-    internal bool isBlockingPass = false;
     //todo HOW ARE WE GOING TO HANDLE JUMP ANIMATIONS
     //todo defenders need to determine LOS and where to lineup
     //todo DB State Machine
@@ -24,23 +19,13 @@ public class DB : DefPlayer
     // Use this for initialization
     void Start()
     {
+        base.Start();
         rayColor = Color.yellow;
-        gameManager = FindObjectOfType<GameManager>();
-        wideRecievers = FindObjectsOfType<WR>();
-        hbs = FindObjectsOfType<HB>();
-        navMeshAgent = GetComponent<NavMeshAgent>();
-
-        navStartSpeed = navMeshAgent.speed;
-        navStartAccel = navMeshAgent.acceleration;
-        anim = GetComponent<Animator>();
         gameManager.hikeTheBall += HikeTheBall;
         gameManager.onBallThrown += BallThrown;
         gameManager.passAttempt += PassAttempt;
-        rb = GetComponent<Rigidbody>();
         CreateZone(); //todo only run if player is in zone
-        qb = FindObjectOfType<QB>();
     }
-
 
     private void CreateZone()
     {
@@ -79,8 +64,8 @@ public class DB : DefPlayer
             if ((potientialTarget.transform.position - transform.position).magnitude < 5f)
             {
                 SetTargetWr(potientialTarget);
-                if (targetWr.CanBePressed())
-                    StartCoroutine(WrPress(targetWr));
+                if (targetReciever.CanBePressed())
+                    StartCoroutine(WrPress(targetReciever));
                 //todo press range variable
             }
         }
@@ -97,6 +82,7 @@ public class DB : DefPlayer
             PlayReact();
 
         }
+
         // ReSharper disable once InvertIf
         if (gameManager.isPass)
         {
@@ -107,26 +93,27 @@ public class DB : DefPlayer
             if (isZone)
             {
                 //todo this whole triple if statement sucks
-                if (targetWr != null)
+                if (targetReciever != null)
                 {
-                    if (IsTargetInZone(targetWr.transform))
+                    if (IsTargetInZone(targetReciever.transform))
                     {
-                        SetDestination(targetWr.transform.position);
+                        SetDestination(targetReciever.transform.position);
                         return;
                     }
                     else
                     {
                         //Debug.Log("targetPlayer out of zone");
-                        targetWr = null;
+                        targetReciever = null;
                         targetPlayer = null;
                     }
                 }
+
                 PlayZone();
             }
 
             // ReSharper disable once InvertIf
         }
-       
+
     }
 
     private void PlayReact()
@@ -136,6 +123,7 @@ public class DB : DefPlayer
         {
             reactTime += Time.deltaTime;
         }
+
         targetPlayer = GetClosestHb(hbs);
         SetTargetHb(targetPlayer);
     }
@@ -144,10 +132,6 @@ public class DB : DefPlayer
     void FixedUpdate()
     {
         base.FixedUpdate();
-        //Vector3 angleFOV2 = Quaternion.AngleAxis(maxAngle, transform.up) * transform.forward * maxRadius;
-        //Vector3 angleFOV1 = Quaternion.AngleAxis(-maxAngle, transform.up) * transform.forward * maxRadius;
-        //Debug.DrawRay(transform.position, angleFOV2);
-        //Debug.DrawRay(transform.position, angleFOV1);
 
     }
 
@@ -156,18 +140,19 @@ public class DB : DefPlayer
         EnableNavMeshAgent();
         SetDestination(targetTransform.position);
         targetPlayer = targetTransform;
-        targetWr = targetTransform.GetComponentInParent<WR>();
+        targetReciever = targetTransform.GetComponentInParent<WR>();
         //Debug.Log("Target Changed");
     }
 
     void PlayZone()
     {
         //todo access WR route to see if it will pass through zone and then move towards intercept point
-        if (targetWr == null)
+        if (targetReciever == null)
         {
             //has return if enemy set
             if (CheckZone()) return;
         }
+
         SetDestination(zone.zoneCenter);
 
     }
@@ -215,28 +200,30 @@ public class DB : DefPlayer
     }
 
 
-    IEnumerator WrPress(WR wr)
+    IEnumerator WrPress(OffPlayer offPlayer)
     {
         isPressing = true;
         float pressTime = .5f;
         anim.SetTrigger("PressTrigger");
-        SetDestination(wr.transform.position + transform.forward);
+        SetDestination(offPlayer.transform.position + transform.forward);
         float pressTimeNorm = 0;
-        //Vector3 dir = (wr.transform.position - transform.position).normalized * pressTime;
+        //Vector3 dir = (offPlayer.transform.position - transform.position).normalized * pressTime;
         //rb.velocity = dir;
         while (pressTimeNorm <= 1f)
         {
             StayInfront();
             pressTimeNorm += Time.deltaTime / pressTime;
-            wr.Press(pressTimeNorm);
+            offPlayer.Press(pressTimeNorm);
             yield return new WaitForEndOfFrame();
         }
+
         anim.SetTrigger("ReleaseTrigger");
-        StartCoroutine("BackOffPress", wr);
-        wr.ReleasePress();
+        StartCoroutine("BackOffPress", offPlayer);
+        offPlayer.ReleasePress();
         isPressing = false;
 
     }
+
     IEnumerator BackOffPress(WR wr)
     {
         //read receiver route, move backwards, release reciever to new defender, moves towards next receiver
@@ -247,8 +234,10 @@ public class DB : DefPlayer
             {
                 BackOff(wr);
             }
+
             yield return new WaitForFixedUpdate();
         }
+
         StartCoroutine("TurnTowardsLOS");
         anim.SetTrigger("InZoneTrigger");
 
@@ -274,11 +263,13 @@ public class DB : DefPlayer
         //DisableNavmeshAgent();
         //navMeshAgent.ResetPath();
     }
+
     IEnumerator TurnTowardsLOS()
     {
         //todo write this function
         yield return new WaitForFixedUpdate();
     }
+
     private void StayInfront()
     {
         DisableNavmeshAgent();
@@ -296,10 +287,7 @@ public class DB : DefPlayer
         rb.velocity = dir;
     }
 
-    private void DisableNavmeshAgent()
-    {
-        navMeshAgent.enabled = false;
-    }
+
 
     private void BackOff(WR wr)
     {
@@ -309,7 +297,7 @@ public class DB : DefPlayer
 
         // turn around and run, cut left, or cut right
 
-        float speed = 5; //todo this should be a calculation of wr release vs db press
+        float speed = 5; //todo this should be a calculation of offPlayer release vs db press
         Vector3 dir = (targetPlayer.position + targetPlayer.transform.forward - transform.position).normalized * speed;
         float v = dir.z;
         float h = dir.x;
@@ -322,144 +310,5 @@ public class DB : DefPlayer
         rb.velocity = dir;
     }
 
-    private void BallThrown(QB thrower, WR reciever, FootBall ball, Vector3 impactPos, float arcType, float power, bool isComplete)
-    {
 
-    }
-
-    private void PassAttempt(QB thrower, WR reciever, FootBall ball, float arcType, float power)
-    {
-        if (InVincintyOfPass(reciever))
-        {
-            if (arcType == 1.5f)
-            {
-                //todo roll dist vs stats
-                AniciptateThrow(thrower, reciever, ball, arcType, power);
-            }
-
-            if (arcType == 2.3f) { }
-            if (arcType == 3.2f) { }
-        }
-    }
-
-    private void AniciptateThrow(QB thrower, WR reciever, FootBall ball, float arcType, float power)
-    {
-        //todo this code is used three times now 
-        Vector3 targetPos = reciever.transform.position;
-        Vector3 diff = targetPos - transform.position;
-        Vector3 diffGround = new Vector3(diff.x, 0f, diff.z);
-        Vector3 fireVel, impactPos;
-        Vector3 velocity = reciever.navMeshAgent.velocity;
-
-
-        //FTS Calculations https://github.com/forrestthewoods/lib_fts/tree/master/projects/unity/ballistic_trajectory
-        float gravity;
-
-        if (Ballistics.solve_ballistic_arc_lateral(transform.position, power, targetPos + Vector3.up, velocity, arcType,
-            out fireVel, out gravity, out impactPos))
-        {
-            //todo: get distance to impact pos and match it against DB position and speed, 
-            //pass outcome of roll to the football call an onInterception or onBlock event
-            //figure out how to add a second impluse to the thrown football in the case of a blocked pass
-
-
-            if ((transform.position - impactPos).magnitude < 5) // todo create range variableStat
-            {
-                EnableNavMeshAgent();
-                StopAllCoroutines();
-                navMeshAgent.speed += power; // todo fix this terrible code, basically speeds up character to get in position
-                SetDestination(impactPos);
-                Debug.Log("PassBlock");
-                StartCoroutine("BlockPass", ball);
-                reciever.SetColor(Color.red);
-                ball.isComplete = false;
-            }
-
-        }
-    }
-
-    IEnumerator BlockPass(FootBall ball)
-    {
-        isBlockingPass = true;
-        anim.SetTrigger("BlockPass");
-        canvas.gameObject.SetActive(true);
-
-        while ((transform.position - ball.transform.position).magnitude > 2.7) //todo, this should be a calculation of anim time vs distance of football to targetPlayer.
-        {
-            //Debug.Log((transform.position - ball.transform.position).magnitude);
-            yield return new WaitForEndOfFrame();
-        }
-        ball.BlockBallTrajectory();
-        navMeshAgent.speed = navStartSpeed;
-        isBlockingPass = false;
-        canvas.gameObject.SetActive(false);
-    }
-
-    bool InVincintyOfPass(WR wR)
-    {
-        float distToWr = Vector3.Distance(transform.position, wR.transform.position);
-        if (distToWr <= 5) return true; //todo create coverage range variable
-        else return false;
-    }
-
-    private bool IsTargetInZone(Transform coverTarget)
-    {
-        if ((coverTarget.transform.position - zone.transform.position).magnitude <= zone.zoneSize) return true; //targetPlayer is inside zone
-        else return false;
-    }
-
-
-    private void SetTargetHb(Transform targetTransform)
-    {
-        SetDestination(targetTransform.position);
-        targetPlayer = targetTransform;
-        targetHb = targetTransform.GetComponentInParent<HB>();
-        //Debug.Log("Target Changed");
-    }
-
-    public bool CanBePressed() //todo rename to block
-    {
-        if (!beenPressed)
-        {
-            beenPressed = true;
-            return true;
-        }
-        return false;
-    }
-
-    public void Press(float pressTimeNorm)
-    {
-        //pressBar.fillAmount = pressTimeNorm;
-        DisableNavmeshAgent();
-        navMeshAgent.acceleration = 0f;
-        navMeshAgent.speed = 0f;
-    }
-
-    public void ReleasePress()
-    {
-        //canvas.enabled = !canvas.enabled;
-        EnableNavMeshAgent();
-        navMeshAgent.speed = navStartSpeed;
-        navMeshAgent.acceleration = navStartAccel;
-    }
-
-    void OnDrawGizmos()
-    {
-        if (zone)
-        {
-            // Draw zone sphere 
-            Gizmos.color = new Color(0, 0, 255, .5f);
-            Gizmos.DrawWireSphere(zone.transform.position, defZoneSize);
-        }
-    }
-    private void TurnAround(Vector3 destination)
-    {
-
-        navMeshAgent.updateRotation = false;
-        Vector3 direction = (destination - transform.position).normalized;
-        Quaternion qDir = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(transform.rotation, qDir, Time.deltaTime * 20);
-    }
-
-    //https://answers.unity.com/questions/1170087/instantly-turn-with-nav-mesh-agent.html
 }

@@ -9,7 +9,15 @@ public class Routes : MonoBehaviour
 
     void Start()
     {
+        var variableForPrefab = Resources.Load("_prefabs/PlayArt/Yellow") as Material;
         lineRenderer = gameObject.AddComponent<LineRenderer>();
+        lineRenderer.material = variableForPrefab;
+
+    }
+
+    void Update()
+    {
+        DrawPath();
     }
     private void OnDrawGizmos()
     {
@@ -34,4 +42,16 @@ public class Routes : MonoBehaviour
     {
         return transform.GetChild(i).position;
     }
+
+    void DrawPath()
+    {
+        for (int i = 0; i < transform.childCount - 1; i++)
+        {
+            int j = GetNextIndex(i);
+            Debug.DrawLine(GetWaypoint(i), GetWaypoint(j));
+           
+        }
+        
+    }
+
 }

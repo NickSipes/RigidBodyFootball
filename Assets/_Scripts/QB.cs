@@ -28,36 +28,12 @@ public class QB : OffPlayer {
 
     void Start ()
     {
+        base.Start();
         //controller = GetComponent<CharacterController>();
-        FindComponents();
         rayColor = Color.cyan;
-
-    }
-    private void FindComponents()
-    {
-
-        materialRenderer = GetComponentInChildren<Renderer>();
-        startColor = materialRenderer.material.color;
-     
+        throwingHandScript = GetComponentInChildren<ThrowingHand>();
         athlete = GetComponent<FootBallAthlete>();
-        rb = GetComponent<Rigidbody>();
-        throwingHandScript = FindObjectOfType<ThrowingHand>();
-        gameManager = FindObjectOfType<GameManager>();
-        navMeshAgent = GetComponent<NavMeshAgent>();
-
-
-        cameraFollow = FindObjectOfType<CameraFollow>();
-        anim = GetComponent<Animator>();
         userControl = GetComponent<UserControl>();
-      
-        hbs = FindObjectsOfType<HB>();
-        wideRecievers = FindObjectsOfType<WR>();
-        defBacks = FindObjectsOfType<DB>();
-        oLine = FindObjectsOfType<Oline>();
-        dLine = FindObjectsOfType<Dline>();
-
-        gameManager.onBallThrown += BallThrown;
-        gameManager.hikeTheBall += HikeTheBall;
         gameManager.hikeTrigger += HikeTrigger;
     }
 
@@ -162,12 +138,12 @@ public class QB : OffPlayer {
         navMeshAgent.enabled = false;
     }
     
-    public void BeginThrowAnim(Vector3 passTarget, WR wr, float arcType, float power)
+    public void BeginThrowAnim(Vector3 passTarget, OffPlayer reciever, float arcType, float power)
     {
         if(!isRapidFire)
         //todo cleanup this code, could cause bugs setting these values then running coroutine
         throwVector = passTarget;
-        targetWr = wr;
+        targetReciever = reciever;
         throwArc = arcType;
         throwPower = power;
         StartCoroutine("PassTheBall");
@@ -181,7 +157,7 @@ public class QB : OffPlayer {
         yield return new WaitForSeconds(1); //todo find way to access animation curve info.
         var thrownBall = Instantiate(footBall, throwingHand.transform.position, lookAt); //todo put footballs in hierarchy container
         FootBall thrownBallScript = thrownBall.GetComponent<FootBall>();
-        thrownBallScript.PassFootBallToMovingTarget(this, targetWr, thrownBallScript, throwArc, throwPower);
+        thrownBallScript.PassFootBallToMovingTarget(this, targetReciever, thrownBallScript, throwArc, throwPower);
         gameManager.isPassStarted = true;
         //Destroy(thrownBall, 3f); //todo get better solution to removing footballs
     }

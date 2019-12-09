@@ -398,8 +398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7158e21f68c173408644ae34e4e3329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startGoal: {fileID: 0}
-  materialRenderer: {fileID: 0}
+  materialRenderer: {fileID: 3088913701904735895}
   iK: {fileID: 0}
   terrain: {fileID: 0}
   qb: {fileID: 0}
@@ -411,6 +410,8 @@ MonoBehaviour:
   highlightColor: {r: 0, g: 0, b: 0, a: 0}
   rb: {fileID: 0}
   anim: {fileID: 0}
+  maxAngle: 35
+  maxRadius: 1
   passTarget: {x: 0, y: 0, z: 0}
   beenPressed: 0
   footBall: {fileID: 0}
@@ -419,16 +420,20 @@ MonoBehaviour:
   isHiked: 0
   targetPlayer: {fileID: 0}
   gameManager: {fileID: 0}
+  routeManager: {fileID: 0}
   isBlocking: 0
+  offPlay: {fileID: 0}
+  routes: []
+  myRoute: {fileID: 0}
+  routeSelection: 0
   wideRecievers: []
   defBacks: []
   hbs: []
   oLine: []
   dLine: []
-  startTarget: {fileID: 0}
   defZoneSize: 0
   zone: {fileID: 0}
-  targetWr: {fileID: 0}
+  targetReciever: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
   isMan: 0
@@ -439,6 +444,7 @@ MonoBehaviour:
   userControl: {fileID: 0}
   cameraRaycaster: {fileID: 0}
   isSelected: 0
+  blockRange: 3
   blockCoolDown: 1
   canBlock: 1
 --- !u!1 &3088913700437291918
@@ -1522,6 +1528,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2424,6 +2431,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0

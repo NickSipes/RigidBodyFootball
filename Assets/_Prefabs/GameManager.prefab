@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2128639696}
   - component: {fileID: 5712946768223445602}
+  - component: {fileID: 1000874565}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -48,9 +49,32 @@ MonoBehaviour:
   isRun: 0
   isPass: 0
   isHiked: 0
+  allOffPlays: []
+  allDefPlays: []
+  routeManager: {fileID: 0}
+  currentOffPlay: {fileID: 0}
   isRapidfire: 1
   isPassStarted: 0
   cameraFollow: {fileID: 0}
   offPlayers: []
   defPlayers: []
   ballOwner: {fileID: 0}
+--- !u!114 &1000874565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128639695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83a37aee9569fa540898752380e08a8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quaterBacks: []
+  wideRecievers: []
+  defBacks: []
+  hbs: []
+  oLine: []
+  routeManager: {fileID: 0}
+  isPass: 0

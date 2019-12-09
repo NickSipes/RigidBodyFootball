@@ -42,14 +42,14 @@ public class FootBall : MonoBehaviour
     void SetGameManager()
     {
         if(!gameManager)
-        gameManager = FindObjectOfType<GameManager>();
+            gameManager = FindObjectOfType<GameManager>();
     }
 
-    public void PassFootBallToMovingTarget(QB ballThrower, WR wideReceiver,FootBall footBall,float arcType, float power) 
+    public void PassFootBallToMovingTarget(QB ballThrower, OffPlayer receiver,FootBall footBall,float arcType, float power) 
     {
         isComplete = true;
         SetGameManager();
-        gameManager.AttemptPass(ballThrower, wideReceiver, this, arcType, power); //todo, this is ugly. Probably should be a bool for isComplete
+        gameManager.AttemptPass(ballThrower, receiver, this, arcType, power); //todo, this is ugly. Probably should be a bool for isComplete
         if (rb == null)
         {
             rb = GetComponent<Rigidbody>();
@@ -59,11 +59,11 @@ public class FootBall : MonoBehaviour
         transform.parent = null;
         rb.useGravity = true;
         BallisticMotion motion = GetComponent<BallisticMotion>();
-        Vector3 targetPos = wideReceiver.transform.position;
+        Vector3 targetPos = receiver.transform.position;
         Vector3 diff = targetPos - transform.position;
         Vector3 diffGround = new Vector3(diff.x, 0f, diff.z);
         Vector3 fireVel, impactPos;
-        Vector3 velocity = wideReceiver.navMeshAgent.velocity;
+        Vector3 velocity = receiver.navMeshAgent.velocity;
 
 
         //FTS Calculations https://github.com/forrestthewoods/lib_fts/tree/master/projects/unity/ballistic_trajectory
@@ -77,7 +77,7 @@ public class FootBall : MonoBehaviour
             transform.forward = diffGround;
             motion.Initialize(transform.position, gravity);
             motion.AddImpulse(fireVel);
-            gameManager.ThrowTheBall(ballThrower, wideReceiver, this, impactPos, arcType, power, isComplete); //todo the football stores whether the pass is complete or not, not sure if thats a good idea.
+            gameManager.ThrowTheBall(ballThrower, receiver, this, impactPos, arcType, power, isComplete); //todo the football stores whether the pass is complete or not, not sure if thats a good idea.
         }
         //Debug.Log("Firing at " + impactPos);
       

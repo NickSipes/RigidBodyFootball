@@ -35,8 +35,8 @@ public class CameraRaycaster : MonoBehaviour
     public delegate void OnMouseDownField(Vector3 destination);
     public event OnMouseDownField onMouseDownfield;
 
-    public delegate void OnMouseOverWr(WR wr);
-    public event OnMouseOverWr onMouseOverWr;
+    public delegate void OnClickPassCatcher(OffPlayer offPlayer);
+    public event OnClickPassCatcher OnMouseOverOffPlayer;
 
     //TODO register Collector for onMouseOverCollector
 
@@ -84,25 +84,25 @@ public class CameraRaycaster : MonoBehaviour
         {
             ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             // Specify layer priorities below, order matters
-            RaycastForWr(ray);
+            RayForPassCatcher(ray);
          
          
         }
     }
     //todo get current weapon info and load it into function, use weapon range instead of raycast depth
    
-    void RaycastForWr(Ray ray)
+    void RayForPassCatcher(Ray ray)
     {
         RaycastHit hitInfo;
         Physics.Raycast(ray, out hitInfo, maxRaycastDepth, recieverLayer);
         if (hitInfo.collider == null) return;
 
-        GameObject gameObjectHit = hitInfo.collider.gameObject;
-        var wrHit = gameObjectHit.GetComponent<WR>();
-        if (wrHit != null)
+        var gameObjectHit = hitInfo.collider.gameObject;
+        var offPlayer = gameObjectHit.GetComponent<OffPlayer>();
+        if (offPlayer != null)
         {
             // todo create better UI change cursor
-            onMouseOverWr?.Invoke(wrHit);
+            OnMouseOverOffPlayer?.Invoke(offPlayer);
 
         }
         else

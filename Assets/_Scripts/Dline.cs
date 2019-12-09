@@ -13,29 +13,12 @@ public class Dline : DefPlayer
     // Start is called before the first frame update
     void Start()
     {
+        base.Start();
         rayColor = Color.red;
-        FindComponents();
         AddEvents();
     }
 
 
-    private void FindComponents()
-    {
-        rb = GetComponent<Rigidbody>();
-        gameManager = FindObjectOfType<GameManager>();
-        navMeshAgent = GetComponent<NavMeshAgent>();
-        //aiCharacter = GetComponent<AICharacterControl>();
-        //userControl = GetComponent<ThirdPersonUserControl>();
-        cameraFollow = FindObjectOfType<CameraFollow>();
-        anim = GetComponent<Animator>();
-        hbs = FindObjectsOfType<HB>();
-        wideRecievers = FindObjectsOfType<WR>();
-        defBacks = FindObjectsOfType<DB>();
-        oLine = FindObjectsOfType<Oline>();
-        dLine = FindObjectsOfType<Dline>();
-        navStartSpeed = navMeshAgent.speed;
-        navStartAccel = navMeshAgent.acceleration;
-    }
     private void AddEvents()
     {
         gameManager.ballOwnerChange += BallOwnerChange;

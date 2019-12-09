@@ -1991,7 +1991,7 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 10
-  m_Acceleration: 20
+  m_Acceleration: 1
   avoidancePriority: 50
   m_AngularSpeed: 250
   m_StoppingDistance: 0.2
@@ -2014,8 +2014,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5890c2526f5cc0443af5845a1414ad34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startGoal: {fileID: 0}
-  materialRenderer: {fileID: 0}
+  materialRenderer: {fileID: 1653392376511590183}
   iK: {fileID: 0}
   terrain: {fileID: 0}
   qb: {fileID: 0}
@@ -2028,7 +2027,7 @@ MonoBehaviour:
   rb: {fileID: 0}
   anim: {fileID: 0}
   maxAngle: 35
-  maxRadius: 5
+  maxRadius: 1
   passTarget: {x: 0, y: 0, z: 0}
   beenPressed: 0
   footBall: {fileID: 0}
@@ -2037,18 +2036,20 @@ MonoBehaviour:
   isHiked: 0
   targetPlayer: {fileID: 0}
   gameManager: {fileID: 0}
+  routeManager: {fileID: 0}
   isBlocking: 0
+  offPlay: {fileID: 0}
   routes: []
   myRoute: {fileID: 0}
+  routeSelection: 0
   wideRecievers: []
   defBacks: []
   hbs: []
   oLine: []
   dLine: []
-  startTarget: {fileID: 0}
   defZoneSize: 0
   zone: {fileID: 0}
-  targetWr: {fileID: 0}
+  targetReciever: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
   isMan: 0
@@ -2062,6 +2063,7 @@ MonoBehaviour:
   isBlocked: 0
   wasBlocked: 0
   blockBar: {fileID: 49370339136942921}
+  zoneLayer: 8
 --- !u!1 &1653392376744804137
 GameObject:
   m_ObjectHideFlags: 0

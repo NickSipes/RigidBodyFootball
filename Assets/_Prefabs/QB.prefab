@@ -1,48 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1641510545
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1641510546}
-  - component: {fileID: 1641510547}
-  m_Layer: 0
-  m_Name: ThrowingHand
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1641510546
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1641510545}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.46, y: 1.35, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4365908357107058}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1641510547
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1641510545}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 008c0f978c1fc0341a86ec3c80cbf484, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1001819616087522
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,7 +66,6 @@ Transform:
   - {fileID: 4005699787648506}
   - {fileID: 4679139324943428}
   - {fileID: 4718524843851930}
-  - {fileID: 1641510546}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -174,8 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 287d250d4568ac14d8ec3b80f1621fd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startGoal: {fileID: 0}
-  materialRenderer: {fileID: 0}
+  materialRenderer: {fileID: 137677865306114622}
   iK: {fileID: 0}
   terrain: {fileID: 0}
   qb: {fileID: 0}
@@ -188,7 +143,7 @@ MonoBehaviour:
   rb: {fileID: 0}
   anim: {fileID: 0}
   maxAngle: 35
-  maxRadius: 5
+  maxRadius: 1
   passTarget: {x: 0, y: 0, z: 0}
   beenPressed: 0
   footBall: {fileID: 114875198895940586, guid: 056b4f200a2c2f74eb7c26762be412ec, type: 3}
@@ -197,18 +152,20 @@ MonoBehaviour:
   isHiked: 0
   targetPlayer: {fileID: 0}
   gameManager: {fileID: 0}
+  routeManager: {fileID: 0}
   isBlocking: 0
+  offPlay: {fileID: 0}
   routes: []
   myRoute: {fileID: 0}
+  routeSelection: 0
   wideRecievers: []
   defBacks: []
   hbs: []
   oLine: []
   dLine: []
-  startTarget: {fileID: 0}
   defZoneSize: 0
   zone: {fileID: 0}
-  targetWr: {fileID: 0}
+  targetReciever: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
   isMan: 0

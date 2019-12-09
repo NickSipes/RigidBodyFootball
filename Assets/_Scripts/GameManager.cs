@@ -24,8 +24,6 @@ public class GameManager : MonoBehaviour
     public bool isRapidfire;
 
     [HideInInspector] public bool isPassStarted = false;
-    //public Object ballOwner;
-    // Start is called before the first frame update
     public CameraFollow cameraFollow;
 
     public delegate void HikeTheBall(bool wasHiked);
@@ -40,10 +38,10 @@ public class GameManager : MonoBehaviour
     public delegate void BallOwnerChange(FootBallAthlete ballOwner);
     public event BallOwnerChange ballOwnerChange;
 
-    public delegate void PassAttempt(QB thrower, WR reciever, FootBall footBall, float arcType, float power);
+    public delegate void PassAttempt(QB thrower, OffPlayer reciever, FootBall footBall, float arcType, float power);
     public event PassAttempt passAttempt;
 
-    public delegate void OnBallThrown(QB thrower, WR reciever, FootBall footBall, Vector3 impactPos, float arcType, float power, bool isComplete);
+    public delegate void OnBallThrown(QB thrower, OffPlayer reciever, FootBall footBall, Vector3 impactPos, float arcType, float power, bool isComplete);
     public event OnBallThrown onBallThrown;
 
     public delegate void ShedBlock(FootBallAthlete brokeBlock);
@@ -103,7 +101,6 @@ public class GameManager : MonoBehaviour
     {
         hikeTheBall(true);
         isHiked = true;
-        //ballOwner = FindObjectOfType<QB>(); //todo find better solution of getting the ball owner 
     }
     public void PassPlay()
     {
@@ -127,11 +124,11 @@ public class GameManager : MonoBehaviour
         ballAthlete = newOwner.GetComponent<FootBallAthlete>();
         ballOwnerChange(ballCarrier);
     }
-    public void ThrowTheBall(QB ballThrower, WR ballReciever, FootBall ball, Vector3 impactPos, float arcType, float power, bool isComplete)
+    public void ThrowTheBall(QB ballThrower, OffPlayer ballReciever, FootBall ball, Vector3 impactPos, float arcType, float power, bool isComplete)
     {
         onBallThrown(ballThrower, ballReciever, ball, impactPos, arcType, power, isComplete);
     }
-    public void AttemptPass(QB ballThrower, WR ballReciever, FootBall ball, float arcType, float power)
+    public void AttemptPass(QB ballThrower, OffPlayer ballReciever, FootBall ball, float arcType, float power)
     {
 
         passAttempt(ballThrower, ballReciever, ball, arcType, power);
