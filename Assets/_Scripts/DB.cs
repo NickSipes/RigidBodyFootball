@@ -128,8 +128,7 @@ public class DB : DefPlayer
         SetTargetHb(targetPlayer);
     }
 
-#pragma warning disable 108,114
-    void FixedUpdate()
+    public override void FixedUpdate()
     {
         base.FixedUpdate();
 
@@ -242,26 +241,7 @@ public class DB : DefPlayer
         anim.SetTrigger("InZoneTrigger");
 
         //todo this needs a stat machine to determine if the DB needs to chase the WR past the Zone, Does he have overhead help
-        //Debug.Log("zone center reached");
-        //Vector3 moveLeft = transform.position + new Vector3(2, 0, 0);
-        //while ((transform.position - moveLeft).magnitude > 1)
-        //{
-        //    float speed = 3;
-        //    Vector3 dir = (moveLeft - transform.position).normalized * speed;
-        //    rb.velocity = dir;
-        //    int velocity = 100;
-        //    float angle;
-        //    var targetDir = qb.transform.position - transform.position;
-        //    var forward = transform.forward;
-        //    var localTarget = transform.InverseTransformPoint(qb.transform.position);
-        //    angle = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;
-        //    Vector3 eulerAngleVelocity = new Vector3(0, angle, 0);
-        //    Quaternion deltaRotation = Quaternion.Euler(eulerAngleVelocity * Time.deltaTime);
-        //    rb.MoveRotation(rb.rotation * deltaRotation);
-        //    yield return new WaitForFixedUpdate();
-        //}
-        //DisableNavmeshAgent();
-        //navMeshAgent.ResetPath();
+
     }
 
     IEnumerator TurnTowardsLOS()
@@ -281,9 +261,7 @@ public class DB : DefPlayer
 
         anim.SetFloat("VelocityX", h * speed);
         anim.SetFloat("VelocityZ", v * speed);
-        //rb.velocity = new Vector3(h * speed, 0, v * speed);
-        //Vector3 tempVect = new Vector3(h, 0, v);
-        //tempVect = tempVect.normalized * speed * Time.deltaTime;
+
         rb.velocity = dir;
     }
 
@@ -304,9 +282,7 @@ public class DB : DefPlayer
 
         anim.SetFloat("VelocityX", h * speed);
         anim.SetFloat("VelocityZ", v * speed);
-        //rb.velocity = new Vector3(h * speed, 0, v * speed);
-        //Vector3 tempVect = new Vector3(h, 0, v);
-        //tempVect = tempVect.normalized * speed * Time.deltaTime;
+
         rb.velocity = dir;
     }
 

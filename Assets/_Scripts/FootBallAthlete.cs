@@ -72,7 +72,6 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public HB targetHb;
     [HideInInspector] public DB targetDb;
 
-
     public bool isMan;
     public bool isZone;
 
@@ -109,7 +108,7 @@ public class FootBallAthlete : MonoBehaviour
         //lr.material.color = LineColor;
    
         AddIk();
-
+        startColor = materialRenderer.material.color;
         navMeshAgent.destination = transform.position;
         navStartSpeed = navMeshAgent.speed;
         navStartAccel = navMeshAgent.acceleration;
@@ -235,11 +234,7 @@ public class FootBallAthlete : MonoBehaviour
         if (!gameManager.isPass) return;
         
         //Debug.Log("MouseOverWR");
-        if(this != offPlayer)
-        {
-            materialRenderer.material.color = startColor;
-            return;
-        }
+        if(offPlayer != this)return;
         materialRenderer.material.color = highlightColor;
         gameManager.SetSelector(gameObject);
         //todo this is terrible, maybe a switch?  Plus should we really be calling a pass from the WR???
@@ -538,9 +533,17 @@ public class OffPlayer : FootBallAthlete
         }
         else
         {
-            StartCoroutine("GetToImpactPos", impactPos);
+            StartCoroutine("GetToBlockPosition", impactPos);
         }
     }
+
+    IEnumerator GetToBlockPosition()
+    {
+        //todo track ball carrier position and determine blocking position
+       
+        yield return new WaitForSeconds(1);
+    }
+
     internal bool CanBePressed()
     {
         if (!beenPressed)
