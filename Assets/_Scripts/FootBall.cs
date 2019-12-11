@@ -73,6 +73,8 @@ public class FootBall : MonoBehaviour
             out fireVel, out gravity, out impactPos))
         {
             GameObject go = Instantiate(targetMarker, impactPos, Quaternion.LookRotation(ballThrower.transform.position + new Vector3(0,1,0)));
+            go.name = "footballMarker";
+            go.transform.parent = FindObjectOfType<FootBall>().transform;
             Destroy(go, 2);
             transform.forward = diffGround;
             motion.Initialize(transform.position, gravity);

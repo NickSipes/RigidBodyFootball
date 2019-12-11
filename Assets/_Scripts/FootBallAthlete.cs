@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -30,8 +31,8 @@ public class FootBallAthlete : MonoBehaviour
 
 
 
-    [SerializeField] float maxAngle = 35;
-    [SerializeField] float maxRadius = 1;
+    [SerializeField] private float maxAngle = 35;
+    [SerializeField] private float maxRadius = 1;
 
     [HideInInspector] public Vector3 passTarget;
     [HideInInspector] public bool beenPressed = false;
@@ -39,11 +40,11 @@ public class FootBallAthlete : MonoBehaviour
     public Canvas canvas;
     public Image pressBar;
     [HideInInspector] public bool isHiked = false;
-    [HideInInspector] public Transform targetPlayer;
     [HideInInspector] public GameManager gameManager;
     [HideInInspector] public RouteManager routeManager;
     [HideInInspector] public bool isBlocking;
     [HideInInspector] public OffPlay offPlay;
+    [HideInInspector] public Transform targetPlayer;
 
     public Routes[] routes;
     public Routes myRoute;
@@ -85,7 +86,7 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public CameraRaycaster cameraRaycaster;
     [HideInInspector] public bool isSelected;
 
-    public virtual void  Start()
+    internal virtual void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
         routes = FindObjectsOfType<Routes>();
@@ -95,18 +96,18 @@ public class FootBallAthlete : MonoBehaviour
         navMeshAgent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
-  
-        
+
+
         qb = FindObjectOfType<QB>();
         hbs = FindObjectsOfType<HB>();
         defBacks = FindObjectsOfType<DB>();
         dLine = FindObjectsOfType<Dline>();
         oLine = FindObjectsOfType<Oline>();
         wideRecievers = FindObjectsOfType<WR>();
-        
+
         //targetPlayer = startGoal.transform;
         //lr.material.color = LineColor;
-   
+
         AddIk();
         startColor = materialRenderer.material.color;
         navMeshAgent.destination = transform.position;
@@ -114,7 +115,7 @@ public class FootBallAthlete : MonoBehaviour
         navStartAccel = navMeshAgent.acceleration;
         cameraRaycaster.OnMouseOverOffPlayer += OnMouseOverOffPlayer;
         gameManager.clearSelector += ClearSelector;
-        
+
     }
     public virtual void FixedUpdate()
     {
@@ -133,7 +134,7 @@ public class FootBallAthlete : MonoBehaviour
         iK.isActive = false;
     }
 
-    void GetTerrain()
+    private void GetTerrain()
     {
         if (terrain == null)
         {
@@ -154,14 +155,14 @@ public class FootBallAthlete : MonoBehaviour
         navMeshAgent.enabled = false;
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision collision)
     {
-        
+
         if (this is OffPlayer) return;
         if (!terrain) GetTerrain();
         var collGo = collision.gameObject;
         if (collGo.transform == terrain.transform) return;
-      
+
         //Debug.Log("Collision " + collGo.name + " and " + name);
         ContactPoint contacts = collision.contacts[0];
         Debug.DrawLine(transform.position, contacts.point);
@@ -230,11 +231,11 @@ public class FootBallAthlete : MonoBehaviour
     }
     internal void OnMouseOverOffPlayer(OffPlayer offPlayer)
     {
-        Debug.Log("Mouse over " + offPlayer.transform.name);
+        //Debug.Log("Mouse over " + offPlayer.transform.name);
         if (!gameManager.isPass) return;
-        
+
         //Debug.Log("MouseOverWR");
-        if(offPlayer != this)return;
+        if (offPlayer != this) return;
         materialRenderer.material.color = highlightColor;
         gameManager.SetSelector(gameObject);
         //todo this is terrible, maybe a switch?  Plus should we really be calling a pass from the WR???
@@ -274,6 +275,7 @@ public class FootBallAthlete : MonoBehaviour
     }
     internal void SetDestination(Vector3 dest)
     {
+        //if(this.name == "DB") Debug.Log(this.name + " " +"set dest " + dest);
         EnableNavMeshAgent();
         navMeshAgent.SetDestination(dest);
     }
@@ -324,27 +326,6 @@ public class FootBallAthlete : MonoBehaviour
 
         return bestTarget;
     }
-    //internal Transform GetClosestDline(Dline[] enemies)
-    //{
-    //    Transform bestTarget = null;
-    //    float closestDistanceSqr = Mathf.Infinity;
-    //    Vector3 currentPosition = transform.position;
-
-    //    foreach (Dline potentialTarget in enemies)
-    //    {
-
-    //        Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
-    //        float dSqrToTarget = directionToTarget.sqrMagnitude;
-    //        if (dSqrToTarget < closestDistanceSqr)
-    //        {
-
-    //            closestDistanceSqr = dSqrToTarget;
-    //            bestTarget = potentialTarget.transform;
-    //        }
-    //    }
-
-    //    return bestTarget;
-    //}
     internal Transform GetClosestDB(DB[] enemies)
     {
         Transform bestTarget = null;
@@ -415,6 +396,8 @@ public class OffPlayer : FootBallAthlete
     public float blockCoolDown = 1f;
     public bool canBlock = true;
     internal bool isBlocker;
+    public bool isReciever;
+    List<DefPlayer> blockList;
 
     public virtual void Start()
     {
@@ -422,7 +405,12 @@ public class OffPlayer : FootBallAthlete
         gameManager.onBallThrown += BallThrown;
         gameManager.hikeTheBall += HikeTheBall;
         startColor = materialRenderer.material.color;
-       
+
+    }
+
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
     }
 
     private void HikeTheBall(bool wasHiked) //event
@@ -451,29 +439,26 @@ public class OffPlayer : FootBallAthlete
 
     internal void RunRoute()
     {
+        if (myRoute == null) return;
+        if (!AtRouteCut()) return;
 
-        if (myRoute != null)
+        if (timeSinceArrivedAtRouteCut > myRoute.routeCutDwellTime[0])
         {
-            if (!AtRouteCut()) return;
+            CycleRouteCut();
+            nextPosition = GetCurrentRouteCut();
+            navMeshAgent.destination = nextPosition;
+            timeSinceArrivedAtRouteCut = 0;
+            //Debug.Log("start NavMeshAgent");
 
-            if (timeSinceArrivedAtRouteCut > myRoute.routeCutDwellTime[0])
-            {
-                CycleRouteCut();
-                nextPosition = GetCurrentRouteCut();
-                navMeshAgent.destination = nextPosition;
-                timeSinceArrivedAtRouteCut = 0;
-                //Debug.Log("start NavMeshAgent");
+            if (!AtLastRouteCut()) return;
+            wasAtLastCut = true;
+            WatchQb();
+            //Debug.Log("set last cut true");
+            return;
 
-                if (!AtLastRouteCut()) return;
-                wasAtLastCut = true;
-                WatchQb();
-                Debug.Log("set last cut true");
-                return;
-
-            }
-
-            timeSinceArrivedAtRouteCut += Time.deltaTime;
         }
+
+        timeSinceArrivedAtRouteCut += Time.deltaTime;
     }
 
 
@@ -537,10 +522,10 @@ public class OffPlayer : FootBallAthlete
         }
     }
 
-    IEnumerator GetToBlockPosition()
+    private IEnumerator GetToBlockPosition()
     {
         //todo track ball carrier position and determine blocking position
-       
+
         yield return new WaitForSeconds(1);
     }
 
@@ -556,6 +541,7 @@ public class OffPlayer : FootBallAthlete
 
     internal void Press(float pressTimeNorm)
     {
+        canvas.enabled = true;
         anim.SetTrigger("PressTrigger");
         pressBar.fillAmount = pressTimeNorm;
         navMeshAgent.acceleration = 0f;
@@ -581,25 +567,18 @@ public class OffPlayer : FootBallAthlete
         if (!canBlock) return;
         ;
         //todo change code to be moving forward with blocks, get to the second level after shedding first defender
-
-        //sudo get positions of all other blockers
-        var blockTargets = gameManager.defPlayers;
-
-        foreach (var defender in blockTargets)
-        {
-            if ((defender.transform.position - transform.position).magnitude < blockRange)
-            {
-
-            }
-
-            ;
-        }
-
         if (targetPlayer == null)
         {
-            targetPlayer = GetClosestDefPlayer(gameManager.defPlayers);
-        }
+            //sudo get positions of all other blockers
+            var blockTargets = gameManager.defPlayers;
+            var bestBlockTarget = GetClosestDefPlayer(blockTargets);
+            if ((bestBlockTarget.transform.position - transform.position).magnitude < blockRange)
 
+
+                //todo compare def players who are engaged in a block, double-team or get down-field
+                targetPlayer = GetClosestDefPlayer(blockTargets);
+        }
+        if(targetPlayer == null)return;
         Vector3 directionToTarget = targetPlayer.position - transform.position;
         transform.LookAt(targetPlayer);
 
@@ -610,13 +589,12 @@ public class OffPlayer : FootBallAthlete
         if (dSqrToTarget < 3) //todo setup block range variable
         {
             var defPlayer = targetPlayer.GetComponent<DefPlayer>();
-            if (!isBlocking) StartCoroutine("BlockTarget", targetPlayer);
+            if (!isBlocking) StartCoroutine(BlockTarget(targetPlayer));
         }
     }
 
 
-
-    IEnumerator GetToImpactPos(Vector3 impact)
+    private IEnumerator GetToImpactPos(Vector3 impact)
     {
         SetDestination(impact);
         yield return new WaitForSeconds(2);
@@ -624,7 +602,7 @@ public class OffPlayer : FootBallAthlete
         ResetRoute();
     }
 
-    IEnumerator TracktheBall(FootBall ball)
+    private IEnumerator TracktheBall(FootBall ball)
     {
         while ((transform.position - ball.transform.position).magnitude > 10f) //todo will have to create some forumla based on throwPower to trigger animations correctly
         {
@@ -637,7 +615,8 @@ public class OffPlayer : FootBallAthlete
         anim.SetTrigger("CatchTrigger");
         StartCoroutine("CatchTheBall", ball);
     }
-    IEnumerator CatchTheBall(FootBall ball)
+
+    private IEnumerator CatchTheBall(FootBall ball)
     {
         iK.rightHandObj = ball.transform;
 
@@ -706,8 +685,15 @@ public class OffPlayer : FootBallAthlete
 
     private void SetTargetDlineRun(Transform target) //todo collapse into single function
     {
-
-        SetDestination(target.position); // 
+        var ballOwner = gameManager.ballOwner;
+        if (ballOwner != null)
+        {
+            SetDestination(ballOwner.transform.position + (target.position - ballOwner.transform.position) / 2); // 
+        }
+        else
+        {
+            SetDestination(target.position);
+        }
     }
 
     public void SetTargetDline(Transform target)
@@ -718,7 +704,7 @@ public class OffPlayer : FootBallAthlete
                        2); // todo centralize ball carrier, access ballcarrier instead of hard coded transform
     }
 
-    IEnumerator BlockTarget(Transform target)
+    private IEnumerator BlockTarget(Transform target)
     {
         //todo 
         var defPlayer = target.GetComponent<DefPlayer>();
@@ -736,12 +722,13 @@ public class OffPlayer : FootBallAthlete
         }
 
         defPlayer.ReleaseBlock(this);
+        targetPlayer = null;
         isBlocking = false;
         canBlock = false;
         StartCoroutine(BlockCoolDown());
     }
 
-    IEnumerator BlockCoolDown()
+    private IEnumerator BlockCoolDown()
     {
         yield return new WaitForSeconds(blockCoolDown);
         canBlock = true;
@@ -753,18 +740,30 @@ public class DefPlayer : FootBallAthlete
 {
     [HideInInspector] public bool isBlocked;
     public bool wasBlocked = false;
-    [SerializeField] Image blockBar;
+    [SerializeField] private Image blockBar;
     internal float blockCooldown = 2f;
     internal List<OffPlayer> blockPlayers = new List<OffPlayer>();
     [SerializeField] internal int zoneLayer = 8;
-
+    internal bool isBackingOff = false;
     internal bool isWrIncoming = false;
     internal bool isBlockingPass = false;
 
-    public virtual void Start()
+    internal override void Start()
     {
         base.Start();
+        AddEvents();
     }
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+    }
+
+    internal void AddEvents()
+    {
+        gameManager.ballOwnerChange += BallOwnerChange;
+
+    }
+
     public void Press(float pressTimeNorm)
     {
         //pressBar.fillAmount = pressTimeNorm;
@@ -772,13 +771,194 @@ public class DefPlayer : FootBallAthlete
         navMeshAgent.acceleration = 0f;
         navMeshAgent.speed = 0f;
     }
+    internal void CreateZone()
+    {
+        //todo make zoneCenterGO move functions dependent on play developement;
+        Vector3 zoneCenterStart = GetZoneStart();
+        GameObject zoneGO = Instantiate(new GameObject(), zoneCenterStart, Quaternion.identity);
+        zone = zoneGO.AddComponent<Zones>();
+        zoneGO.transform.position = transform.position + new Vector3(0, 0, 5);
+        zoneGO.transform.name = transform.name + "ZoneObject";
+        GameObject zoneObjectContainer = GameObject.FindGameObjectWithTag("ZoneObject"); //Hierarchy Cleanup
+        zoneGO.transform.parent = zoneObjectContainer.transform;
+        zoneGO.transform.tag = "ZoneObject";
+        SphereCollider sphereCollider = zoneGO.gameObject.AddComponent<SphereCollider>();
+        sphereCollider.isTrigger = true;
+        zoneGO.layer = zoneLayer;
+        zone.zoneSize = defZoneSize;
+    }
+
+    internal Vector3 GetZoneStart()
+    {
+        return transform.position + new Vector3(5, 0, 0); //todo this needs to be dependent on player responsibilities
+    }
+
+    internal void PlayReact()
+    {
+        var reactTime = 0f;
+        while (reactTime < 1.5f)
+        {
+            reactTime += Time.deltaTime;
+        }
+
+        targetPlayer = GetClosestHb(hbs);
+        SetTargetHb(targetPlayer);
+    }
 
     public void ReleasePress()
     {
-        //canvas.enabled = !canvas.enabled;
+        canvas.enabled = !canvas.enabled;
         EnableNavMeshAgent();
         navMeshAgent.speed = navStartSpeed;
         navMeshAgent.acceleration = navStartAccel;
+    }
+
+    internal void PlayZone()
+    {
+        //todo access WR route to see if it will pass through zone and then move towards intercept point
+        if (targetReciever == null)
+        {
+            //has return if enemy set
+            if (CheckZone()) return;
+        }
+
+        SetDestination(zone.zoneCenter);
+
+    }
+
+    private bool CheckZone()
+    {
+        var possibleEnemy = GetClosestWr(wideRecievers);
+        Vector3 wrZoneCntrDist = possibleEnemy.position - zone.transform.position;
+        //Debug.Log(wrZoneCntrDist.magnitude);
+        if (wrZoneCntrDist.magnitude < zone.zoneSize)
+        {
+            //todo this will break with mulitple recievers, need to determine coverage responsablilty
+            SetTargetOffPlayer(possibleEnemy);
+            return true;
+        }
+
+        foreach (var reciever in wideRecievers)
+        {
+            RaycastHit[] hits = Physics.RaycastAll(reciever.transform.position, reciever.transform.forward, 100.0F);
+            //if(hits.Length != 0)Debug.Log(hits.Length);
+
+            for (int i = 0; i < hits.Length; i++)
+            {
+                RaycastHit hit = hits[i];
+                if (hit.collider.tag == "ZoneObject")
+                {
+                    Zones zoneObject = hit.collider.gameObject.GetComponent<Zones>();
+
+                    if (zoneObject == zone)
+                    {
+                        //Maybe Method
+                        SetDestination(hit.point);
+                        Debug.DrawLine(transform.position, hit.point, Color.red);
+                        return true;
+
+                    }
+
+                }
+
+            }
+        }
+
+        return false;
+
+    }
+
+    internal void SetTargetOffPlayer(Transform targetTransform)
+    {
+        EnableNavMeshAgent();
+        SetDestination(targetTransform.position);
+        targetPlayer = targetTransform;
+        targetReciever = targetTransform.GetComponentInParent<OffPlayer>();
+        //Debug.Log("Target Changed");
+    }
+    internal IEnumerator WrPress(OffPlayer offPlayer)
+    {
+        isPressing = true;
+        float pressTime = .5f;
+        anim.SetTrigger("PressTrigger");
+        SetDestination(offPlayer.transform.position + transform.forward);
+        float pressTimeNorm = 0;
+        //Vector3 dir = (offPlayer.transform.position - transform.position).normalized * pressTime;
+        //rb.velocity = dir;
+        while (pressTimeNorm <= 1f)
+        {
+            StayInfront();
+            pressTimeNorm += Time.deltaTime / pressTime;
+            offPlayer.Press(pressTimeNorm);
+            yield return new WaitForEndOfFrame();
+        }
+
+        anim.SetTrigger("ReleaseTrigger");
+        StartCoroutine(BackOffPress(offPlayer));
+
+    }
+
+    private IEnumerator BackOffPress(OffPlayer offPlayer)
+    {
+        //read receiver route, move backwards, release reciever to new defender, moves towards next receiver
+
+        offPlayer.ReleasePress();
+        isPressing = false;
+        StartCoroutine(TurnTowardsLOS());
+        var backOffTime = 0f;
+        while (backOffTime < 1)
+        {
+            //Vector3 dir = targetPlayer.position - transform.position;
+
+            isBackingOff = true;
+            //Debug.Log("isBackingOff true");
+            BackOff(offPlayer);
+            backOffTime += Time.deltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+
+        anim.SetTrigger("InZoneTrigger");
+        isBackingOff = false;
+        //Debug.Log("isBackingOff false");
+        //todo this needs a stat machine to determine if the DB needs to chase the WR past the Zone, Does he have overhead help
+    }
+
+    private IEnumerator TurnTowardsLOS()
+    {
+        //todo write this function
+        yield return new WaitForFixedUpdate();
+    }
+
+    private void StayInfront()
+    {
+        DisableNavmeshAgent();
+
+        float speed = 3; //todo needs to be a calculation of WR release and DB press
+        Vector3 dir = (targetPlayer.position + targetPlayer.transform.forward - transform.position).normalized * speed;
+        float v = dir.z;
+        float h = dir.x;
+
+        anim.SetFloat("VelocityX", h * speed);
+        anim.SetFloat("VelocityZ", v * speed);
+
+        rb.velocity = dir;
+    }
+
+
+    private void BackOff(OffPlayer offPlayer)
+    {
+        DisableNavmeshAgent();
+        // turn around and run, cut left, or cut right
+
+        float speed = 5; //todo this should be a calculation of offPlayer release vs db press
+        Vector3 dir = (offPlayer.transform.position + offPlayer.transform.forward - transform.position).normalized * speed;
+        float v = dir.z;
+        float h = dir.x;
+
+        anim.SetFloat("VelocityX", h * speed);
+        anim.SetFloat("VelocityZ", v * speed);
+
+        rb.velocity = dir;
     }
 
     public void BeBlocked(float blockTimeNorm, OffPlayer blocker)
@@ -792,8 +972,6 @@ public class DefPlayer : FootBallAthlete
         navMeshAgent.acceleration = 0f;
         navMeshAgent.speed = 0f;
         isBlocked = true;
-
-
 
         if (!blockPlayers.Contains(blocker))
         {
@@ -877,7 +1055,7 @@ public class DefPlayer : FootBallAthlete
         }
     }
 
-    IEnumerator BlockPass(FootBall ball)
+    private IEnumerator BlockPass(FootBall ball)
     {
         isBlockingPass = true;
         anim.SetTrigger("BlockPass");
@@ -894,7 +1072,7 @@ public class DefPlayer : FootBallAthlete
         canvas.gameObject.SetActive(false);
     }
 
-    bool InVincintyOfPass(OffPlayer receiver)
+    private bool InVincintyOfPass(OffPlayer receiver)
     {
         float distToWr = Vector3.Distance(transform.position, receiver.transform.position);
         if (distToWr <= 5) return true; //todo create coverage range variable
@@ -911,8 +1089,7 @@ public class DefPlayer : FootBallAthlete
     internal void SetTargetHb(Transform targetTransform)
     {
         SetDestination(targetTransform.position);
-        targetPlayer = targetTransform;
-        targetHb = targetTransform.GetComponentInParent<HB>();
+        targetPlayer = targetTransform; targetHb = targetTransform.GetComponentInParent<HB>();
         //Debug.Log("Target Changed");
     }
 
@@ -926,7 +1103,7 @@ public class DefPlayer : FootBallAthlete
         return false;
     }
 
-    void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
         if (zone)
         {
@@ -947,7 +1124,7 @@ public class DefPlayer : FootBallAthlete
     //https://answers.unity.com/questions/1170087/instantly-turn-with-nav-mesh-agent.html
 
 
-public IEnumerator BlockCoolDown()
+    public IEnumerator BlockCoolDown()
     {
         yield return new WaitForSeconds(blockCooldown);
         wasBlocked = false;

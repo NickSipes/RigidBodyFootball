@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityStandardAssets.CrossPlatformInput;
 
 
 //todo: this is a unity standard asset script. Refactor variables to meet the rest of the projects naming standards. Look for ways to improve
@@ -44,7 +43,7 @@ public class ThirdPersonUserControl : MonoBehaviour
     {
         if (!m_Jump)
         {
-            m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
+            m_Jump = Input.GetButtonDown("Jump");
         }
     }
 
@@ -54,8 +53,8 @@ public class ThirdPersonUserControl : MonoBehaviour
     {
         if (!gameManager.isHiked) return;
         // read inputs
-        float h = CrossPlatformInputManager.GetAxis("Horizontal");
-        float v = CrossPlatformInputManager.GetAxis("Vertical");
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
         if (isStrafe)
         {
             m_Character.StrafeMoveAnimation(h, v, speed, true);

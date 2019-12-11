@@ -3,16 +3,18 @@
 [System.Serializable]
 public class Routes : MonoBehaviour
 {
-    private LineRenderer lineRenderer;
+    LineRenderer lineRenderer;
     const float waypointGizmoRadius = 0.3f;
     public float[] routeCutDwellTime;
+    private Transform routeStartLocation;
+    private Transform[] routeCuts;
 
     void Start()
     {
-        var variableForPrefab = Resources.Load("_prefabs/PlayArt/Yellow") as Material;
-        lineRenderer = gameObject.AddComponent<LineRenderer>();
-        lineRenderer.material = variableForPrefab;
-
+        routeCuts = GetComponentsInChildren<Transform>();
+        //lineRenderer = GetComponent<LineRenderer>();
+        //lineRenderer.widthMultiplier = .1f;
+        //lineRenderer.SetPosition(0, transform.GetChild(0).position);
     }
 
     void Update()
@@ -45,10 +47,9 @@ public class Routes : MonoBehaviour
 
     void DrawPath()
     {
-        for (int i = 0; i < transform.childCount - 1; i++)
+        foreach (Transform cut in routeCuts)  
         {
-            int j = GetNextIndex(i);
-            Debug.DrawLine(GetWaypoint(i), GetWaypoint(j));
+            
            
         }
         

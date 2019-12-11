@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class CameraRaycaster : MonoBehaviour
@@ -45,7 +43,7 @@ public class CameraRaycaster : MonoBehaviour
     {
         if (instance != null)
         {
-            Debug.Log("two raycasters");
+            Debug.Log("two ray casters");
         }
         instance = this;
 
@@ -65,20 +63,20 @@ public class CameraRaycaster : MonoBehaviour
     void Update()
     {
 
-        // Check if pointer is over an interactable UI element
+        // Check if pointer is over an interact able UI element
         if (EventSystem.current.IsPointerOverGameObject())
         {
-            // Impliment UI interaction
+            // Implement UI interaction
         }
         else
         {
             //TODO Consider removing from update loop
-            PerformRaycasts();
+            PerformRaycast();
         }
         currentScrenRect = new Rect(0, 0, Screen.width, Screen.height);
     }
 
-    void PerformRaycasts()
+    internal void PerformRaycast()
     {
         if (currentScrenRect.Contains(Input.mousePosition))
         {
@@ -93,8 +91,7 @@ public class CameraRaycaster : MonoBehaviour
    
     void RayForPassCatcher(Ray ray)
     {
-        RaycastHit hitInfo;
-        Physics.Raycast(ray, out hitInfo, maxRaycastDepth, recieverLayer);
+        Physics.Raycast(ray, out RaycastHit hitInfo, maxRaycastDepth, recieverLayer);
         if (hitInfo.collider == null) return;
 
         var gameObjectHit = hitInfo.collider.gameObject;

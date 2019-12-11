@@ -50,6 +50,7 @@ MonoBehaviour:
   oLine: []
   routeManager: {fileID: 0}
   isPass: 1
-  wrRoutes: 0900000008000000080000000a000000
-  isHbBlock: 00
+  wrRoutes: 090000000800000008000000
+  isOffPlayerBlock: 0000
   HbRoute: 0b000000
+  TeRoute: 0a000000

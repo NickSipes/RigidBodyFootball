@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityStandardAssets.CrossPlatformInput;
 
 public class UserControl : MonoBehaviour
 {
@@ -28,8 +27,8 @@ public class UserControl : MonoBehaviour
         if (controlPlayer.userControl == false) return;
              
         float speed = 5; // todo make setable variable
-        float h = CrossPlatformInputManager.GetAxis("Horizontal");
-        float v = CrossPlatformInputManager.GetAxis("Vertical");
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
         StrafeMove(h, v, speed);
 
     }

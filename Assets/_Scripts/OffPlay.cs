@@ -8,8 +8,11 @@ public class OffPlay : PlayCall
 {
     public int[] wrRoutes;
   
-    public bool[] isHbBlock;
+    public bool[] isOffPlayerBlock;
     public int[] HbRoute;
+
+    public int[] TeRoute;
+
     //public int Wr5Route;
 
     void Start()

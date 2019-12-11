@@ -69,6 +69,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -110,8 +111,9 @@ MonoBehaviour:
   rb: {fileID: 54817059174413438}
   arcPeakRange: 0.315
   throwPowerRange: 0.517
-  targetMarker: {fileID: 1150013325577494, guid: 81dfdc8088386ed4bb57d24778181cbf,
+  targetMarker: {fileID: 6750982538021403886, guid: 81dfdc8088386ed4bb57d24778181cbf,
     type: 3}
+  isComplete: 0
   destroyTime: 3
 --- !u!54 &54817059174413438
 Rigidbody:
