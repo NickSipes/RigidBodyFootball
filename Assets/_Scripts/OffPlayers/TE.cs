@@ -5,7 +5,7 @@ using UnityEngine;
 public class TE : OffPlayer
 {
     // Start is called before the first frame update
-    void Start()
+    internal override void Start()
     {
         base.Start();
         AddClickCollider();

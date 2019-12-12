@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Experimental.GlobalIllumination;
 
 // ReSharper disable UnusedMember.Local
 #pragma warning disable 108,114
@@ -74,6 +75,11 @@ public class QB : OffPlayer {
     {
         base.FixedUpdate();
         RaycastForward();
+        foreach (var offPlayer in offPlayers)
+        {
+            //var lineColor = defPlayer.startColor;
+            Debug.DrawLine(this.transform.position, offPlayer.transform.position,offPlayer.startColor);
+        }
     }
 
     public void HikeTrigger() // called from UI button on gamemanger
@@ -143,7 +149,7 @@ public class QB : OffPlayer {
         if(!isRapidFire)
         //todo cleanup this code, could cause bugs setting these values then running coroutine
         throwVector = passTarget;
-        targetReciever = reciever;
+        targetReceiver = reciever;
         throwArc = arcType;
         throwPower = power;
         StartCoroutine("PassTheBall");
@@ -158,7 +164,7 @@ public class QB : OffPlayer {
         var thrownBall = Instantiate(footBall, throwingHand.transform.position, lookAt); //todo put footballs in hierarchy container
         thrownBall.name = "throwBall";
         FootBall thrownBallScript = thrownBall.GetComponent<FootBall>();
-        thrownBallScript.PassFootBallToMovingTarget(this, targetReciever, thrownBallScript, throwArc, throwPower);
+        thrownBallScript.PassFootBallToMovingTarget(this, targetReceiver, thrownBallScript, throwArc, throwPower);
         gameManager.isPassStarted = true;
         //Destroy(thrownBall, 3f); //todo get better solution to removing footballs
     }

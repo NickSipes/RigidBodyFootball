@@ -64,12 +64,12 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public HB[] hbs;
     [HideInInspector] public Oline[] oLine;
     [HideInInspector] public Dline[] dLine;
-
-    [Range(5, 10)]
-    public float defZoneSize; //todo should this be determined by the Zone? //Maybe awareness checks
+    [HideInInspector] public DefPlayer[] defPlayers;
+    [HideInInspector] public OffPlayer[] offPlayers;
+    [Range(5, 10)] public float defZoneSize; //todo should this be determined by the Zone? //Maybe awareness checks
 
     [HideInInspector] public Zones zone;
-    [HideInInspector] public OffPlayer targetReciever;
+    [HideInInspector] public OffPlayer targetReceiver;
     [HideInInspector] public HB targetHb;
     [HideInInspector] public DB targetDb;
 
@@ -97,15 +97,14 @@ public class FootBallAthlete : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
 
-
         qb = FindObjectOfType<QB>();
         hbs = FindObjectsOfType<HB>();
         defBacks = FindObjectsOfType<DB>();
         dLine = FindObjectsOfType<Dline>();
         oLine = FindObjectsOfType<Oline>();
         wideRecievers = FindObjectsOfType<WR>();
-
-        //targetPlayer = startGoal.transform;
+        defPlayers = FindObjectsOfType<DefPlayer>();
+        offPlayers = FindObjectsOfType<OffPlayer>();
         //lr.material.color = LineColor;
 
         AddIk();
@@ -121,10 +120,10 @@ public class FootBallAthlete : MonoBehaviour
     {
         //Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
         //Debug.DrawRay(transform.position, forward, rayColor);
-        Vector3 angleFOV2 = Quaternion.AngleAxis(maxAngle, transform.up) * transform.forward;
-        Vector3 angleFOV1 = Quaternion.AngleAxis(-maxAngle, transform.up) * transform.forward;
-        Debug.DrawRay(transform.position, angleFOV2, rayColor);
-        Debug.DrawRay(transform.position, angleFOV1, rayColor);
+        Vector3 angleFov2 = Quaternion.AngleAxis(maxAngle, transform.up) * transform.forward;
+        Vector3 angleFov1 = Quaternion.AngleAxis(-maxAngle, transform.up) * transform.forward;
+        Debug.DrawRay(transform.position, angleFov2, rayColor);
+        Debug.DrawRay(transform.position, angleFov1, rayColor);
         RaycastForward();
     }
 
@@ -174,7 +173,7 @@ public class FootBallAthlete : MonoBehaviour
         if (gameManager.ballOwner == null) return;
         if (collGo == gameManager.ballOwner.gameObject)
         {
-            //todo check if player is facing ballowner is targetPlayer in 'tackle angle'
+            //todo check if player is facing ballOwner is targetPlayer in 'tackle angle'
 
             FootBallAthlete playerType = collGo.GetComponent<FootBallAthlete>();
             if (playerType is OffPlayer)
@@ -248,27 +247,27 @@ public class FootBallAthlete : MonoBehaviour
         // todo bool canBePassedTo, then raycast OnMouseOverWr for QB to throw
 
     }
-    internal void BeginPass(int mouseButton, OffPlayer reciever) //todo, move code to QB or game manager
+    internal void BeginPass(int mouseButton, OffPlayer receiver) //todo, move code to QB or game manager
     {
 
         //todo adjust throwPower dependent on distance and throw type
         if (mouseButton == 0) //Bullet Pass
         {
             passTarget = transform.position;
-            qb.BeginThrowAnim(passTarget, reciever, 1.5f, 23f); //todo fix hardcoded variables, needs to be a measure of distance + qb throw power
+            qb.BeginThrowAnim(passTarget, receiver, 1.5f, 23f); //todo fix hardcoded variables, needs to be a measure of distance + qb throw power
         }
 
         if (mouseButton == 1) // Touch Pass
         {
             passTarget = transform.position;
-            qb.BeginThrowAnim(passTarget, reciever, 2.3f, 20f);
+            qb.BeginThrowAnim(passTarget, receiver, 2.3f, 20f);
         }
 
         if (mouseButton == 2) // Lob PASS
         {
             //Debug.Log("Pressed middle click.");
             passTarget = transform.position;
-            qb.BeginThrowAnim(passTarget, reciever, 3.2f, 19.5f);
+            qb.BeginThrowAnim(passTarget, receiver, 3.2f, 19.5f);
         }
 
 
@@ -399,7 +398,7 @@ public class OffPlayer : FootBallAthlete
     public bool isReciever;
     List<DefPlayer> blockList;
 
-    public virtual void Start()
+    internal override void Start()
     {
         base.Start();
         gameManager.onBallThrown += BallThrown;
@@ -504,7 +503,7 @@ public class OffPlayer : FootBallAthlete
 
     internal void BallThrown(QB thrower, OffPlayer reciever, FootBall ball, Vector3 impactPos, float arcType, float power, bool isComplete) //event
     {
-        //todo move reciever to a through pass targetPlayer
+        //todo move receiver to a through pass targetPlayer
         if (reciever == this)
         {
             StartCoroutine("GetToImpactPos", impactPos);
@@ -578,7 +577,7 @@ public class OffPlayer : FootBallAthlete
                 //todo compare def players who are engaged in a block, double-team or get down-field
                 targetPlayer = GetClosestDefPlayer(blockTargets);
         }
-        if(targetPlayer == null)return;
+        if (targetPlayer == null) return;
         Vector3 directionToTarget = targetPlayer.position - transform.position;
         transform.LookAt(targetPlayer);
 
@@ -608,7 +607,7 @@ public class OffPlayer : FootBallAthlete
         {
             iK.isActive = true;
             iK.LookAtBall(ball);
-            //todo reciever doesnt get to ball well on second throw
+            //todo receiver doesnt get to ball well on second throw
             yield return new WaitForEndOfFrame();
         }
 
@@ -740,7 +739,7 @@ public class DefPlayer : FootBallAthlete
 {
     [HideInInspector] public bool isBlocked;
     public bool wasBlocked = false;
-    [SerializeField] private Image blockBar;
+    [SerializeField] internal Image blockBar;
     internal float blockCooldown = 2f;
     internal List<OffPlayer> blockPlayers = new List<OffPlayer>();
     [SerializeField] internal int zoneLayer = 8;
@@ -816,7 +815,7 @@ public class DefPlayer : FootBallAthlete
     internal void PlayZone()
     {
         //todo access WR route to see if it will pass through zone and then move towards intercept point
-        if (targetReciever == null)
+        if (targetReceiver == null)
         {
             //has return if enemy set
             if (CheckZone()) return;
@@ -873,7 +872,7 @@ public class DefPlayer : FootBallAthlete
         EnableNavMeshAgent();
         SetDestination(targetTransform.position);
         targetPlayer = targetTransform;
-        targetReciever = targetTransform.GetComponentInParent<OffPlayer>();
+        targetReceiver = targetTransform.GetComponentInParent<OffPlayer>();
         //Debug.Log("Target Changed");
     }
     internal IEnumerator WrPress(OffPlayer offPlayer)
@@ -900,7 +899,7 @@ public class DefPlayer : FootBallAthlete
 
     private IEnumerator BackOffPress(OffPlayer offPlayer)
     {
-        //read receiver route, move backwards, release reciever to new defender, moves towards next receiver
+        //read receiver route, move backwards, release receiver to new defender, moves towards next receiver
 
         offPlayer.ReleasePress();
         isPressing = false;
@@ -995,6 +994,7 @@ public class DefPlayer : FootBallAthlete
 
     public void SetTargetPlayer(Transform targetSetter)
     {
+        EnableNavMeshAgent();
         navMeshAgent.SetDestination(targetSetter.position);
         targetPlayer = targetSetter;
     }

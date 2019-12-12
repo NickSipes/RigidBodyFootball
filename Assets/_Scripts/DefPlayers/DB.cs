@@ -52,24 +52,24 @@ public class DB : DefPlayer
 
             if (isPressing) return;
 
-            if (isBackingOff)return;
+            if (isBackingOff) return;
             {
                 if (isZone)
 
                 {
                     //todo this whole triple if statement sucks
-                    if (targetReciever != null)
+                    if (targetReceiver != null)
                     {
-                        if (IsTargetInZone(targetReciever.transform))
+                        if (IsTargetInZone(targetReceiver.transform))
                         {
 
-                            SetDestination(targetReciever.transform.position);
+                            SetDestination(targetReceiver.transform.position);
                             return;
                         }
                         else
                         {
                             //Debug.Log("targetPlayer out of zone");
-                            targetReciever = null;
+                            targetReceiver = null;
                             targetPlayer = null;
                         }
                     }
@@ -99,10 +99,10 @@ public class DB : DefPlayer
             if ((potientialTarget.transform.position - transform.position).magnitude < 5f)
             {
                 SetTargetOffPlayer(potientialTarget);
+                if (targetReceiver.CanBePressed())
+                    StartCoroutine(WrPress(targetReceiver));
+                //todo press range variable
             }
-            if (targetReciever.CanBePressed())
-                StartCoroutine(WrPress(targetReciever));
-            //todo press range variable
         }
     }
 }

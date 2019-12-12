@@ -7,9 +7,7 @@ using UnityEngine.AI;
 
 public class Oline : OffPlayer
 {
-
-
-    void Start()
+    internal override void Start()
     {
         base.Start();
         rayColor = Color.magenta;
@@ -24,7 +22,8 @@ public class Oline : OffPlayer
             BlockProtection();
         
     }
-    private void FixedUpdate()
+
+    public override void FixedUpdate()
     {
         base.FixedUpdate();
     

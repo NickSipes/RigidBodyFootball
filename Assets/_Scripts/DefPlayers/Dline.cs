@@ -35,9 +35,8 @@ public class Dline : DefPlayer
         if (wasBlocked && !isBlocked)
             StartCoroutine("BlockCoolDown"); 
     }
-#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
-    private void FixedUpdate()
-#pragma warning restore CS0108 // Member hides inherited member; missing new keyword
+
+    public override void FixedUpdate()
     {
        base.FixedUpdate();  
     }

@@ -3,32 +3,21 @@ using UnityEngine.EventSystems;
 
 public class CameraRaycaster : MonoBehaviour
 {
-
-    
     [SerializeField] Vector2 cursorHotspot = new Vector2(0, 0);
 
     [HideInInspector] public CameraFollow camFollow;
     [HideInInspector] public GameObject player;
     GameManager gameManager; 
     // Layers
-    const int recieverLayer = 9;
+    const int receiverLayer = 9;
    
     private Ray ray;
     private GameObject rayHit;
-    float maxRaycastDepth = 100f; //todo make variable Stat
+    float maxRaycastDepth = 10000f; //todo make variable Stat
     Rect currentScrenRect = new Rect(0, 0, Screen.width, Screen.height);
 
     private Camera mainCamera;
-    [HideInInspector] public Vector3 AimPoint;
-    [HideInInspector] public GameObject AimObject;
-
     public static CameraRaycaster instance { get; private set; }
-
-
-
-
-    //todo remove this variable pull in current player weapon config
-
 
     public delegate void OnMouseDownField(Vector3 destination);
     public event OnMouseDownField onMouseDownfield;
@@ -71,12 +60,12 @@ public class CameraRaycaster : MonoBehaviour
         else
         {
             //TODO Consider removing from update loop
-            PerformRaycast();
+            PerformRay();
         }
         currentScrenRect = new Rect(0, 0, Screen.width, Screen.height);
     }
 
-    internal void PerformRaycast()
+    internal void PerformRay()
     {
         if (currentScrenRect.Contains(Input.mousePosition))
         {
@@ -87,18 +76,18 @@ public class CameraRaycaster : MonoBehaviour
          
         }
     }
-    //todo get current weapon info and load it into function, use weapon range instead of raycast depth
-   
-    void RayForPassCatcher(Ray ray)
+    
+    void RayForPassCatcher(Ray rayForPassCatcher)
     {
-        Physics.Raycast(ray, out RaycastHit hitInfo, maxRaycastDepth, recieverLayer);
-        if (hitInfo.collider == null) return;
-
+        Physics.Raycast(rayForPassCatcher, out RaycastHit hitInfo, maxRaycastDepth, receiverLayer);
+        if (hitInfo.collider == null){Debug.Log("ColliderNull"); return;}
+        Debug.Log("hit " + hitInfo.transform.name);
         var gameObjectHit = hitInfo.collider.gameObject;
         var offPlayer = gameObjectHit.GetComponent<OffPlayer>();
         if (offPlayer != null)
         {
             // todo create better UI change cursor
+            
             OnMouseOverOffPlayer?.Invoke(offPlayer);
 
         }
@@ -109,4 +98,8 @@ public class CameraRaycaster : MonoBehaviour
        
     }
 
+    protected virtual void OnOnMouseDownfield(Vector3 destination)
+    {
+        onMouseDownfield?.Invoke(destination);
+    }
 }

@@ -2133,8 +2133,8 @@ MonoBehaviour:
   passTarget: {x: 0, y: 0, z: 0}
   beenPressed: 0
   footBall: {fileID: 0}
-  canvas: {fileID: 0}
-  pressBar: {fileID: 0}
+  canvas: {fileID: 7586528048547198960}
+  pressBar: {fileID: 7586528049133179584}
   isHiked: 0
   gameManager: {fileID: 0}
   routeManager: {fileID: 0}
