@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7692516795767794952}
   - component: {fileID: 7573478776140279269}
   m_Layer: 0
-  m_Name: MiamiPlayCall
+  m_Name: DolphinPlayCall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48,11 +48,10 @@ MonoBehaviour:
   defBacks: []
   hbs: []
   oLine: []
-  offPlayers: []
-  allOffPlays: []
-  allDefPlays: []
   routeManager: {fileID: 0}
+  formationTransforms: []
   isPass: 0
   wrRoutes: 
-  isHbBlock: 0
+  isSkillPlayerBlock: 0000
   HbRoute: 
+  TeRoute: 

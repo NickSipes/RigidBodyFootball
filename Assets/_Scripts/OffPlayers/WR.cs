@@ -4,28 +4,20 @@ using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.Experimental.XR;
 using UnityEngine.UIElements;
-// ReSharper disable ArrangeTypeMemberModifiers
-#pragma warning disable 108,114
+
 
 public class WR : OffPlayer
 {
-    //todo rapid fire
-    // Use this for initialization
-    
 
-    void Start()
+    internal override void Start()
     {
         base.Start();
         rayColor = Color.cyan;
-        gameManager.offPlayChange += ChangeOffRoute;
         AddClickCollider();
-        //start goal set by inspector
     }
 
-
-    // Update is called once per frame
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    void FixedUpdate()
+    public override void FixedUpdate()
     {
         base.FixedUpdate();
     }
@@ -79,42 +71,7 @@ public class WR : OffPlayer
 
         }
     }
-
-   void ChangeOffRoute(OffPlay offPlay)
-    {
-        if (gameManager.isRun)
-        {
-            if (myRoute != null) Destroy(myRoute);
-            StopNavMeshAgent();
-            return;
-        }
-
-        var wrName = this.name;
-        switch (wrName)
-        {
-            case "WR1":
-                routeSelection = offPlay.wrRoutes[0];
-                break;
-            case "WR2":
-                routeSelection = offPlay.wrRoutes[1];
-                break;
-            case "WR3":
-                routeSelection = offPlay.wrRoutes[2];
-                break;
-            case "WR4":
-                routeSelection = offPlay.wrRoutes[3];
-                break;
-            default:
-                routeSelection = offPlay.HbRoute[0];
-                break;
-        }
-
-        Destroy(myRoute);
-        GetRoute(routeSelection);
-    }
-
-  
-
+    
     IEnumerator DbBlock(DefPlayer defPlayer)
     {
         Debug.Log("BeBlocked " + "");

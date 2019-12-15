@@ -17,7 +17,7 @@ public class HB : OffPlayer
         AddClickCollider();
         rayColor = Color.green;
         gameManager.shedBlock += DefShedBlock;
-        gameManager.offPlayChange += ChangeOffRoute;
+        //gameManager.offPlayChange += ChangeOffPlay;
     }
     
     private void FixedUpdate()
@@ -73,38 +73,31 @@ public class HB : OffPlayer
         }
     }
 
-    void ChangeOffRoute(OffPlay offPlay)
-    {
-        if (gameManager.isRun)
-        {
-            Destroy(myRoute);
-            isReciever = false;
-            return;
-        }
+    //void ChangeOffRoute(OffPlay offPlay)
+    //{
+    //    if (gameManager.isRun)
+    //    {
+    //        Destroy(myRoute);
+    //        isReciever = false;
+    //        return;
+    //    }
 
-        if (gameManager.isPass)
-        {
-            var hbNumber = this.name;
-            switch (hbNumber)
-            {
-                case "HB1":
-                    routeSelection = offPlay.HbRoute[0];
-                    isBlocker = offPlay.isOffPlayerBlock[0];
-                    break;
-                case "HB2":
-                    routeSelection = offPlay.HbRoute[1];
-                    isBlocker = offPlay.isOffPlayerBlock[1];
-                    break;
-                default:
-                    routeSelection = offPlay.HbRoute[0];
-                    isBlocker = offPlay.isOffPlayerBlock[0];
-                    break;
-            }
-            if (!isBlocker) isReciever = true;
-            Destroy(myRoute);
-            GetRoute(routeSelection);
-        }
-    }
+    //    if (gameManager.isPass)
+    //    {
+    //        var hbNumber = this.name;
+    //        switch (hbNumber)
+    //        {
+                
+    //            default:
+    //                routeSelection = offPlay.HbRoute[0];
+    //                isBlocker = offPlay.isSkillPlayerBlock[0];
+    //                break;
+    //        }
+    //        if (!isBlocker) isReciever = true;
+    //        Destroy(myRoute);
+    //        GetRoute(routeSelection);
+    //    }
+    //}
     private void DefShedBlock(FootBallAthlete brokeBlock)
     {
         //todo check assignment

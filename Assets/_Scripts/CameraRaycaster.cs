@@ -81,7 +81,7 @@ public class CameraRaycaster : MonoBehaviour
     {
         Physics.Raycast(rayForPassCatcher, out RaycastHit hitInfo, maxRaycastDepth, receiverLayer);
         if (hitInfo.collider == null){Debug.Log("ColliderNull"); return;}
-        Debug.Log("hit " + hitInfo.transform.name);
+        //Debug.Log("hit " + hitInfo.transform.name);
         var gameObjectHit = hitInfo.collider.gameObject;
         var offPlayer = gameObjectHit.GetComponent<OffPlayer>();
         if (offPlayer != null)

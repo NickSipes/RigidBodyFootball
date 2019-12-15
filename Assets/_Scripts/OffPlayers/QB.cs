@@ -18,10 +18,7 @@ public class QB : OffPlayer {
     float throwArc;
     float throwPower;
     Vector3 throwVector;
-    
-    FootBallAthlete athlete;
 
-    
     Transform hbTransform;
 
     bool isRapidFire;
@@ -32,7 +29,6 @@ public class QB : OffPlayer {
         //controller = GetComponent<CharacterController>();
         rayColor = Color.cyan;
         throwingHandScript = GetComponentInChildren<ThrowingHand>();
-        athlete = GetComponent<FootBallAthlete>();
         userControl = GetComponent<UserControl>();
         gameManager.hikeTrigger += HikeTrigger;
     }
@@ -74,12 +70,6 @@ public class QB : OffPlayer {
     private void FixedUpdate()
     {
         base.FixedUpdate();
-        RaycastForward();
-        foreach (var offPlayer in offPlayers)
-        {
-            //var lineColor = defPlayer.startColor;
-            Debug.DrawLine(this.transform.position, offPlayer.transform.position,offPlayer.startColor);
-        }
     }
 
     public void HikeTrigger() // called from UI button on gamemanger

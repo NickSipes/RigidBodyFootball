@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayCall : MonoBehaviour
@@ -16,7 +17,7 @@ public class PlayCall : MonoBehaviour
     private DefPlay[] allDefPlays;
     public RouteManager routeManager;
     private GameManager gameManager;
-
+ 
     public bool isPass;
 
     // Start is called before the first frame update
@@ -33,7 +34,7 @@ public class PlayCall : MonoBehaviour
         allOffPlays = FindObjectsOfType<OffPlay>();
         routeManager = FindObjectOfType<RouteManager>();
         gameManager = FindObjectOfType<GameManager>();
-
+  
     }
 
     // Update is called once per frame
@@ -50,6 +51,9 @@ public class PlayCall : MonoBehaviour
         }
      
     }
+
+   
+
 
 }
 

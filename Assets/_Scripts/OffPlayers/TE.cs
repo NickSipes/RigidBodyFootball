@@ -11,7 +11,7 @@ public class TE : OffPlayer
         AddClickCollider();
         rayColor = Color.green;
         gameManager.shedBlock += DefShedBlock;
-        gameManager.offPlayChange += ChangeOffRoute;
+        //gameManager.offPlayChange += ChangeOffPlay;
     }
 
     // Update is called once per frame
@@ -73,37 +73,5 @@ public class TE : OffPlayer
         isBlocker = true;
         BlockProtection();
     }
-    void ChangeOffRoute(OffPlay offPlay)
-    {
-        if (gameManager.isRun)
-        {
-            Destroy(myRoute);
-            isReciever = false;
-            return;
-        }
-
-        if (gameManager.isPass)
-        {
-            var number = this.name;
-            switch (number)
-            {
-                case "TE1":
-                    routeSelection = offPlay.TeRoute[0];
-                    isBlocker = offPlay.isOffPlayerBlock[0];
-                    break;
-                case "TE2":
-                    routeSelection = offPlay.TeRoute[1];
-                    isBlocker = offPlay.isOffPlayerBlock[1];
-                    break;
-                default:
-                    routeSelection = offPlay.TeRoute[0];
-                    isBlocker = offPlay.isOffPlayerBlock[0];
-                    break;
-            }
-
-            if (!isBlocker) isReciever = true;
-            Destroy(myRoute);
-            GetRoute(routeSelection);
-        }
-    }
+    
 }

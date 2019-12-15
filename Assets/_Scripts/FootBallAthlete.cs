@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using UnityEngine.XR.WSA.Input;
 
 public class FootBallAthlete : MonoBehaviour
 {
@@ -125,6 +127,12 @@ public class FootBallAthlete : MonoBehaviour
         Debug.DrawRay(transform.position, angleFov2, rayColor);
         Debug.DrawRay(transform.position, angleFov1, rayColor);
         RaycastForward();
+
+        foreach (var offPlayer in offPlayers)
+        {
+            //var lineColor = defPlayer.startColor;
+            Debug.DrawLine(this.transform.position, offPlayer.transform.position, offPlayer.startColor);
+        }
     }
 
     private void AddIk()
@@ -403,6 +411,7 @@ public class OffPlayer : FootBallAthlete
         base.Start();
         gameManager.onBallThrown += BallThrown;
         gameManager.hikeTheBall += HikeTheBall;
+        gameManager.offPlayChange += ChangeOffPlay;
         startColor = materialRenderer.material.color;
 
     }
@@ -416,7 +425,96 @@ public class OffPlayer : FootBallAthlete
     {
         anim.SetTrigger("HikeTrigger");
     }
+    
+    internal void ChangeOffPlay(OffPlay offPlay)
+    {
+        if (gameManager.isRun)
+        {
+            Destroy(myRoute);
+            isReciever = false;
+            return;
+        }
 
+        if (gameManager.isPass)
+        {
+            var number = this.name;
+            switch (number)
+            {
+                case "WR1":
+                    routeSelection = offPlay.wrRoutes[0];
+                    MoveToStartPosition(offPlay.formationTransforms[0].position);
+                    break;
+                case "WR2":
+                    routeSelection = offPlay.wrRoutes[1];
+                    MoveToStartPosition(offPlay.formationTransforms[1].position);
+                    break;
+                case "WR3":
+                    routeSelection = offPlay.wrRoutes[2];
+                    MoveToStartPosition(offPlay.formationTransforms[2].position);
+                    break;
+                case "WR4":
+                    routeSelection = offPlay.wrRoutes[3];
+                    break;
+                case "TE1":
+                    routeSelection = offPlay.TeRoute[0];
+                    isBlocker = offPlay.isSkillPlayerBlock[0];
+                    MoveToStartPosition(offPlay.formationTransforms[10].position);
+                    break;
+                case "TE2":
+                    routeSelection = offPlay.TeRoute[1];
+                    isBlocker = offPlay.isSkillPlayerBlock[1];
+                    break;
+                case "TE3":
+                    routeSelection = offPlay.TeRoute[2];
+                    isBlocker = offPlay.isSkillPlayerBlock[2];
+                    break;
+                case "HB1":
+                    routeSelection = offPlay.HbRoute[0];
+                    isBlocker = offPlay.isSkillPlayerBlock[0];
+                    MoveToStartPosition(offPlay.formationTransforms[9].position);
+                    break;
+                case "HB2":
+                    routeSelection = offPlay.HbRoute[1];
+                    isBlocker = offPlay.isSkillPlayerBlock[1];
+                    break;
+                case "FB":
+                    //todo assign fullback route stuff
+                    break;
+                case "Center":
+                    MoveToStartPosition(offPlay.formationTransforms[3].position);
+                    break;
+                case "GuardR":
+                    MoveToStartPosition(offPlay.formationTransforms[4].position);
+                    break;
+                case "GuardL":
+                    MoveToStartPosition(offPlay.formationTransforms[5].position);
+                    break;
+                case "TackleL":
+                    MoveToStartPosition(offPlay.formationTransforms[6].position);
+                    break;
+                case "TackleR":
+                    MoveToStartPosition(offPlay.formationTransforms[7].position);
+                    break;
+                case "QB":
+                   // MoveToStartPosition(offPlay.formationTransforms[8].position);
+                    break;
+                default:
+                    //todo default stuff
+                    break;
+            }
+            if (!isBlocker) isReciever = true;
+            Destroy(myRoute);
+            GetRoute(routeSelection);
+        }
+    }
+
+    internal void MoveToStartPosition(Vector3 position)
+    {
+        anim.SetTrigger("HikeTrigger");
+        EnableNavMeshAgent();
+        navMeshAgent.destination = position;
+
+    }
     internal void GetRoute(int routeSelector)
     {
         myRoute = Instantiate(routeManager.allRoutes[routeSelector], transform.position, transform.rotation).GetComponent<Routes>(); //todo get route index selection
@@ -739,7 +837,7 @@ public class DefPlayer : FootBallAthlete
 {
     [HideInInspector] public bool isBlocked;
     public bool wasBlocked = false;
-    [SerializeField] internal Image blockBar;
+    [SerializeField] internal TextMeshPro blockText;
     internal float blockCooldown = 2f;
     internal List<OffPlayer> blockPlayers = new List<OffPlayer>();
     [SerializeField] internal int zoneLayer = 8;
@@ -766,7 +864,7 @@ public class DefPlayer : FootBallAthlete
     public void Press(float pressTimeNorm)
     {
         //pressBar.fillAmount = pressTimeNorm;
-        DisableNavmeshAgent();
+        DisableNavMeshAgent();
         navMeshAgent.acceleration = 0f;
         navMeshAgent.speed = 0f;
     }
@@ -930,7 +1028,7 @@ public class DefPlayer : FootBallAthlete
 
     private void StayInfront()
     {
-        DisableNavmeshAgent();
+        DisableNavMeshAgent();
 
         float speed = 3; //todo needs to be a calculation of WR release and DB press
         Vector3 dir = (targetPlayer.position + targetPlayer.transform.forward - transform.position).normalized * speed;
@@ -946,7 +1044,7 @@ public class DefPlayer : FootBallAthlete
 
     private void BackOff(OffPlayer offPlayer)
     {
-        DisableNavmeshAgent();
+        DisableNavMeshAgent();
         // turn around and run, cut left, or cut right
 
         float speed = 5; //todo this should be a calculation of offPlayer release vs db press
@@ -967,7 +1065,7 @@ public class DefPlayer : FootBallAthlete
 
         //todo make way around multiple defenders
         SetTargetPlayer(blocker.transform);
-        blockBar.fillAmount = blockTimeNorm;
+        pressBar.fillAmount = blockTimeNorm;
         navMeshAgent.acceleration = 0f;
         navMeshAgent.speed = 0f;
         isBlocked = true;
@@ -1006,7 +1104,7 @@ public class DefPlayer : FootBallAthlete
 
     internal void PassAttempt(QB thrower, OffPlayer reciever, FootBall ball, float arcType, float power)
     {
-        if (InVincintyOfPass(reciever))
+        if (IsVicinityPass(reciever))
         {
             if (arcType == 1.5f)
             {
@@ -1019,14 +1117,14 @@ public class DefPlayer : FootBallAthlete
         }
     }
 
-    private void AniciptateThrow(QB thrower, OffPlayer reciever, FootBall ball, float arcType, float power)
+    private void AniciptateThrow(QB thrower, OffPlayer receiver, FootBall ball, float arcType, float power)
     {
         //todo this code is used three times now 
-        Vector3 targetPos = reciever.transform.position;
+        Vector3 targetPos = receiver.transform.position;
         Vector3 diff = targetPos - transform.position;
         Vector3 diffGround = new Vector3(diff.x, 0f, diff.z);
         Vector3 fireVel, impactPos;
-        Vector3 velocity = reciever.navMeshAgent.velocity;
+        Vector3 velocity = receiver.navMeshAgent.velocity;
 
 
         //FTS Calculations https://github.com/forrestthewoods/lib_fts/tree/master/projects/unity/ballistic_trajectory
@@ -1048,7 +1146,7 @@ public class DefPlayer : FootBallAthlete
                 SetDestination(impactPos);
                 Debug.Log("PassBlock");
                 StartCoroutine("BlockPass", ball);
-                reciever.SetColor(Color.red);
+                receiver.SetColor(Color.red);
                 ball.isComplete = false;
             }
 
@@ -1072,7 +1170,7 @@ public class DefPlayer : FootBallAthlete
         canvas.gameObject.SetActive(false);
     }
 
-    private bool InVincintyOfPass(OffPlayer receiver)
+    private bool IsVicinityPass(OffPlayer receiver)
     {
         float distToWr = Vector3.Distance(transform.position, receiver.transform.position);
         if (distToWr <= 5) return true; //todo create coverage range variable
@@ -1134,7 +1232,7 @@ public class DefPlayer : FootBallAthlete
     {
         SetTargetPlayer(ballOwner.transform);
     }
-    internal void DisableNavmeshAgent()
+    internal void DisableNavMeshAgent()
     {
         navMeshAgent.enabled = false;
     }

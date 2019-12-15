@@ -8,18 +8,27 @@ public class OffPlay : PlayCall
 {
     public int[] wrRoutes;
   
-    public bool[] isOffPlayerBlock;
+    public bool[] isSkillPlayerBlock;
     public int[] HbRoute;
 
     public int[] TeRoute;
+    public List<Transform> formationTransforms;
 
     //public int Wr5Route;
 
     void Start()
     {
         base.Start();
+        GetFormationPositions();
+    }
+    void GetFormationPositions()
+    {
+
+        foreach (var transform1 in formationTransforms)
+        {
+            Debug.Log(transform1.name);
+        }
 
     }
-
 
 }
