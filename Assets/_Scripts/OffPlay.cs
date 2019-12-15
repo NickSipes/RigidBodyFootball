@@ -19,7 +19,7 @@ public class OffPlay : PlayCall
     void Start()
     {
         base.Start();
-        GetFormationPositions();
+        //GetFormationPositions();
     }
     void GetFormationPositions()
     {

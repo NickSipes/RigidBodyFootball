@@ -24,7 +24,7 @@ public class WR : OffPlayer
 
     void Update()
     {
-
+        base.Update();
         if (gameManager.WhoHasBall() == this) return;
         if (isCatching) return;
 

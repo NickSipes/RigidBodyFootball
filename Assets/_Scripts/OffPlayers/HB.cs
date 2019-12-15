@@ -30,6 +30,7 @@ public class HB : OffPlayer
     // Update is called once per frame
     void Update()
     {
+        base.Update();
         if (!gameManager.isHiked)
         {
             return;

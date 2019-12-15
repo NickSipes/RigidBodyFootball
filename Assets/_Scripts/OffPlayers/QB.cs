@@ -40,12 +40,13 @@ public class QB : OffPlayer {
 
     private void BallThrown(QB thrower, WR reciever, FootBall footBall, Vector3 impactPos, float arcType, float power, bool isComplete)
     {
-        
+         
     }
 
     // Update is called once per frame
-    private void Update()
+    void Update()
     {
+        base.Update();   
         if (!gameManager.isHiked) return;
         
         if (gameManager.isRun)
@@ -61,7 +62,7 @@ public class QB : OffPlayer {
             float dSqrToTarget = directionToTarget.sqrMagnitude;
             if (dSqrToTarget < 1 && hasBall)
             {
-                Debug.Log("Handoff");
+                //Debug.Log("Handoff");
                 hasBall = false;
                 HandOffBall(hbTransform);
             }

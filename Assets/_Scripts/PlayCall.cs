@@ -15,8 +15,9 @@ public class PlayCall : MonoBehaviour
     private DefPlayer[] defPlayers;
     private OffPlay[] allOffPlays;
     private DefPlay[] allDefPlays;
-    public RouteManager routeManager;
+    [HideInInspector]public RouteManager routeManager;
     private GameManager gameManager;
+    private OffPlay currerntOffPlay;
  
     public bool isPass;
 
@@ -48,16 +49,39 @@ public class PlayCall : MonoBehaviour
         if (!gameManager.isHiked)
         {
             gameManager.ChangeOffPlay(offPlay);
+           
         }
      
     }
+    public void FlipOffPlay()
+    {
+        if (!gameManager.isHiked)
+        {
+            Debug.Log("FlipPlay");
+            gameManager.FlipPlay();
+        
+        }
 
-   
-
+    }
 
 }
 
 public class DefPlay : PlayCall
 {
+    public List<Transform> formationTransforms;
 
+    void Start()
+    {
+        base.Start();
+        GetFormationPositions();
+    }
+    void GetFormationPositions()
+    {
+
+        foreach (var transform1 in formationTransforms)
+        {
+            Debug.Log(transform1.name);
+        }
+
+    }
 }

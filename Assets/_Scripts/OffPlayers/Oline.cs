@@ -17,6 +17,7 @@ public class Oline : OffPlayer
     // Update is called once per frame
     void Update()
     {
+        base.Update();
         if (!gameManager.isHiked) return;
       
             BlockProtection();

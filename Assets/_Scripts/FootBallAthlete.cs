@@ -47,7 +47,7 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public bool isBlocking;
     [HideInInspector] public OffPlay offPlay;
     [HideInInspector] public Transform targetPlayer;
-
+    [HideInInspector] public PlayCall currentPlayCall;
     public Routes[] routes;
     public Routes myRoute;
     [HideInInspector] public int routeSelection;
@@ -56,7 +56,7 @@ public class FootBallAthlete : MonoBehaviour
     internal bool wasAtLastCut = false;
     internal int currentRouteIndex = 0;
     internal float routeCutTolerance = 1.5f;
-
+    internal Vector3 routeStartPosition;
 
     internal float timeSinceArrivedAtRouteCut;
     internal Vector3 nextPosition;
@@ -128,11 +128,11 @@ public class FootBallAthlete : MonoBehaviour
         Debug.DrawRay(transform.position, angleFov1, rayColor);
         RaycastForward();
 
-        foreach (var offPlayer in offPlayers)
-        {
-            //var lineColor = defPlayer.startColor;
-            Debug.DrawLine(this.transform.position, offPlayer.transform.position, offPlayer.startColor);
-        }
+        //foreach (var offPlayer in offPlayers)
+        //{
+        //    //var lineColor = defPlayer.startColor;
+        //    Debug.DrawLine(this.transform.position, offPlayer.transform.position, offPlayer.startColor);
+        //}
     }
 
     private void AddIk()
@@ -252,7 +252,7 @@ public class FootBallAthlete : MonoBehaviour
         if (Input.GetMouseButtonDown(2)) { mouseButton = 2; BeginPass(mouseButton, offPlayer); }
 
 
-        // todo bool canBePassedTo, then raycast OnMouseOverWr for QB to throw
+        // todo bool canBePassedTo, then RayCast OnMouseOverWr for QB to throw
 
     }
     internal void BeginPass(int mouseButton, OffPlayer receiver) //todo, move code to QB or game manager
@@ -405,6 +405,7 @@ public class OffPlayer : FootBallAthlete
     internal bool isBlocker;
     public bool isReciever;
     List<DefPlayer> blockList;
+    internal OffPlay currentOffPlay;
 
     internal override void Start()
     {
@@ -412,10 +413,15 @@ public class OffPlayer : FootBallAthlete
         gameManager.onBallThrown += BallThrown;
         gameManager.hikeTheBall += HikeTheBall;
         gameManager.offPlayChange += ChangeOffPlay;
+        gameManager.offFlipPlay += FlipOffPlay;
         startColor = materialRenderer.material.color;
 
     }
 
+    internal virtual void Update()
+    {
+
+    }
     public override void FixedUpdate()
     {
         base.FixedUpdate();
@@ -425,9 +431,10 @@ public class OffPlayer : FootBallAthlete
     {
         anim.SetTrigger("HikeTrigger");
     }
-    
+
     internal void ChangeOffPlay(OffPlay offPlay)
     {
+        currentOffPlay = offPlay;
         if (gameManager.isRun)
         {
             Destroy(myRoute);
@@ -442,15 +449,15 @@ public class OffPlayer : FootBallAthlete
             {
                 case "WR1":
                     routeSelection = offPlay.wrRoutes[0];
-                    MoveToStartPosition(offPlay.formationTransforms[0].position);
+                    SetStartPosition(offPlay.formationTransforms[0].position);
                     break;
                 case "WR2":
                     routeSelection = offPlay.wrRoutes[1];
-                    MoveToStartPosition(offPlay.formationTransforms[1].position);
+                    SetStartPosition(offPlay.formationTransforms[1].position);
                     break;
                 case "WR3":
                     routeSelection = offPlay.wrRoutes[2];
-                    MoveToStartPosition(offPlay.formationTransforms[2].position);
+                    SetStartPosition(offPlay.formationTransforms[2].position);
                     break;
                 case "WR4":
                     routeSelection = offPlay.wrRoutes[3];
@@ -458,7 +465,7 @@ public class OffPlayer : FootBallAthlete
                 case "TE1":
                     routeSelection = offPlay.TeRoute[0];
                     isBlocker = offPlay.isSkillPlayerBlock[0];
-                    MoveToStartPosition(offPlay.formationTransforms[10].position);
+                    SetStartPosition(offPlay.formationTransforms[10].position);
                     break;
                 case "TE2":
                     routeSelection = offPlay.TeRoute[1];
@@ -471,7 +478,7 @@ public class OffPlayer : FootBallAthlete
                 case "HB1":
                     routeSelection = offPlay.HbRoute[0];
                     isBlocker = offPlay.isSkillPlayerBlock[0];
-                    MoveToStartPosition(offPlay.formationTransforms[9].position);
+                    SetStartPosition(offPlay.formationTransforms[9].position);
                     break;
                 case "HB2":
                     routeSelection = offPlay.HbRoute[1];
@@ -481,47 +488,113 @@ public class OffPlayer : FootBallAthlete
                     //todo assign fullback route stuff
                     break;
                 case "Center":
-                    MoveToStartPosition(offPlay.formationTransforms[3].position);
+                    SetStartPosition(offPlay.formationTransforms[3].position);
                     break;
                 case "GuardR":
-                    MoveToStartPosition(offPlay.formationTransforms[4].position);
+                    SetStartPosition(offPlay.formationTransforms[4].position);
                     break;
                 case "GuardL":
-                    MoveToStartPosition(offPlay.formationTransforms[5].position);
+                    SetStartPosition(offPlay.formationTransforms[5].position);
                     break;
                 case "TackleL":
-                    MoveToStartPosition(offPlay.formationTransforms[6].position);
+                    SetStartPosition(offPlay.formationTransforms[6].position);
                     break;
                 case "TackleR":
-                    MoveToStartPosition(offPlay.formationTransforms[7].position);
+                    SetStartPosition(offPlay.formationTransforms[7].position);
                     break;
                 case "QB":
-                   // MoveToStartPosition(offPlay.formationTransforms[8].position);
+                    navMeshAgent.speed = 4;
+                    SetStartPosition(offPlay.formationTransforms[8].position);
                     break;
                 default:
                     //todo default stuff
                     break;
             }
+            currentPlayCall = offPlay;
             if (!isBlocker) isReciever = true;
             Destroy(myRoute);
             GetRoute(routeSelection);
         }
     }
 
-    internal void MoveToStartPosition(Vector3 position)
+    internal void FlipOffPlay(OffPlay offPlay)
     {
-        anim.SetTrigger("HikeTrigger");
-        EnableNavMeshAgent();
-        navMeshAgent.destination = position;
-
+        var number = this.name;
+        switch (number)
+        {
+            case "WR1":
+                routeSelection = offPlay.wrRoutes[0];
+                FlipStartPosition(0);
+                break;
+            case "WR2":
+                routeSelection = offPlay.wrRoutes[1];
+                FlipStartPosition(1);
+                break;
+            case "WR3":
+                routeSelection = offPlay.wrRoutes[2];
+                FlipStartPosition(2);
+                break;
+            case "WR4":
+                routeSelection = offPlay.wrRoutes[3];
+                break;
+            case "TE1":
+                routeSelection = offPlay.TeRoute[0];
+                isBlocker = offPlay.isSkillPlayerBlock[0];
+                FlipStartPosition(10); ;
+                break;
+            case "TE2":
+                routeSelection = offPlay.TeRoute[1];
+                isBlocker = offPlay.isSkillPlayerBlock[1];
+                break;
+            case "TE3":
+                routeSelection = offPlay.TeRoute[2];
+                isBlocker = offPlay.isSkillPlayerBlock[2];
+                break;
+            case "HB1":
+                routeSelection = offPlay.HbRoute[0];
+                isBlocker = offPlay.isSkillPlayerBlock[0];
+                FlipStartPosition(9);
+                break;
+            case "HB2":
+                routeSelection = offPlay.HbRoute[1];
+                isBlocker = offPlay.isSkillPlayerBlock[1];
+                break;
+            case "FB":
+                //todo assign fullback route stuff
+                break;
+        }
     }
+
+    private void FlipStartPosition(int i)
+    {
+        var currentPlay = currentOffPlay.formationTransforms[i];
+        var xPos = -(currentPlay.position.x);
+        var yPos = currentPlay.position.y;
+        var zPos = currentPlay.position.z;
+        currentPlay.transform.position = new Vector3(xPos,yPos,zPos);
+        myRoute.transform.position = new Vector3(xPos, yPos, zPos);
+        foreach (var routeCut in myRoute.transform.GetComponentsInChildren<Transform>())
+        {
+            var xPosCut = -(routeCut.position.x);
+            var yPosCut = routeCut.position.y;
+            var zPosCut = routeCut.position.z;
+            routeCut.position = new Vector3(xPos, yPos, zPos);
+        }
+
+        SetDestination(myRoute.GetWaypoint(currentRouteIndex));
+        StartCoroutine(FaceLOS());
+    }
+
+    internal void SetStartPosition(Vector3 position)
+    {
+        routeStartPosition = position + new Vector3(0, 0, gameManager.lineOfScrimmage.transform.position.z);
+        //anim.SetTrigger("HuddleTrigger");
+    }
+
     internal void GetRoute(int routeSelector)
     {
-        myRoute = Instantiate(routeManager.allRoutes[routeSelector], transform.position, transform.rotation).GetComponent<Routes>(); //todo get route index selection
+        myRoute = Instantiate(routeManager.allRoutes[routeSelector], routeStartPosition, gameManager.lineOfScrimmage.transform.rotation).GetComponent<Routes>(); //todo get route index selection
         myRoute.transform.name = routeManager.allRoutes[routeSelector].name;
-
-        //myRoute.transform.position = transform.position;
-
         var childCount = myRoute.transform.childCount;
         totalCuts = childCount - 1; //todo had to subtract 1 because arrays start at 0
 
@@ -531,6 +604,16 @@ public class OffPlayer : FootBallAthlete
 
         if (!targetPlayer) GetTarget();
         SetDestination(myRoute.GetWaypoint(currentRouteIndex));
+        StartCoroutine(FaceLOS());
+    }
+
+    IEnumerator FaceLOS()
+    {
+        while (gameManager.isHiked == false)
+        {
+            transform.LookAt(transform.position + new Vector3(0, 0, 1));
+            yield return new WaitForEndOfFrame();
+        }
 
     }
 

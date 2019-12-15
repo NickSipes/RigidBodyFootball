@@ -12,10 +12,10 @@ public class GameManager : MonoBehaviour
     FootBallAthlete ballAthlete;
     [HideInInspector] public GameObject selector;
     public GameObject UIStuff;
-    public bool isRun = false;
-    public bool isPass = false;
-    public bool isHiked = false;
-
+    [HideInInspector] public bool isRun = false;
+    [HideInInspector] public bool isPass = false;
+    [HideInInspector] public bool isHiked = false;
+    public GameObject lineOfScrimmage; 
     [HideInInspector] public OffPlay[] allOffPlays;
     [HideInInspector] public DefPlay[] allDefPlays;
     [HideInInspector] public RouteManager routeManager;
@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     public bool isRapidfire;
 
     [HideInInspector] public bool isPassStarted = false;
-    public CameraFollow cameraFollow;
+    [HideInInspector] public CameraFollow cameraFollow;
 
     public delegate void HikeTheBall(bool wasHiked);
     public event HikeTheBall hikeTheBall;
@@ -47,13 +47,16 @@ public class GameManager : MonoBehaviour
     public delegate void ShedBlock(FootBallAthlete brokeBlock);
     public event ShedBlock shedBlock;
 
-    public delegate void OffPlayChange(OffPlay pffPlay);
+    public delegate void OffPlayChange(OffPlay offPlay);
     public event OffPlayChange offPlayChange;
 
+    public delegate void OffFlipPlay(OffPlay flipPlay);
+    public event OffFlipPlay offFlipPlay;
+    
     [HideInInspector] public OffPlayer[] offPlayers;
     [HideInInspector] public DefPlayer[] defPlayers;
     internal static GameManager instance;
-    public FootBallAthlete ballOwner;
+    internal FootBallAthlete ballOwner;
 
     //todo instantiate UIStuff at runtime
     private void Awake()
@@ -155,7 +158,7 @@ public class GameManager : MonoBehaviour
 
     public void ChangeOffPlay(OffPlay offPlay)
     {
-        currentOffPlay = offPlay;
+        currentOffPlay = Instantiate(offPlay, transform);
         if (currentOffPlay.isPass)
         {
             PassPlay();
@@ -168,5 +171,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    
+    public void FlipPlay()
+    {
+       offFlipPlay(currentOffPlay);
+    }
 }
