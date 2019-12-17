@@ -9,7 +9,6 @@ using UnityEngine.XR.WSA.Input;
 
 public class FootBallAthlete : MonoBehaviour
 {
-
     //public RouteManager startGoal;
     //todo clean up inheritance and add setters and getters instead of public variables. Separate OffPlayers variables from DefPlayers variables
     public Renderer materialRenderer;
@@ -463,25 +462,25 @@ public class OffPlayer : FootBallAthlete
                     routeSelection = offPlay.wrRoutes[3];
                     break;
                 case "TE1":
-                    routeSelection = offPlay.TeRoute[0];
+                    routeSelection = offPlay.teRoute[0];
                     isBlocker = offPlay.isSkillPlayerBlock[0];
                     SetStartPosition(offPlay.formationTransforms[10].position);
                     break;
                 case "TE2":
-                    routeSelection = offPlay.TeRoute[1];
+                    routeSelection = offPlay.teRoute[1];
                     isBlocker = offPlay.isSkillPlayerBlock[1];
                     break;
                 case "TE3":
-                    routeSelection = offPlay.TeRoute[2];
+                    routeSelection = offPlay.teRoute[2];
                     isBlocker = offPlay.isSkillPlayerBlock[2];
                     break;
                 case "HB1":
-                    routeSelection = offPlay.HbRoute[0];
+                    routeSelection = offPlay.hbRoute[0];
                     isBlocker = offPlay.isSkillPlayerBlock[0];
                     SetStartPosition(offPlay.formationTransforms[9].position);
                     break;
                 case "HB2":
-                    routeSelection = offPlay.HbRoute[1];
+                    routeSelection = offPlay.hbRoute[1];
                     isBlocker = offPlay.isSkillPlayerBlock[1];
                     break;
                 case "FB":
@@ -538,25 +537,25 @@ public class OffPlayer : FootBallAthlete
                 routeSelection = offPlay.wrRoutes[3];
                 break;
             case "TE1":
-                routeSelection = offPlay.TeRoute[0];
+                routeSelection = offPlay.teRoute[0];
                 isBlocker = offPlay.isSkillPlayerBlock[0];
                 FlipStartPosition(10); ;
                 break;
             case "TE2":
-                routeSelection = offPlay.TeRoute[1];
+                routeSelection = offPlay.teRoute[1];
                 isBlocker = offPlay.isSkillPlayerBlock[1];
                 break;
             case "TE3":
-                routeSelection = offPlay.TeRoute[2];
+                routeSelection = offPlay.teRoute[2];
                 isBlocker = offPlay.isSkillPlayerBlock[2];
                 break;
             case "HB1":
-                routeSelection = offPlay.HbRoute[0];
+                routeSelection = offPlay.hbRoute[0];
                 isBlocker = offPlay.isSkillPlayerBlock[0];
                 FlipStartPosition(9);
                 break;
             case "HB2":
-                routeSelection = offPlay.HbRoute[1];
+                routeSelection = offPlay.hbRoute[1];
                 isBlocker = offPlay.isSkillPlayerBlock[1];
                 break;
             case "FB":
@@ -578,9 +577,8 @@ public class OffPlayer : FootBallAthlete
             var xPosCut = -(routeCut.position.x);
             var yPosCut = routeCut.position.y;
             var zPosCut = routeCut.position.z;
-            routeCut.position = new Vector3(xPos, yPos, zPos);
+            routeCut.transform.position = new Vector3(xPosCut, yPosCut, zPosCut);
         }
-
         SetDestination(myRoute.GetWaypoint(currentRouteIndex));
         StartCoroutine(FaceLOS());
     }
@@ -597,11 +595,9 @@ public class OffPlayer : FootBallAthlete
         myRoute.transform.name = routeManager.allRoutes[routeSelector].name;
         var childCount = myRoute.transform.childCount;
         totalCuts = childCount - 1; //todo had to subtract 1 because arrays start at 0
-
         lastCutVector = myRoute.transform.GetChild(totalCuts).position;
         //Debug.Log("total cuts " + totalCuts + "Child Count " + (childCount - 1));
         //Debug.Log(myRoute.transform.name);
-
         if (!targetPlayer) GetTarget();
         SetDestination(myRoute.GetWaypoint(currentRouteIndex));
         StartCoroutine(FaceLOS());
@@ -614,12 +610,12 @@ public class OffPlayer : FootBallAthlete
             transform.LookAt(transform.position + new Vector3(0, 0, 1));
             yield return new WaitForEndOfFrame();
         }
-
     }
 
     internal void RunRoute()
     {
         if (myRoute == null) return;
+
         if (!AtRouteCut()) return;
 
         if (timeSinceArrivedAtRouteCut > myRoute.routeCutDwellTime[0])
@@ -629,15 +625,12 @@ public class OffPlayer : FootBallAthlete
             navMeshAgent.destination = nextPosition;
             timeSinceArrivedAtRouteCut = 0;
             //Debug.Log("start NavMeshAgent");
-
             if (!AtLastRouteCut()) return;
             wasAtLastCut = true;
             WatchQb();
             //Debug.Log("set last cut true");
             return;
-
         }
-
         timeSinceArrivedAtRouteCut += Time.deltaTime;
     }
 

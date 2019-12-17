@@ -6,15 +6,17 @@ public class Zones : MonoBehaviour
 {
     internal float zoneSize;
     private DB db;
-
-    public Vector3 zoneCenter;
+    [SerializeField] enum zoneType
+    {
+        flat, seam, deepHalf, deepThird, Curl, spy
+    }
+    [HideInInspector]public Vector3 zoneCenter;
     SphereCollider sphereCollider;
 
     // Use this for initialization
     void Start ()
     {
-      
-
+        zoneCenter = transform.position;
     }
 	
 	// Update is called once per frame

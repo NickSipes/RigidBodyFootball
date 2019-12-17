@@ -284,11 +284,12 @@ MonoBehaviour:
   hbs: []
   oLine: []
   routeManager: {fileID: 0}
+  isFlipped: 0
   isPass: 1
   wrRoutes: 0c0000000700000005000000
   isSkillPlayerBlock: 0000
-  HbRoute: 06000000
-  TeRoute: 04000000
+  hbRoute: 06000000
+  teRoute: 04000000
   formationTransforms:
   - {fileID: 1517935523937250416}
   - {fileID: 8250062908027177895}

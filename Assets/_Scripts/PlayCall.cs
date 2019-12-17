@@ -16,13 +16,14 @@ public class PlayCall : MonoBehaviour
     private OffPlay[] allOffPlays;
     private DefPlay[] allDefPlays;
     [HideInInspector]public RouteManager routeManager;
+    [HideInInspector] public bool isFlipped = false;
     private GameManager gameManager;
-    private OffPlay currerntOffPlay;
+    private OffPlay currentOffPlay;
  
     public bool isPass;
 
     // Start is called before the first frame update
-    internal void Start()
+    internal virtual void Start()
     {
         quaterBacks = FindObjectsOfType<QB>();
         wideRecievers = FindObjectsOfType<WR>();
@@ -49,39 +50,23 @@ public class PlayCall : MonoBehaviour
         if (!gameManager.isHiked)
         {
             gameManager.ChangeOffPlay(offPlay);
-           
+            currentOffPlay = offPlay;
         }
      
     }
     public void FlipOffPlay()
     {
-        if (!gameManager.isHiked)
+        //todo need to copy the playCall to a new object because of how flipping assigns transforms of route cuts
+        if (gameManager.isHiked) return;
+        if (isFlipped)
         {
-            Debug.Log("FlipPlay");
-            gameManager.FlipPlay();
-        
+            ChangeOffPlay(currentOffPlay);
+            isFlipped = false;
         }
+        Debug.Log("FlipPlay");
+        gameManager.FlipPlay();
+        isFlipped = true;
 
     }
 
-}
-
-public class DefPlay : PlayCall
-{
-    public List<Transform> formationTransforms;
-
-    void Start()
-    {
-        base.Start();
-        GetFormationPositions();
-    }
-    void GetFormationPositions()
-    {
-
-        foreach (var transform1 in formationTransforms)
-        {
-            Debug.Log(transform1.name);
-        }
-
-    }
 }
