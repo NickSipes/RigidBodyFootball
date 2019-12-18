@@ -117,6 +117,12 @@ public class FootBallAthlete : MonoBehaviour
         gameManager.clearSelector += ClearSelector;
 
     }
+
+    internal virtual void Update()
+    {
+
+    }
+
     public virtual void FixedUpdate()
     {
         //Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
@@ -411,7 +417,7 @@ public class OffPlayer : FootBallAthlete
         base.Start();
         gameManager.onBallThrown += BallThrown;
         gameManager.hikeTheBall += HikeTheBall;
-        gameManager.offPlayChange += ChangeOffPlay;
+        gameManager.offPlayChange += OffPlayChange;
         gameManager.offFlipPlay += FlipOffPlay;
         startColor = materialRenderer.material.color;
 
@@ -431,7 +437,7 @@ public class OffPlayer : FootBallAthlete
         anim.SetTrigger("HikeTrigger");
     }
 
-    internal void ChangeOffPlay(OffPlay offPlay)
+    internal void OffPlayChange(OffPlay offPlay)
     {
         currentOffPlay = offPlay;
         if (gameManager.isRun)
@@ -916,6 +922,7 @@ public class DefPlayer : FootBallAthlete
     [SerializeField] internal TextMeshPro blockText;
     internal float blockCooldown = 2f;
     internal List<OffPlayer> blockPlayers = new List<OffPlayer>();
+    internal DefPlay defPlay;
     [SerializeField] internal int zoneLayer = 8;
     internal bool isBackingOff = false;
     internal bool isWrIncoming = false;
@@ -926,6 +933,17 @@ public class DefPlayer : FootBallAthlete
         base.Start();
         AddEvents();
     }
+
+    private void GetPlayCall()
+    {
+        defPlay = gameManager.currentDefPlay;
+    }
+
+    internal override void Update()
+    {
+        base.Update();
+    }
+
     public override void FixedUpdate()
     {
         base.FixedUpdate();
@@ -934,7 +952,8 @@ public class DefPlayer : FootBallAthlete
     internal void AddEvents()
     {
         gameManager.ballOwnerChange += BallOwnerChange;
-
+        gameManager.offPlayChange += OffPlayChange;
+        gameManager.defPlayChange += ChangeDefPlay;
     }
 
     public void Press(float pressTimeNorm)
@@ -944,22 +963,39 @@ public class DefPlayer : FootBallAthlete
         navMeshAgent.acceleration = 0f;
         navMeshAgent.speed = 0f;
     }
-    internal void CreateZone()
+
+    internal void OffPlayChange(OffPlay offPlay)
     {
-        //todo make zoneCenterGO move functions dependent on play developement;
-        Vector3 zoneCenterStart = GetZoneStart();
-        GameObject zoneGO = Instantiate(new GameObject(), zoneCenterStart, Quaternion.identity);
-        zone = zoneGO.AddComponent<Zones>();
-        zoneGO.transform.position = transform.position + new Vector3(0, 0, 5);
-        zoneGO.transform.name = transform.name + "ZoneObject";
-        GameObject zoneObjectContainer = GameObject.FindGameObjectWithTag("ZoneObject"); //Hierarchy Cleanup
-        zoneGO.transform.parent = zoneObjectContainer.transform;
-        zoneGO.transform.tag = "ZoneObject";
-        SphereCollider sphereCollider = zoneGO.gameObject.AddComponent<SphereCollider>();
-        sphereCollider.isTrigger = true;
-        zoneGO.layer = zoneLayer;
-        zone.zoneSize = defZoneSize;
+        if(gameManager.isHiked)return;
+        MoveToLOS();
     }
+
+    internal void ChangeDefPlay(DefPlay defPlay)
+    {
+        GetPlayCall();
+    }
+
+    private void MoveToLOS()
+    {
+        
+    }
+
+    //internal void CreateZone()
+    //{
+    
+    //    Vector3 zoneCenterStart = GetZoneStart();
+    //    GameObject zoneGO = Instantiate(new GameObject(), zoneCenterStart, Quaternion.identity);
+    //    zone = zoneGO.AddComponent<Zones>();
+    //    zoneGO.transform.position = transform.position + new Vector3(0, 0, 5);
+    //    zoneGO.transform.name = transform.name + "ZoneObject";
+    //    GameObject zoneObjectContainer = GameObject.FindGameObjectWithTag("ZoneObject"); //Hierarchy Cleanup
+    //    zoneGO.transform.parent = zoneObjectContainer.transform;
+    //    zoneGO.transform.tag = "ZoneObject";
+    //    SphereCollider sphereCollider = zoneGO.gameObject.AddComponent<SphereCollider>();
+    //    sphereCollider.isTrigger = true;
+    //    zoneGO.layer = zoneLayer;
+    //    zone.zoneSize = defZoneSize;
+    //}
 
     internal Vector3 GetZoneStart()
     {

@@ -24,7 +24,7 @@ public class DB : DefPlayer
         gameManager.hikeTheBall += HikeTheBall;
         gameManager.onBallThrown += BallThrown;
         gameManager.passAttempt += PassAttempt;
-        CreateZone(); //todo only run if player is in zone
+        //CreateZone(); //todo only run if player is in zone
     }
 
     public override void FixedUpdate()

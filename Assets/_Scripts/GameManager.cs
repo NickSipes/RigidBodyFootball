@@ -20,12 +20,20 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public DefPlay[] allDefPlays;
     [HideInInspector] public RouteManager routeManager;
     [HideInInspector] public OffPlay currentOffPlay;
+    [HideInInspector] public DefPlay currentDefPlay;
+
+    [HideInInspector] public OffPlayer[] offPlayers;
+    [HideInInspector] public DefPlayer[] defPlayers;
 
     public bool isRapidfire;
 
     [HideInInspector] public bool isPassStarted = false;
     [HideInInspector] public CameraFollow cameraFollow;
 
+    internal static GameManager instance;
+    internal FootBallAthlete ballOwner;
+    
+    //Events
     public delegate void HikeTheBall(bool wasHiked);
     public event HikeTheBall hikeTheBall;
 
@@ -52,12 +60,11 @@ public class GameManager : MonoBehaviour
 
     public delegate void OffFlipPlay(OffPlay flipPlay);
     public event OffFlipPlay offFlipPlay;
-    
-    [HideInInspector] public OffPlayer[] offPlayers;
-    [HideInInspector] public DefPlayer[] defPlayers;
-    internal static GameManager instance;
-    internal FootBallAthlete ballOwner;
+   
+    public delegate void DefPlayChange(DefPlay defPlay);
+    public event DefPlayChange defPlayChange;
 
+  
     //todo instantiate UIStuff at runtime
     private void Awake()
     {
@@ -174,5 +181,13 @@ public class GameManager : MonoBehaviour
     public void FlipPlay()
     {
        offFlipPlay(currentOffPlay);
+    }
+
+
+    public void ChangeDefPlay(DefPlay defPlay)
+    {
+        currentDefPlay = Instantiate(defPlay, transform);
+        defPlayChange?.Invoke(currentDefPlay);
+        
     }
 }

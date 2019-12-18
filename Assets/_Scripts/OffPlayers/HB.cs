@@ -17,7 +17,7 @@ public class HB : OffPlayer
         AddClickCollider();
         rayColor = Color.green;
         gameManager.shedBlock += DefShedBlock;
-        //gameManager.offPlayChange += ChangeOffPlay;
+        //gameManager.offPlayChange += OffPlayChange;
     }
     
     private void FixedUpdate()

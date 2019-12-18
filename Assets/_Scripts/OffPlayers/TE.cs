@@ -11,7 +11,7 @@ public class TE : OffPlayer
         AddClickCollider();
         rayColor = Color.green;
         gameManager.shedBlock += DefShedBlock;
-        //gameManager.offPlayChange += ChangeOffPlay;
+        //gameManager.offPlayChange += OffPlayChange;
     }
 
     // Update is called once per frame

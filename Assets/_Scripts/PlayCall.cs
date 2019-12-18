@@ -11,16 +11,17 @@ public class PlayCall : MonoBehaviour
     [HideInInspector] public DB[] defBacks;
     [HideInInspector] public HB[] hbs;
     [HideInInspector] public Oline[] oLine;
-    private OffPlayer[] offPlayers;
-    private DefPlayer[] defPlayers;
+    internal OffPlayer[] offPlayers;
+    internal DefPlayer[] defPlayers;
     private OffPlay[] allOffPlays;
     private DefPlay[] allDefPlays;
     [HideInInspector]public RouteManager routeManager;
     [HideInInspector] public bool isFlipped = false;
     private GameManager gameManager;
     private OffPlay currentOffPlay;
- 
-    public bool isPass;
+    private DefPlay currentDefPlay;
+
+    [HideInInspector]public bool isPass;
 
     // Start is called before the first frame update
     internal virtual void Start()
@@ -45,7 +46,7 @@ public class PlayCall : MonoBehaviour
 
     }
 
-    public void ChangeOffPlay(OffPlay offPlay)
+    public void ChangeOffPlay(OffPlay offPlay)//called from UI
     {
         if (!gameManager.isHiked)
         {
@@ -54,7 +55,7 @@ public class PlayCall : MonoBehaviour
         }
      
     }
-    public void FlipOffPlay()
+    public void FlipOffPlay()//called from UI
     {
         //todo need to copy the playCall to a new object because of how flipping assigns transforms of route cuts
         if (gameManager.isHiked) return;
@@ -67,6 +68,15 @@ public class PlayCall : MonoBehaviour
         gameManager.FlipPlay();
         isFlipped = true;
 
+    }
+   
+    public void ChangeDefPlay(DefPlay defPlay)//called from UI
+    {
+        if (!gameManager.isHiked)
+        {
+            gameManager.ChangeDefPlay(defPlay);
+            currentDefPlay = defPlay;
+        }
     }
 
 }

@@ -1,23 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class DefPlay : PlayCall
 {
-    public List<Transform> formationTransforms;
+    public List<Zones> formationZones;
 
     internal override void Start()
     {
         base.Start();
-        GetFormationPositions();
+        SetFormationPositions();
     }
-    void GetFormationPositions()
+
+    internal void SetFormationPositions()
     {
-
-        foreach (var transform1 in formationTransforms)
+        foreach (var defPlayer in defPlayers)
         {
-            Debug.Log(transform1.name);
+            
         }
-
     }
 }

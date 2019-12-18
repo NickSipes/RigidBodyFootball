@@ -6,10 +6,11 @@ public class Zones : MonoBehaviour
 {
     internal float zoneSize;
     private DB db;
-    [SerializeField] enum zoneType
+    [System.Serializable] public enum ZoneType
     {
-        flat, seam, deepHalf, deepThird, Curl, spy
+        Flat, Seam, DeepHalf, DeepThird, Curl, Spy
     }
+    public ZoneType type;
     [HideInInspector]public Vector3 zoneCenter;
     SphereCollider sphereCollider;
 
@@ -17,23 +18,19 @@ public class Zones : MonoBehaviour
     void Start ()
     {
         zoneCenter = transform.position;
+        sphereCollider = gameObject.AddComponent<SphereCollider>();
     }
-	
-	// Update is called once per frame
+
+
+    // Update is called once per frame
 	void Update () {
-        if (!sphereCollider)
-        {
-            sphereCollider = GetComponent<SphereCollider>();
-        }
         sphereCollider.radius = zoneSize;
         zoneCenter = transform.position;
     }
-    public void SetDB(DB dB)
+
+    void OnDrawGizmos()
     {
-        db = dB;
-    }
-    public DB GetDB()
-    {
-        return db;
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, 4);
     }
 }
