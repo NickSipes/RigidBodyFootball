@@ -9,14 +9,12 @@ public class DB : DefPlayer
 {
     public object SetTargetWr;
 
-    //todo create class between Off and Def based on FootballAthlete
     //todo HOW ARE WE GOING TO HANDLE JUMP ANIMATIONS
-    //todo defenders need to determine LOS and where to lineup
     //todo DB State Machine
     //todo readdress how pass incomlpetion are cacluated. All determining factors should be rolls vs stats ?
     //todo scramble mechanics
     //todo Man coverage
-    // Use this for initialization
+    
     internal void Start()
     {
         base.Start();
@@ -30,7 +28,6 @@ public class DB : DefPlayer
     public override void FixedUpdate()
     {
         base.FixedUpdate();
-
     }
 
     void Update()

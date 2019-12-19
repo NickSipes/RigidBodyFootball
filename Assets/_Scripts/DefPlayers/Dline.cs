@@ -6,23 +6,19 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 
 
+// ReSharper disable once CheckNamespace
 public class Dline : DefPlayer
 {
-
-   
     // Start is called before the first frame update
-    internal override void Start()
+    internal void Start()
     {
         base.Start();
         rayColor = Color.red;
         gameManager.hikeTheBall += HikeTheBall;
     }
 
-
-   
-
     // Update is called once per frame
-    void Update()
+    internal override void Update()
     {
         if (!gameManager.isHiked) return;
 

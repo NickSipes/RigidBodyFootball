@@ -1885,6 +1885,7 @@ MonoBehaviour:
   isBlocking: 0
   offPlay: {fileID: 0}
   targetPlayer: {fileID: 0}
+  currentPlayCall: {fileID: 0}
   routes: []
   myRoute: {fileID: 0}
   routeSelection: 0
@@ -1893,9 +1894,11 @@ MonoBehaviour:
   hbs: []
   oLine: []
   dLine: []
+  defPlayers: []
+  offPlayers: []
   defZoneSize: 5
   zone: {fileID: 0}
-  targetReciever: {fileID: 0}
+  targetReceiver: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
   isMan: 0
@@ -1908,7 +1911,7 @@ MonoBehaviour:
   isSelected: 0
   isBlocked: 0
   wasBlocked: 0
-  blockBar: {fileID: 3791103675175058550}
+  blockText: {fileID: 0}
   zoneLayer: 8
 --- !u!1 &1439487981675300
 GameObject:
@@ -3301,8 +3304,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 0626b924325d1c34cafa6b22297f4e4f, type: 3}
-  m_Type: 3
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4

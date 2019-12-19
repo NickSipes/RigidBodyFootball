@@ -20,4 +20,17 @@ public class DefPlay : PlayCall
             
         }
     }
+
+    public void GetJob(DefPlayer defPlayer)
+    {
+        var defPlayerName = defPlayer.name;
+        foreach (Zones zone in formationZones)
+        {
+            if (zone.transform.name == defPlayerName)
+            {
+                defPlayer.SetZone(zone);
+                Debug.Log(zone.name + " " + defPlayer.name + " set");
+            }
+        }
+    }
 }

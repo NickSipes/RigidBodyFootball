@@ -8,7 +8,7 @@ public class Zones : MonoBehaviour
     private DB db;
     [System.Serializable] public enum ZoneType
     {
-        Flat, Seam, DeepHalf, DeepThird, Curl, Spy
+        Flat, Seam, DeepHalf, DeepThird, Curl, Spy, Rush
     }
     public ZoneType type;
     [HideInInspector]public Vector3 zoneCenter;

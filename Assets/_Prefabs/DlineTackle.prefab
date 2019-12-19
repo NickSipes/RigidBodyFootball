@@ -1905,7 +1905,7 @@ GameObject:
   - component: {fileID: 1653392376714448273}
   - component: {fileID: 1653392376714448272}
   - component: {fileID: 1653392376714448274}
-  - component: {fileID: 1653392376714448276}
+  - component: {fileID: 421140930}
   m_Layer: 0
   m_Name: DlineTackle
   m_TagString: DefPlayer
@@ -1941,7 +1941,7 @@ Animator:
   m_GameObject: {fileID: 1653392376714448284}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: b235179bd2a63d1468dd430670338c55, type: 3}
-  m_Controller: {fileID: 9100000, guid: 67b97a22cbe973440ba3f17bea1c6e0e, type: 2}
+  m_Controller: {fileID: 9100000, guid: ad20a91b092090d44ba70a8585bb174b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1990,8 +1990,8 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 10
-  m_Acceleration: 1
+  m_Speed: 7
+  m_Acceleration: 5
   avoidancePriority: 50
   m_AngularSpeed: 250
   m_StoppingDistance: 0.2
@@ -2002,7 +2002,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &1653392376714448276
+--- !u!114 &421140930
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2011,10 +2011,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1653392376714448284}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5890c2526f5cc0443af5845a1414ad34, type: 3}
+  m_Script: {fileID: 11500000, guid: fd6917b790e00b540aa9146c168a3f06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materialRenderer: {fileID: 1653392376511590183}
+  materialRenderer: {fileID: 0}
   iK: {fileID: 0}
   terrain: {fileID: 0}
   qb: {fileID: 0}
@@ -2031,14 +2031,15 @@ MonoBehaviour:
   passTarget: {x: 0, y: 0, z: 0}
   beenPressed: 0
   footBall: {fileID: 0}
-  canvas: {fileID: 6301271190398203385}
+  canvas: {fileID: 0}
   pressBar: {fileID: 0}
   isHiked: 0
-  targetPlayer: {fileID: 0}
   gameManager: {fileID: 0}
   routeManager: {fileID: 0}
   isBlocking: 0
   offPlay: {fileID: 0}
+  targetPlayer: {fileID: 0}
+  currentPlayCall: {fileID: 0}
   routes: []
   myRoute: {fileID: 0}
   routeSelection: 0
@@ -2047,9 +2048,11 @@ MonoBehaviour:
   hbs: []
   oLine: []
   dLine: []
+  defPlayers: []
+  offPlayers: []
   defZoneSize: 0
   zone: {fileID: 0}
-  targetReciever: {fileID: 0}
+  targetReceiver: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
   isMan: 0
@@ -2062,7 +2065,7 @@ MonoBehaviour:
   isSelected: 0
   isBlocked: 0
   wasBlocked: 0
-  blockBar: {fileID: 49370339136942921}
+  blockText: {fileID: 0}
   zoneLayer: 8
 --- !u!1 &1653392376744804137
 GameObject:

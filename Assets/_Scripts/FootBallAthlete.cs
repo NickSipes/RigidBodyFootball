@@ -422,8 +422,7 @@ public class OffPlayer : FootBallAthlete
         startColor = materialRenderer.material.color;
 
     }
-
-    internal virtual void Update()
+    internal override void Update()
     {
 
     }
@@ -521,7 +520,14 @@ public class OffPlayer : FootBallAthlete
             GetRoute(routeSelection);
         }
     }
+    internal void DefShedBlock(FootBallAthlete brokeBlock)
+    {
+        //todo check assignment
+        if (isReciever) return;
 
+        isBlocker = true;
+        BlockProtection();
+    }
     internal void FlipOffPlay(OffPlay offPlay)
     {
         var number = this.name;
@@ -599,6 +605,7 @@ public class OffPlayer : FootBallAthlete
     {
         myRoute = Instantiate(routeManager.allRoutes[routeSelector], routeStartPosition, gameManager.lineOfScrimmage.transform.rotation).GetComponent<Routes>(); //todo get route index selection
         myRoute.transform.name = routeManager.allRoutes[routeSelector].name;
+        myRoute.transform.SetParent(routeManager.transform);
         var childCount = myRoute.transform.childCount;
         totalCuts = childCount - 1; //todo had to subtract 1 because arrays start at 0
         lastCutVector = myRoute.transform.GetChild(totalCuts).position;
@@ -608,8 +615,7 @@ public class OffPlayer : FootBallAthlete
         SetDestination(myRoute.GetWaypoint(currentRouteIndex));
         StartCoroutine(FaceLOS());
     }
-
-    IEnumerator FaceLOS()
+    internal IEnumerator FaceLOS()
     {
         while (gameManager.isHiked == false)
         {
@@ -617,7 +623,6 @@ public class OffPlayer : FootBallAthlete
             yield return new WaitForEndOfFrame();
         }
     }
-
     internal void RunRoute()
     {
         if (myRoute == null) return;
@@ -927,6 +932,7 @@ public class DefPlayer : FootBallAthlete
     internal bool isBackingOff = false;
     internal bool isWrIncoming = false;
     internal bool isBlockingPass = false;
+    internal Zones myZone;
 
     internal override void Start()
     {
@@ -937,6 +943,7 @@ public class DefPlayer : FootBallAthlete
     private void GetPlayCall()
     {
         defPlay = gameManager.currentDefPlay;
+        defPlay.GetJob(this);
     }
 
     internal override void Update()
@@ -953,9 +960,12 @@ public class DefPlayer : FootBallAthlete
     {
         gameManager.ballOwnerChange += BallOwnerChange;
         gameManager.offPlayChange += OffPlayChange;
-        gameManager.defPlayChange += ChangeDefPlay;
+        gameManager.defPlayChange += DefPlayChange;
     }
-
+    public void SetZone(Zones zone)
+    {
+        myZone = zone;
+    }
     public void Press(float pressTimeNorm)
     {
         //pressBar.fillAmount = pressTimeNorm;
@@ -963,43 +973,25 @@ public class DefPlayer : FootBallAthlete
         navMeshAgent.acceleration = 0f;
         navMeshAgent.speed = 0f;
     }
-
     internal void OffPlayChange(OffPlay offPlay)
     {
-        if(gameManager.isHiked)return;
-        MoveToLOS();
+        //if(gameManager.isHiked)return;
+        //GetZoneStart();
+        //MoveToStart();
     }
-
-    internal void ChangeDefPlay(DefPlay defPlay)
+    internal void DefPlayChange(DefPlay defPlay)
     {
         GetPlayCall();
+        GetZoneStart();
+        MoveToStart();
     }
-
-    private void MoveToLOS()
+    private void MoveToStart()
     {
-        
+        SetDestination(myZone.transform.position);
     }
-
-    //internal void CreateZone()
-    //{
-    
-    //    Vector3 zoneCenterStart = GetZoneStart();
-    //    GameObject zoneGO = Instantiate(new GameObject(), zoneCenterStart, Quaternion.identity);
-    //    zone = zoneGO.AddComponent<Zones>();
-    //    zoneGO.transform.position = transform.position + new Vector3(0, 0, 5);
-    //    zoneGO.transform.name = transform.name + "ZoneObject";
-    //    GameObject zoneObjectContainer = GameObject.FindGameObjectWithTag("ZoneObject"); //Hierarchy Cleanup
-    //    zoneGO.transform.parent = zoneObjectContainer.transform;
-    //    zoneGO.transform.tag = "ZoneObject";
-    //    SphereCollider sphereCollider = zoneGO.gameObject.AddComponent<SphereCollider>();
-    //    sphereCollider.isTrigger = true;
-    //    zoneGO.layer = zoneLayer;
-    //    zone.zoneSize = defZoneSize;
-    //}
-
     internal Vector3 GetZoneStart()
     {
-        return transform.position + new Vector3(5, 0, 0); //todo this needs to be dependent on player responsibilities
+        return myZone.transform.position; //todo this needs to be dependent on player responsibilities
     }
 
     internal void PlayReact()
@@ -1042,14 +1034,14 @@ public class DefPlayer : FootBallAthlete
         //Debug.Log(wrZoneCntrDist.magnitude);
         if (wrZoneCntrDist.magnitude < zone.zoneSize)
         {
-            //todo this will break with mulitple recievers, need to determine coverage responsablilty
+            //todo this will break with multiple recievers, need to determine coverage responsibility
             SetTargetOffPlayer(possibleEnemy);
             return true;
         }
 
-        foreach (var reciever in wideRecievers)
+        foreach (var receiver in wideRecievers)
         {
-            RaycastHit[] hits = Physics.RaycastAll(reciever.transform.position, reciever.transform.forward, 100.0F);
+            RaycastHit[] hits = Physics.RaycastAll(receiver.transform.position, receiver.transform.forward, 100.0F);
             //if(hits.Length != 0)Debug.Log(hits.Length);
 
             for (int i = 0; i < hits.Length; i++)
@@ -1077,6 +1069,12 @@ public class DefPlayer : FootBallAthlete
 
     }
 
+    public void SetTargetPlayer(Transform targetSetter)
+    {
+        EnableNavMeshAgent();
+        navMeshAgent.SetDestination(targetSetter.position);
+        targetPlayer = targetSetter;
+    }
     internal void SetTargetOffPlayer(Transform targetTransform)
     {
         EnableNavMeshAgent();
@@ -1106,7 +1104,6 @@ public class DefPlayer : FootBallAthlete
         StartCoroutine(BackOffPress(offPlayer));
 
     }
-
     private IEnumerator BackOffPress(OffPlayer offPlayer)
     {
         //read receiver route, move backwards, release receiver to new defender, moves towards next receiver
@@ -1131,13 +1128,11 @@ public class DefPlayer : FootBallAthlete
         //Debug.Log("isBackingOff false");
         //todo this needs a stat machine to determine if the DB needs to chase the WR past the Zone, Does he have overhead help
     }
-
     private IEnumerator TurnTowardsLOS()
     {
         //todo write this function
         yield return new WaitForFixedUpdate();
     }
-
     private void StayInfront()
     {
         DisableNavMeshAgent();
@@ -1152,8 +1147,6 @@ public class DefPlayer : FootBallAthlete
 
         rb.velocity = dir;
     }
-
-
     private void BackOff(OffPlayer offPlayer)
     {
         DisableNavMeshAgent();
@@ -1169,7 +1162,6 @@ public class DefPlayer : FootBallAthlete
 
         rb.velocity = dir;
     }
-
     public void BeBlocked(float blockTimeNorm, OffPlayer blocker)
     {
         canvas.enabled = true;
@@ -1189,7 +1181,6 @@ public class DefPlayer : FootBallAthlete
         }
 
     }
-
     public void ReleaseBlock(OffPlayer blocker)
     {
         canvas.enabled = !canvas.enabled;
@@ -1200,13 +1191,6 @@ public class DefPlayer : FootBallAthlete
         navMeshAgent.acceleration = navStartAccel;
         gameManager.RaiseShedBlock(this);
         blockPlayers.Remove(blocker);
-    }
-
-    public void SetTargetPlayer(Transform targetSetter)
-    {
-        EnableNavMeshAgent();
-        navMeshAgent.SetDestination(targetSetter.position);
-        targetPlayer = targetSetter;
     }
 
     internal void BallThrown(QB thrower, OffPlayer reciever, FootBall ball, Vector3 impactPos, float arcType, float power, bool isComplete)
@@ -1348,6 +1332,28 @@ public class DefPlayer : FootBallAthlete
     {
         navMeshAgent.enabled = false;
     }
+
+    
+
 }
+
+
+//internal void CreateZone()
+//{
+
+//    Vector3 zoneCenterStart = GetZoneStart();
+//    GameObject zoneGO = Instantiate(new GameObject(), zoneCenterStart, Quaternion.identity);
+//    zone = zoneGO.AddComponent<Zones>();
+//    zoneGO.transform.position = transform.position + new Vector3(0, 0, 5);
+//    zoneGO.transform.name = transform.name + "ZoneObject";
+//    GameObject zoneObjectContainer = GameObject.FindGameObjectWithTag("ZoneObject"); //Hierarchy Cleanup
+//    zoneGO.transform.parent = zoneObjectContainer.transform;
+//    zoneGO.transform.tag = "ZoneObject";
+//    SphereCollider sphereCollider = zoneGO.gameObject.AddComponent<SphereCollider>();
+//    sphereCollider.isTrigger = true;
+//    zoneGO.layer = zoneLayer;
+//    zone.zoneSize = defZoneSize;
+//}
+
 
 

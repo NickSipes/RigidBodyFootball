@@ -186,8 +186,9 @@ public class GameManager : MonoBehaviour
 
     public void ChangeDefPlay(DefPlay defPlay)
     {
-        currentDefPlay = Instantiate(defPlay, transform);
+        currentDefPlay = Instantiate(defPlay, lineOfScrimmage.transform.position, lineOfScrimmage.transform.rotation);
+        var zoneParent = GameObject.Find("ZoneObjects");
+        currentOffPlay.transform.SetParent(zoneParent.transform);
         defPlayChange?.Invoke(currentDefPlay);
-        
     }
 }

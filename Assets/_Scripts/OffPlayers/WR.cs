@@ -14,15 +14,15 @@ public class WR : OffPlayer
         base.Start();
         rayColor = Color.cyan;
         AddClickCollider();
+        gameManager.shedBlock += DefShedBlock;
     }
 
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public override void FixedUpdate()
     {
         base.FixedUpdate();
     }
 
-    void Update()
+    internal override void Update()
     {
         base.Update();
         if (gameManager.WhoHasBall() == this) return;

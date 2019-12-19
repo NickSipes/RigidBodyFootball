@@ -11,7 +11,6 @@ public class TE : OffPlayer
         AddClickCollider();
         rayColor = Color.green;
         gameManager.shedBlock += DefShedBlock;
-        //gameManager.offPlayChange += OffPlayChange;
     }
 
     // Update is called once per frame
@@ -66,13 +65,6 @@ public class TE : OffPlayer
 
         }
     }
-    private void DefShedBlock(FootBallAthlete brokeBlock)
-    {
-        //todo check assignment
-        if (isReciever) return;
 
-        isBlocker = true;
-        BlockProtection();
-    }
     
 }

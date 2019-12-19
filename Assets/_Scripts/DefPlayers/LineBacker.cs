@@ -5,13 +5,13 @@ using UnityEngine;
 public class LineBacker : DefPlayer
 {
     // Start is called before the first frame update
-    internal override void Start()
+    internal void Start()
     {
-        
+        base.Start();
     }
 
     // Update is called once per frame
-    void Update()
+    internal override void Update()
     {
         
     }
