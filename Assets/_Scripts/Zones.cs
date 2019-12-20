@@ -17,15 +17,13 @@ public class Zones : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        zoneCenter = transform.position;
         sphereCollider = gameObject.AddComponent<SphereCollider>();
     }
 
-
     // Update is called once per frame
-	void Update () {
+	void Update ()
+    { 
         sphereCollider.radius = zoneSize;
-        zoneCenter = transform.position;
     }
 
     void OnDrawGizmos()
@@ -33,4 +31,5 @@ public class Zones : MonoBehaviour
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, 4);
     }
+
 }

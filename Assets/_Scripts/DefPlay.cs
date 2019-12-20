@@ -21,16 +21,19 @@ public class DefPlay : PlayCall
         }
     }
 
-    public void GetJob(DefPlayer defPlayer)
+    public Zones GetJob(DefPlayer defPlayer)
     {
         var defPlayerName = defPlayer.name;
         foreach (Zones zone in formationZones)
         {
+            //todo string reference to hierarchy
             if (zone.transform.name == defPlayerName)
             {
-                defPlayer.SetZone(zone);
-                Debug.Log(zone.name + " " + defPlayer.name + " set");
+
+                return zone;
+                //Debug.Log(zone.name + " " + defPlayer.name + " set");
             }
         }
+        return null;
     }
 }

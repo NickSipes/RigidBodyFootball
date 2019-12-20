@@ -70,10 +70,9 @@ public class GameManager : MonoBehaviour
     {
         if (instance != null)
         {
-            Debug.Log("two gamemanagers");
+            Debug.Log("two game-managers");
         }
         instance = this;
-
     }
     void Start()
     {
@@ -84,12 +83,10 @@ public class GameManager : MonoBehaviour
         allOffPlays = FindObjectsOfType<OffPlay>();
         routeManager = FindObjectOfType<RouteManager>();
     }
-
     internal FootBallAthlete WhoHasBall()
     {
         return ballAthlete;
     }
-
     // Update is called once per frame
     void Update()
     {
@@ -102,7 +99,6 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-
     public void CallForSnap()
     {
         hikeTrigger();
@@ -140,10 +136,8 @@ public class GameManager : MonoBehaviour
     }
     public void AttemptPass(QB ballThrower, OffPlayer ballReciever, FootBall ball, float arcType, float power)
     {
-
         passAttempt(ballThrower, ballReciever, ball, arcType, power);
     }
-
     public void RaiseShedBlock(FootBallAthlete brokeBlock)
     {
         shedBlock(brokeBlock);
@@ -157,12 +151,10 @@ public class GameManager : MonoBehaviour
         selector = null;
         clearSelector(true);
     }
-
     internal void TipDrill()
     {
         Debug.Log("tipdrill");
     }
-
     public void ChangeOffPlay(OffPlay offPlay)
     {
         currentOffPlay = Instantiate(offPlay, transform);
@@ -177,18 +169,15 @@ public class GameManager : MonoBehaviour
             offPlayChange?.Invoke(currentOffPlay);
         }
     }
-
     public void FlipPlay()
     {
        offFlipPlay(currentOffPlay);
     }
-
-
     public void ChangeDefPlay(DefPlay defPlay)
     {
         currentDefPlay = Instantiate(defPlay, lineOfScrimmage.transform.position, lineOfScrimmage.transform.rotation);
         var zoneParent = GameObject.Find("ZoneObjects");
-        currentOffPlay.transform.SetParent(zoneParent.transform);
+        currentDefPlay.transform.SetParent(zoneParent.transform);
         defPlayChange?.Invoke(currentDefPlay);
     }
 }
