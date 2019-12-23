@@ -7,7 +7,7 @@ using UnityEngine.AI;
 
 public class DB : DefPlayer
 {
-    public object SetTargetWr;
+    
 
     //todo HOW ARE WE GOING TO HANDLE JUMP ANIMATIONS
     //todo DB State Machine
@@ -22,7 +22,6 @@ public class DB : DefPlayer
         gameManager.hikeTheBall += HikeTheBall;
         gameManager.onBallThrown += BallThrown;
         gameManager.passAttempt += PassAttempt;
-        //CreateZone(); //todo only run if player is in zone
     }
 
     public override void FixedUpdate()
@@ -30,63 +29,17 @@ public class DB : DefPlayer
         base.FixedUpdate();
     }
 
-    void Update()
+    internal override void Update()
     {
-        if (!gameManager.isHiked)
-            return;
-
-        if (gameManager.isRun)
-        {
-            if (isBlocked) return;
-            PlayReact();
-
-        }
-
-        // ReSharper disable once InvertIf
-        if (gameManager.isPass)
-        {
-            if (isBlockingPass) return;
-
-            if (isPressing) return;
-
-            if (isBackingOff) return;
-            {
-                if (isZone)
-
-                {
-                    //todo this whole triple if statement sucks
-                    if (targetReceiver != null)
-                    {
-                        if (IsTargetInZone(targetReceiver.transform))
-                        {
-
-                            SetDestination(targetReceiver.transform.position);
-                            return;
-                        }
-                        else
-                        {
-                            //Debug.Log("targetPlayer out of zone");
-                            targetReceiver = null;
-                            targetPlayer = null;
-                        }
-                    }
-                }
-            }
-
-            PlayZone();
-        }
-
-        // ReSharper disable once InvertIf
+        base.Update();
     }
-
-
 
     private void HikeTheBall(bool wasHiked)
     {
         anim.SetTrigger("HikeTrigger");
         if (gameManager.isRun)
         {
-
+            return;
         }
 
         if (gameManager.isPass)
@@ -96,8 +49,8 @@ public class DB : DefPlayer
             if ((potientialTarget.transform.position - transform.position).magnitude < 5f)
             {
                 SetTargetOffPlayer(potientialTarget);
-                if (targetReceiver.CanBePressed())
-                    StartCoroutine(WrPress(targetReceiver));
+                if (targetOffPlayer.CanBePressed())
+                    StartCoroutine(WrPress(targetOffPlayer));
                 //todo press range variable
             }
         }

@@ -13,6 +13,7 @@ public class LineBacker : DefPlayer
     // Update is called once per frame
     internal override void Update()
     {
-        
+        base.Update();
+        //dostuff
     }
 }

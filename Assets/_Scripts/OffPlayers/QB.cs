@@ -140,7 +140,7 @@ public class QB : OffPlayer {
         if(!isRapidFire)
         //todo cleanup this code, could cause bugs setting these values then running coroutine
         throwVector = passTarget;
-        targetReceiver = reciever;
+        targetOffPlayer = reciever;
         throwArc = arcType;
         throwPower = power;
         StartCoroutine("PassTheBall");
@@ -155,7 +155,7 @@ public class QB : OffPlayer {
         var thrownBall = Instantiate(footBall, throwingHand.transform.position, lookAt); //todo put footballs in hierarchy container
         thrownBall.name = "throwBall";
         FootBall thrownBallScript = thrownBall.GetComponent<FootBall>();
-        thrownBallScript.PassFootBallToMovingTarget(this, targetReceiver, thrownBallScript, throwArc, throwPower);
+        thrownBallScript.PassFootBallToMovingTarget(this, targetOffPlayer, thrownBallScript, throwArc, throwPower);
         gameManager.isPassStarted = true;
         //Destroy(thrownBall, 3f); //todo get better solution to removing footballs
     }

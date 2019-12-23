@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
 
-    //todo make gamemanger a scriptable object
+    //todo maybe make gamemanger a scriptable object?
 
     FootBallAthlete ballAthlete;
     [HideInInspector] public GameObject selector;

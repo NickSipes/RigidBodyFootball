@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class FootBall : MonoBehaviour
 {
 
-    //todo Make function to get football time to targetPlayer
+    //todo Make function to get football time to targetOffPlayer
     // distance from qb to impactPos 
     // speed is velocity
     // time = distance/speed
@@ -131,8 +131,8 @@ public class FootBall : MonoBehaviour
 
 
 /*
- *  function BallisticVel(targetPlayer: Transform, angle: float): Vector3 {
-     var dir = targetPlayer.position - transform.position;  // get targetPlayer direction
+ *  function BallisticVel(targetOffPlayer: Transform, angle: float): Vector3 {
+     var dir = targetOffPlayer.position - transform.position;  // get targetOffPlayer direction
      var h = dir.y;  // get height difference
      dir.y = 0;  // retain only the horizontal direction
      var dist = dir.magnitude ;  // get horizontal distance
@@ -144,7 +144,7 @@ public class FootBall : MonoBehaviour
      return vel * dir.normalized;
  }
  
- var myTarget: Transform;  // drag the targetPlayer here
+ var myTarget: Transform;  // drag the targetOffPlayer here
  var cannonball: GameObject;  // drag the cannonball prefab here
  var shootAngle: float = 30;  // elevation angle
  

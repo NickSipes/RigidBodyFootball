@@ -22,11 +22,11 @@ public class Dline : DefPlayer
     {
         if (!gameManager.isHiked) return;
 
-        if (targetPlayer == null)
+        if (transformTarget == null)
         {
-            targetPlayer = GameObject.FindGameObjectWithTag("Player").transform;
+            transformTarget = GameObject.FindGameObjectWithTag("Player").transform;
         }
-        SetTargetPlayer(targetPlayer);
+        SetTargetPlayer(transformTarget);
 
         if (wasBlocked && !isBlocked)
             StartCoroutine("BlockCoolDown"); 

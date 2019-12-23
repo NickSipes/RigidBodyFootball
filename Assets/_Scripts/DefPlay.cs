@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class DefPlay : PlayCall
 {
+    public bool isPress;
     public List<Zones> formationZones;
-
     internal override void Start()
     {
         base.Start();
@@ -15,10 +15,7 @@ public class DefPlay : PlayCall
 
     internal void SetFormationPositions()
     {
-        foreach (var defPlayer in defPlayers)
-        {
-            
-        }
+
     }
 
     public Zones GetJob(DefPlayer defPlayer)
@@ -29,9 +26,9 @@ public class DefPlay : PlayCall
             //todo string reference to hierarchy
             if (zone.transform.name == defPlayerName)
             {
-
+                zone.SetDefPlayer(defPlayer);
                 return zone;
-                //Debug.Log(zone.name + " " + defPlayer.name + " set");
+                //Debug.Log(myZone.name + " " + defPlayer.name + " set");
             }
         }
         return null;
