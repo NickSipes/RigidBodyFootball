@@ -450,7 +450,6 @@ MonoBehaviour:
   routeManager: {fileID: 0}
   isBlocking: 0
   offPlay: {fileID: 0}
-  targetPlayer: {fileID: 0}
   currentPlayCall: {fileID: 0}
   routes: []
   myRoute: {fileID: 0}
@@ -463,8 +462,9 @@ MonoBehaviour:
   defPlayers: []
   offPlayers: []
   defZoneSize: 0
-  zone: {fileID: 0}
-  targetReceiver: {fileID: 0}
+  myZone: {fileID: 0}
+  targetOffPlayer: {fileID: 0}
+  transformTarget: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
   isMan: 0
@@ -479,6 +479,7 @@ MonoBehaviour:
   wasBlocked: 0
   blockText: {fileID: 0}
   zoneLayer: 8
+  zoneType: 0
 --- !u!1 &39914217
 GameObject:
   m_ObjectHideFlags: 0
@@ -1642,7 +1643,6 @@ MonoBehaviour:
   routeManager: {fileID: 0}
   isBlocking: 0
   offPlay: {fileID: 0}
-  targetPlayer: {fileID: 0}
   currentPlayCall: {fileID: 0}
   routes: []
   myRoute: {fileID: 0}
@@ -1655,8 +1655,9 @@ MonoBehaviour:
   defPlayers: []
   offPlayers: []
   defZoneSize: 0
-  zone: {fileID: 0}
-  targetReceiver: {fileID: 0}
+  myZone: {fileID: 0}
+  targetOffPlayer: {fileID: 0}
+  transformTarget: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
   isMan: 0
@@ -1671,6 +1672,7 @@ MonoBehaviour:
   wasBlocked: 0
   blockText: {fileID: 0}
   zoneLayer: 8
+  zoneType: 0
 --- !u!4 &639706030 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6098374582815525946, guid: 99fc90a8ea7d73042b00adcc3867217c,
@@ -1725,7 +1727,6 @@ MonoBehaviour:
   routeManager: {fileID: 0}
   isBlocking: 0
   offPlay: {fileID: 0}
-  targetPlayer: {fileID: 0}
   currentPlayCall: {fileID: 0}
   routes: []
   myRoute: {fileID: 0}
@@ -1738,8 +1739,9 @@ MonoBehaviour:
   defPlayers: []
   offPlayers: []
   defZoneSize: 0
-  zone: {fileID: 0}
-  targetReceiver: {fileID: 0}
+  myZone: {fileID: 0}
+  targetOffPlayer: {fileID: 0}
+  transformTarget: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
   isMan: 0
@@ -1754,6 +1756,7 @@ MonoBehaviour:
   wasBlocked: 0
   blockText: {fileID: 0}
   zoneLayer: 8
+  zoneType: 0
 --- !u!1 &666339098
 GameObject:
   m_ObjectHideFlags: 0
@@ -3392,7 +3395,6 @@ MonoBehaviour:
   routeManager: {fileID: 0}
   isBlocking: 0
   offPlay: {fileID: 0}
-  targetPlayer: {fileID: 0}
   currentPlayCall: {fileID: 0}
   routes: []
   myRoute: {fileID: 0}
@@ -3405,8 +3407,9 @@ MonoBehaviour:
   defPlayers: []
   offPlayers: []
   defZoneSize: 0
-  zone: {fileID: 0}
-  targetReceiver: {fileID: 0}
+  myZone: {fileID: 0}
+  targetOffPlayer: {fileID: 0}
+  transformTarget: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
   isMan: 0
@@ -3421,6 +3424,7 @@ MonoBehaviour:
   wasBlocked: 0
   blockText: {fileID: 0}
   zoneLayer: 8
+  zoneType: 0
 --- !u!1001 &1479540107
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4777,7 +4781,6 @@ MonoBehaviour:
   routeManager: {fileID: 0}
   isBlocking: 0
   offPlay: {fileID: 0}
-  targetPlayer: {fileID: 0}
   currentPlayCall: {fileID: 0}
   routes: []
   myRoute: {fileID: 0}
@@ -4790,8 +4793,9 @@ MonoBehaviour:
   defPlayers: []
   offPlayers: []
   defZoneSize: 0
-  zone: {fileID: 0}
-  targetReceiver: {fileID: 0}
+  myZone: {fileID: 0}
+  targetOffPlayer: {fileID: 0}
+  transformTarget: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
   isMan: 0
@@ -4806,6 +4810,7 @@ MonoBehaviour:
   wasBlocked: 0
   blockText: {fileID: 0}
   zoneLayer: 8
+  zoneType: 0
 --- !u!137 &1938320964 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 137732589740493876, guid: 06a16a104b39a454e971c1df0727d2b3,
@@ -5138,7 +5143,6 @@ MonoBehaviour:
   routeManager: {fileID: 0}
   isBlocking: 0
   offPlay: {fileID: 0}
-  targetPlayer: {fileID: 0}
   currentPlayCall: {fileID: 0}
   routes: []
   myRoute: {fileID: 0}
@@ -5151,8 +5155,9 @@ MonoBehaviour:
   defPlayers: []
   offPlayers: []
   defZoneSize: 0
-  zone: {fileID: 0}
-  targetReceiver: {fileID: 0}
+  myZone: {fileID: 0}
+  targetOffPlayer: {fileID: 0}
+  transformTarget: {fileID: 0}
   targetHb: {fileID: 0}
   targetDb: {fileID: 0}
   isMan: 0
@@ -5167,6 +5172,7 @@ MonoBehaviour:
   wasBlocked: 0
   blockText: {fileID: 0}
   zoneLayer: 8
+  zoneType: 0
 --- !u!1001 &2033403936
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5559,6 +5565,10 @@ PrefabInstance:
     - target: {fileID: 377076501, guid: b56336840749ed24794ea948db953428, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
+      objectReference: {fileID: 461999126}
+    - target: {fileID: 377076501, guid: b56336840749ed24794ea948db953428, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: FlipOffPlay
       objectReference: {fileID: 0}
     - target: {fileID: 972049203, guid: b56336840749ed24794ea948db953428, type: 3}
       propertyPath: m_IsActive
@@ -5822,6 +5832,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: TE1
       objectReference: {fileID: 0}
+    - target: {fileID: 6150003792409806744, guid: 99fc90a8ea7d73042b00adcc3867217c,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31f39fd2b3febf8419ace55cc1325d32, type: 2}
     - target: {fileID: 7225038549752861112, guid: 99fc90a8ea7d73042b00adcc3867217c,
         type: 3}
       propertyPath: canvas
