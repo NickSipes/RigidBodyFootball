@@ -454,6 +454,7 @@ MonoBehaviour:
   routes: []
   myRoute: {fileID: 0}
   routeSelection: 0
+  lastCutVector: {x: 0, y: 0, z: 0}
   wideRecievers: []
   defBacks: []
   hbs: []
@@ -1200,6 +1201,11 @@ PrefabInstance:
       propertyPath: m_Speed
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 1653392376714448274, guid: 59a55bdb41380534d832a67efa9c463b,
+        type: 3}
+      propertyPath: m_StoppingDistance
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1653392376714448276, guid: 59a55bdb41380534d832a67efa9c463b,
         type: 3}
       propertyPath: pressBar
@@ -1208,7 +1214,7 @@ PrefabInstance:
     - target: {fileID: 1653392376714448279, guid: 59a55bdb41380534d832a67efa9c463b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 8.28
+      value: 19.66
       objectReference: {fileID: 0}
     - target: {fileID: 1653392376714448279, guid: 59a55bdb41380534d832a67efa9c463b,
         type: 3}
@@ -1218,7 +1224,7 @@ PrefabInstance:
     - target: {fileID: 1653392376714448279, guid: 59a55bdb41380534d832a67efa9c463b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -13.46
+      value: -14.32
       objectReference: {fileID: 0}
     - target: {fileID: 1653392376714448279, guid: 59a55bdb41380534d832a67efa9c463b,
         type: 3}
@@ -1648,6 +1654,7 @@ MonoBehaviour:
   routes: []
   myRoute: {fileID: 0}
   routeSelection: 0
+  lastCutVector: {x: 0, y: 0, z: 0}
   wideRecievers: []
   defBacks: []
   hbs: []
@@ -1733,6 +1740,7 @@ MonoBehaviour:
   routes: []
   myRoute: {fileID: 0}
   routeSelection: 0
+  lastCutVector: {x: 0, y: 0, z: 0}
   wideRecievers: []
   defBacks: []
   hbs: []
@@ -2192,7 +2200,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.4
+      value: 4.76
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2200,7 +2208,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10.75
+      value: -10.07
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalRotation.x
@@ -2261,7 +2269,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 10.29
+      value: 15.58
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2269,7 +2277,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.83
+      value: -9.08
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalRotation.x
@@ -3195,6 +3203,11 @@ PrefabInstance:
       propertyPath: m_Speed
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 1653392376714448274, guid: 59a55bdb41380534d832a67efa9c463b,
+        type: 3}
+      propertyPath: m_StoppingDistance
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1653392376714448276, guid: 59a55bdb41380534d832a67efa9c463b,
         type: 3}
       propertyPath: pressBar
@@ -3203,7 +3216,7 @@ PrefabInstance:
     - target: {fileID: 1653392376714448279, guid: 59a55bdb41380534d832a67efa9c463b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 10.5
+      value: 10.57
       objectReference: {fileID: 0}
     - target: {fileID: 1653392376714448279, guid: 59a55bdb41380534d832a67efa9c463b,
         type: 3}
@@ -3287,7 +3300,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.4
+      value: 12.85
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3295,7 +3308,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -7.2
+      value: -11.38
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalRotation.x
@@ -3402,6 +3415,7 @@ MonoBehaviour:
   routes: []
   myRoute: {fileID: 0}
   routeSelection: 0
+  lastCutVector: {x: 0, y: 0, z: 0}
   wideRecievers: []
   defBacks: []
   hbs: []
@@ -3442,7 +3456,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.51
+      value: 15.27
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3450,7 +3464,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -9.45
+      value: -12.16
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalRotation.x
@@ -4387,7 +4401,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 13.39
+      value: 8.02
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -4395,7 +4409,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -4.91
+      value: -8.81
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalRotation.x
@@ -4587,6 +4601,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Speed
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1653392376714448274, guid: 59a55bdb41380534d832a67efa9c463b,
+        type: 3}
+      propertyPath: m_StoppingDistance
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1653392376714448276, guid: 59a55bdb41380534d832a67efa9c463b,
         type: 3}
@@ -4789,6 +4808,7 @@ MonoBehaviour:
   routes: []
   myRoute: {fileID: 0}
   routeSelection: 0
+  lastCutVector: {x: 0, y: 0, z: 0}
   wideRecievers: []
   defBacks: []
   hbs: []
@@ -4853,7 +4873,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 30.93
+      value: 21.48
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -4861,7 +4881,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -4.85
+      value: -9
       objectReference: {fileID: 0}
     - target: {fileID: 4073126429548692, guid: 06a16a104b39a454e971c1df0727d2b3, type: 3}
       propertyPath: m_LocalRotation.x
@@ -5152,6 +5172,7 @@ MonoBehaviour:
   routes: []
   myRoute: {fileID: 0}
   routeSelection: 0
+  lastCutVector: {x: 0, y: 0, z: 0}
   wideRecievers: []
   defBacks: []
   hbs: []
@@ -5200,6 +5221,11 @@ PrefabInstance:
       propertyPath: m_Speed
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 1653392376714448274, guid: 59a55bdb41380534d832a67efa9c463b,
+        type: 3}
+      propertyPath: m_StoppingDistance
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1653392376714448276, guid: 59a55bdb41380534d832a67efa9c463b,
         type: 3}
       propertyPath: pressBar
@@ -5208,7 +5234,7 @@ PrefabInstance:
     - target: {fileID: 1653392376714448279, guid: 59a55bdb41380534d832a67efa9c463b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 21.31
+      value: 5.72
       objectReference: {fileID: 0}
     - target: {fileID: 1653392376714448279, guid: 59a55bdb41380534d832a67efa9c463b,
         type: 3}
@@ -5218,7 +5244,7 @@ PrefabInstance:
     - target: {fileID: 1653392376714448279, guid: 59a55bdb41380534d832a67efa9c463b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -12.64
+      value: -13.65
       objectReference: {fileID: 0}
     - target: {fileID: 1653392376714448279, guid: 59a55bdb41380534d832a67efa9c463b,
         type: 3}
