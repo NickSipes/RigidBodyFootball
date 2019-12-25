@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
@@ -31,8 +32,6 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public Animator anim;
     //public LineRenderer lr;
 
-
-
     [SerializeField] private float maxAngle = 35;
     [SerializeField] private float maxRadius = 1;
 
@@ -52,7 +51,7 @@ public class FootBallAthlete : MonoBehaviour
     public Routes myRoute;
     [HideInInspector] public int routeSelection;
     internal int totalCuts;
-    internal Vector3 lastCutVector;
+    public Vector3 lastCutVector;
     internal bool wasAtLastCut = false;
     internal int currentRouteIndex = 0;
     internal float routeCutTolerance = 1.5f;
@@ -954,7 +953,7 @@ public class DefPlayer : FootBallAthlete
     internal bool isWrIncoming = false;
     internal bool isBlockingPass = false;
     public Zones.ZoneType zoneType;
-    internal OffPlayer startOffPlayer;
+    [SerializeField] internal OffPlayer startOffPlayer;
     internal override void Start()
     {
         base.Start();
@@ -973,24 +972,32 @@ public class DefPlayer : FootBallAthlete
 
         }
         if (!gameManager.isPass) return;
-        
+
         if (isRusher) return;
         if (!isZone) return;
 
         if (isBlockingPass) return;
         if (isPressing) return;
         if (isBackingOff) return;
-        
+
         if (isDeepDefender)
         {
+            if (targetOffPlayer)
+            {
+                if ((targetOffPlayer.transform.position - myZone.zoneCenter).sqrMagnitude > myZone.zoneSize)
+                {
+                    targetOffPlayer = null;
+                }
+            }
             StayDeep();
+            return;
         }
 
         if (targetOffPlayer != null)
         {
             if (IsTargetCovered(targetOffPlayer))
             {
-                   
+
             }
             if (IsTargetInZone(targetOffPlayer.transform))
             {
@@ -1003,7 +1010,7 @@ public class DefPlayer : FootBallAthlete
                 targetOffPlayer = null;
             }
         }
-       
+
         PlayZone();
     }
     public override void FixedUpdate()
@@ -1017,15 +1024,55 @@ public class DefPlayer : FootBallAthlete
         gameManager.offPlayChange += OffPlayChange;
         gameManager.defPlayChange += DefPlayChange;
     }
+
     private void StayDeep()
-    {
+    { //todo figure out side of field, area zone covers, check distance and direction, anticipate routes. Move back 
         
+        if (targetOffPlayer) return;
+
+        if (myZone.zoneCenter.x > 0) //right side
+        {
+           
+        }
+   
+        OffPlayer bestOffPlayer = null;
+        float bestOutsideCut = 0; 
+        foreach (OffPlayer offPlayer in offPlayers)
+        {
+            if (!offPlayer.isReciever) return;
+
+            if (!((offPlayer.transform.position.z + offPlayer.navMeshAgent.desiredVelocity.z) >
+                  transform.position.z)) continue;
+
+            if (offPlayer.lastCutVector.x < bestOutsideCut)
+            {
+                bestOutsideCut = offPlayer.lastCutVector.x;
+                bestOffPlayer = offPlayer;
+                Debug.Log("BestOff " + bestOffPlayer.name);
+            }
+        }
+        if (!bestOffPlayer)
+        {
+            SetDestination(myZone.zoneCenter);
+            return;
+        }
+
+        StartCoroutine(PlayDeepBall(bestOffPlayer));
+
     }
 
     private void GuardTarget(OffPlayer offPlayer)
     {
         SetDestination(targetOffPlayer.transform.position);
-        throw new NotImplementedException();
+    }
+
+    IEnumerator PlayDeepBall(OffPlayer offPlayer)
+    {
+        while (offPlayer.transform.position.x < myZone.zoneCenter.x)
+        {
+            SetDestination(offPlayer.transform.position + new Vector3(3,0,0));
+            yield return new WaitForEndOfFrame();
+        }
     }
 
     private bool IsTargetCovered(OffPlayer offPlayer)
@@ -1034,14 +1081,13 @@ public class DefPlayer : FootBallAthlete
         {
             if (defPlayer.targetOffPlayer == offPlayer)
             {
+
                 return true;
             }
         }
 
         return false;
     }
-
-   
 
     public void Press(float pressTimeNorm)
     {
@@ -1051,14 +1097,14 @@ public class DefPlayer : FootBallAthlete
         navMeshAgent.speed = 0f;
     }
 
-    internal void OffPlayChange(OffPlay offPlay)
+    internal void OffPlayChange(OffPlay offPlayChange)
     {
         //if(gameManager.isHiked)return;
         //GetZoneStart();
         //MoveToStart();
     }
 
-    internal void DefPlayChange(DefPlay defPlay)
+    internal void DefPlayChange(DefPlay defPlayChange)
     {
         GetPlayCall();
         GetAssignment();
@@ -1113,6 +1159,7 @@ public class DefPlayer : FootBallAthlete
             yield return new WaitForEndOfFrame();
         }
     }
+
     internal void PlayReact()
     {
         var reactTime = 0f;

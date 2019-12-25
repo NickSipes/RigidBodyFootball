@@ -13,7 +13,7 @@ public class Zones : MonoBehaviour
     [System.Serializable]
     public enum ZoneType
     {
-        Man, Flat, Seam, DeepHalf, DeepThird, Curl, Spy, Rush
+        Man, Flat, Seam, DeepHalf, DeepThird, Curl, Hook, Spy, Rush
     }
     public ZoneType type;
 
@@ -33,6 +33,10 @@ public class Zones : MonoBehaviour
         {
             case ZoneType.Curl:
                 zoneColor = Color.yellow;
+                zoneSize = 5;
+                break;
+            case ZoneType.Hook:
+                zoneColor = new Color(253, 5, 5);
                 zoneSize = 5;
                 break;
             case ZoneType.DeepHalf:

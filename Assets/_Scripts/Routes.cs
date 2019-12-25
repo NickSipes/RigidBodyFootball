@@ -7,7 +7,7 @@ public class Routes : MonoBehaviour
     const float waypointGizmoRadius = 0.3f;
     public float[] routeCutDwellTime;
     private Transform routeStartLocation;
-    private Transform[] routeCuts;
+    [HideInInspector] public Transform[] routeCuts;
 
     void Start()
     {
