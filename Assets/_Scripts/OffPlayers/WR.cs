@@ -63,7 +63,7 @@ public class WR : OffPlayer
             if (IsEndOfRoute())
             {
                 StopNavMeshAgent();
-                Debug.Log("EndOfRoute Update");
+                //Debug.Log("EndOfRoute Update");
                 return;
             }
 

@@ -1,13 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.WSA.Input;
 
 public class Zones : MonoBehaviour
 {
     public static DefPlayer myDefPlayer;
     internal float zoneSize;
+    
     private Color zoneColor;
     [HideInInspector] public Vector3 zoneCenter;
+    public bool isPress;
     SphereCollider sphereCollider;
     //todo, these should be lists with assignable values in inspector
     [System.Serializable]

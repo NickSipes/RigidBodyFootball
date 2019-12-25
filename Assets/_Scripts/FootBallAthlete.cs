@@ -511,22 +511,28 @@ public class OffPlayer : FootBallAthlete
                     break;
                 case "Center":
                     SetStartPosition(offPlay.formationTransforms[3].position);
+                    isBlocker = true;
                     break;
                 case "GuardR":
                     SetStartPosition(offPlay.formationTransforms[4].position);
+                    isBlocker = true;
                     break;
                 case "GuardL":
                     SetStartPosition(offPlay.formationTransforms[5].position);
+                    isBlocker = true;
                     break;
                 case "TackleL":
                     SetStartPosition(offPlay.formationTransforms[6].position);
+                    isBlocker = true;
                     break;
                 case "TackleR":
                     SetStartPosition(offPlay.formationTransforms[7].position);
+                    isBlocker = true;
                     break;
                 case "QB":
                     navMeshAgent.speed = 4;
                     SetStartPosition(offPlay.formationTransforms[8].position);
+                    isBlocker = true;
                     break;
                 default:
                     //todo default stuff
@@ -609,6 +615,8 @@ public class OffPlayer : FootBallAthlete
             var zPosCut = routeCut.position.z;
             routeCut.transform.position = new Vector3(xPosCut, yPosCut, zPosCut);
         }
+
+        lastCutVector = myRoute.routeCuts.Last().position;
         SetDestination(myRoute.GetWaypoint(currentRouteIndex));
         StartCoroutine(FaceLOS());
     }
@@ -952,8 +960,14 @@ public class DefPlayer : FootBallAthlete
     internal bool isBackingOff = false;
     internal bool isWrIncoming = false;
     internal bool isBlockingPass = false;
+    internal bool inPressPos = false;
     public Zones.ZoneType zoneType;
     [SerializeField] internal OffPlayer startOffPlayer;
+    private bool isPlayingDeep = false;
+
+    //todo stats
+    private float awarenessBoost = 3f;
+
     internal override void Start()
     {
         base.Start();
@@ -963,7 +977,8 @@ public class DefPlayer : FootBallAthlete
     internal override void Update()
     {
         base.Update();
-        if (!gameManager.isHiked) return;
+        if (gameManager.currentOffPlay == null) return;
+        if (!gameManager.isHiked) return; 
 
         if (gameManager.isRun)
         {
@@ -989,6 +1004,7 @@ public class DefPlayer : FootBallAthlete
                     targetOffPlayer = null;
                 }
             }
+            if (isPlayingDeep) return;
             StayDeep();
             return;
         }
@@ -1001,7 +1017,7 @@ public class DefPlayer : FootBallAthlete
             }
             if (IsTargetInZone(targetOffPlayer.transform))
             {
-                GuardTarget(targetOffPlayer);
+                SetTargetOffPlayer(targetOffPlayer.transform);
                 return;
             }
             else
@@ -1026,32 +1042,46 @@ public class DefPlayer : FootBallAthlete
     }
 
     private void StayDeep()
-    { //todo figure out side of field, area zone covers, check distance and direction, anticipate routes. Move back 
-        
+    {
+        //todo figure out side of field, area zone covers, check distance and direction, anticipate routes. Move back 
+
         if (targetOffPlayer) return;
 
-        if (myZone.zoneCenter.x > 0) //right side
-        {
-           
-        }
-   
+        var deepestDefender = GetOffPlayerDownField();
+        if (deepestDefender.transform.position.z < gameManager.lineOfScrimmage.transform.position.z + 5f) return;
+
         OffPlayer bestOffPlayer = null;
-        float bestOutsideCut = 0; 
+        float lastBest = 0f;
         foreach (OffPlayer offPlayer in offPlayers)
         {
-            if (!offPlayer.isReciever) return;
+            if (!offPlayer.isReciever) continue;
 
-            if (!((offPlayer.transform.position.z + offPlayer.navMeshAgent.desiredVelocity.z) >
-                  transform.position.z)) continue;
+            //if(offPlayer.transform.position.z < myZone.zoneSize + myZone.zoneCenter.z + awarenessBoost)continue;
 
-            if (offPlayer.lastCutVector.x < bestOutsideCut)
+
+            if (myZone.zoneCenter.x < 0) //Left side
             {
-                bestOutsideCut = offPlayer.lastCutVector.x;
-                bestOffPlayer = offPlayer;
-                Debug.Log("BestOff " + bestOffPlayer.name);
+                if (offPlayer.transform.position.x < 0 && offPlayer.transform.position.x < lastBest)
+                {
+                    lastBest = offPlayer.transform.position.x;
+                    bestOffPlayer = offPlayer;
+                    //Debug.Log("BestOff " + bestOffPlayer.name);
+                }
             }
+
+            if (myZone.zoneCenter.x > 0) //Right side
+            {
+                if (offPlayer.transform.position.x > 0 && offPlayer.transform.position.x > lastBest)
+                {
+                    lastBest = offPlayer.transform.position.x;
+                    bestOffPlayer = offPlayer;
+                    //Debug.Log("BestOff " + bestOffPlayer.name);
+                }
+            }
+
         }
-        if (!bestOffPlayer)
+
+        if (bestOffPlayer == null)
         {
             SetDestination(myZone.zoneCenter);
             return;
@@ -1061,18 +1091,36 @@ public class DefPlayer : FootBallAthlete
 
     }
 
-    private void GuardTarget(OffPlayer offPlayer)
+    private OffPlayer GetOffPlayerDownField()
     {
-        SetDestination(targetOffPlayer.transform.position);
+        OffPlayer bestTarget = null;
+        float closestDistanceSqr = Mathf.Infinity;
+        foreach (OffPlayer potentialTarget in offPlayers)
+        {
+
+            Vector3 directionToTarget = potentialTarget.transform.position - transform.position;
+            float dSqrToTarget = directionToTarget.sqrMagnitude;
+
+            if (!(dSqrToTarget < closestDistanceSqr)) continue;
+
+            closestDistanceSqr = dSqrToTarget;
+            bestTarget = potentialTarget;
+        }
+
+        return bestTarget;
     }
+
 
     IEnumerator PlayDeepBall(OffPlayer offPlayer)
     {
-        while (offPlayer.transform.position.x < myZone.zoneCenter.x)
+        while (offPlayer.transform.position.z < myZone.zoneCenter.z)
         {
-            SetDestination(offPlayer.transform.position + new Vector3(3,0,0));
+            isPlayingDeep = true;
+            SetDestination(offPlayer.transform.position + new Vector3(0, 0, 5 + awarenessBoost));
             yield return new WaitForEndOfFrame();
         }
+
+        isPlayingDeep = false;
     }
 
     private bool IsTargetCovered(OffPlayer offPlayer)
@@ -1081,7 +1129,6 @@ public class DefPlayer : FootBallAthlete
         {
             if (defPlayer.targetOffPlayer == offPlayer)
             {
-
                 return true;
             }
         }
@@ -1099,22 +1146,15 @@ public class DefPlayer : FootBallAthlete
 
     internal void OffPlayChange(OffPlay offPlayChange)
     {
-        //if(gameManager.isHiked)return;
-        //GetZoneStart();
-        //MoveToStart();
+        
     }
 
     internal void DefPlayChange(DefPlay defPlayChange)
     {
         GetPlayCall();
-        GetAssignment();
         MoveToStart();
     }
 
-    private void GetAssignment()
-    {
-
-    }
 
     private void GetPlayCall()
     {
@@ -1147,8 +1187,12 @@ public class DefPlayer : FootBallAthlete
 
     private void MoveToStart()
     {
+        if (myZone.isPress)
+        {
+            var wideReceiver = GetClosestWr(FindObjectsOfType<WR>());
+            SetDestination(wideReceiver.transform.position + new Vector3(0,0,2));
+        }
         SetDestination(myZone.transform.position);
-        StartCoroutine(FaceLineOfScrim());
     }
 
     IEnumerator FaceLineOfScrim()

@@ -49,6 +49,7 @@ public class DB : DefPlayer
             if ((potientialTarget.transform.position - transform.position).magnitude < 5f)
             {
                 SetTargetOffPlayer(potientialTarget);
+                if(!myZone.isPress)return;
                 if (targetOffPlayer.CanBePressed())
                     StartCoroutine(WrPress(targetOffPlayer));
                 //todo press range variable
