@@ -9,6 +9,7 @@ TagManager:
   - DefPlayer
   - ZoneObject
   - ClickCollider
+  - Routes
   layers:
   - Default
   - TransparentFX

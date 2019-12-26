@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   routeCutDwellTime:
   - 1
+  routeCuts: []
 --- !u!1 &5200026797272312172
 GameObject:
   m_ObjectHideFlags: 0

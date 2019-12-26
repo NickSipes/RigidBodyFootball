@@ -72,7 +72,7 @@ GameObject:
   - component: {fileID: 8388188182341010873}
   m_Layer: 0
   m_Name: HBOutnUp
-  m_TagString: Untagged
+  m_TagString: Routes
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110,6 +110,7 @@ MonoBehaviour:
   - 0
   - 0
   - 0
+  routeCuts: []
 --- !u!1 &6478424442448325978
 GameObject:
   m_ObjectHideFlags: 0

@@ -400,7 +400,7 @@ public class FootBallAthlete : MonoBehaviour
     internal void AddClickCollider()
     {
         sphereCollider = gameObject.AddComponent<SphereCollider>();
-        sphereCollider.radius = 3f;//todo make inspector settable
+        sphereCollider.radius = 2f;//todo make inspector settable
         sphereCollider.isTrigger = true;
         sphereCollider.tag = "ClickCollider";
     }
@@ -978,7 +978,7 @@ public class DefPlayer : FootBallAthlete
     {
         base.Update();
         if (gameManager.currentOffPlay == null) return;
-        if (!gameManager.isHiked) return; 
+        if (!gameManager.isHiked) return;
 
         if (gameManager.isRun)
         {
@@ -1146,7 +1146,7 @@ public class DefPlayer : FootBallAthlete
 
     internal void OffPlayChange(OffPlay offPlayChange)
     {
-        
+
     }
 
     internal void DefPlayChange(DefPlay defPlayChange)
@@ -1159,49 +1159,85 @@ public class DefPlayer : FootBallAthlete
     private void GetPlayCall()
     {
         defPlay = gameManager.currentDefPlay;
+        offPlay = gameManager.currentOffPlay;
         myZone = defPlay.GetJob(this);
         var zoneObjects = GameObject.Find("ZoneObjects");
         myZone.transform.SetParent(zoneObjects.transform);
         zoneType = myZone.type;
-        if (zoneType == Zones.ZoneType.Seam ||
-            zoneType == Zones.ZoneType.Flat ||
-            zoneType == Zones.ZoneType.Curl ||
-            zoneType == Zones.ZoneType.DeepHalf ||
-            zoneType == Zones.ZoneType.DeepThird)
+
+        switch (zoneType)
         {
-            isZone = true;
+            case Zones.ZoneType.DeepHalf:
+                isZone = true;
+                isDeepDefender = true;
+                break;
+            case Zones.ZoneType.DeepThird:
+                isDeepDefender = true;
+                isZone = true;
+                break;
+            case Zones.ZoneType.Rush:
+                isRusher = true;
+                break;
+            case Zones.ZoneType.Man:
+                break;
+            case Zones.ZoneType.Flat:
+                isZone = true;
+                break;
+            case Zones.ZoneType.Seam:
+                isZone = true;
+                break;
+            case Zones.ZoneType.Curl:
+                isZone = true;
+                break;
+            case Zones.ZoneType.Hook:
+                isZone = true;
+                break;
+            case Zones.ZoneType.Spy:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
 
-        if (zoneType == Zones.ZoneType.DeepHalf ||
-            zoneType == Zones.ZoneType.DeepThird)
-        {
-            isDeepDefender = true;
-        }
-
-        if (zoneType == Zones.ZoneType.Rush)
-        {
-            isRusher = true;
-        }
         targetOffPlayer = GetClosestOffPlayer(offPlayers, myZone.zoneCenter);
+        var routeStarts = GameObject.FindGameObjectsWithTag("Routes");
+        Routes myRouteStarts;
+        
+        //todo this all sucks 
+        float closestDistanceSqr = 10;
+
+        foreach (var routeStart in routeStarts)
+        {
+            Vector3 directionToTarget = routeStart.transform.position - myZone.zoneCenter;
+            float dSqrToTarget = directionToTarget.sqrMagnitude;
+            if (!(dSqrToTarget < closestDistanceSqr)) continue;
+
+            closestDistanceSqr = dSqrToTarget;
+            myRouteStarts = routeStart.GetComponent<Routes>();
+        }
     }
 
     private void MoveToStart()
     {
-        if (myZone.isPress)
-        {
-            var wideReceiver = GetClosestWr(FindObjectsOfType<WR>());
-            SetDestination(wideReceiver.transform.position + new Vector3(0,0,2));
-        }
+        //if (myZone.isPress)
+        //{
+        //    var wideReceiver = GetClosestWr(FindObjectsOfType<WR>());
+        //    SetDestination(wideReceiver.transform.position + new Vector3(0, 0, 2));
+        //    return;
+        //}
         SetDestination(myZone.transform.position);
+        StartCoroutine(FaceLineOfScrim());
     }
 
     IEnumerator FaceLineOfScrim()
     {
-        while ((transform.position - myZone.zoneCenter).sqrMagnitude > 1)
+        while (Math.Abs(navMeshAgent.velocity.sqrMagnitude) > .02)
         {
-            transform.LookAt(transformTarget ? transformTarget : gameManager.lineOfScrimmage.transform);
+            transform.LookAt(gameManager.lineOfScrimmage.transform);
             yield return new WaitForEndOfFrame();
+
         }
+
+        transform.LookAt(gameManager.lineOfScrimmage.transform);
     }
 
     internal void PlayReact()

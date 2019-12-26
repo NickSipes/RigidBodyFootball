@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 3227144157589727053}
   m_Layer: 0
   m_Name: ComeBack
-  m_TagString: Untagged
+  m_TagString: Routes
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -140,6 +140,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   routeCutDwellTime:
   - 0
+  routeCuts: []
 --- !u!120 &3227144157589727053
 LineRenderer:
   m_ObjectHideFlags: 0

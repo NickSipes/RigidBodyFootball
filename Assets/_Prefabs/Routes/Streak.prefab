@@ -72,7 +72,7 @@ GameObject:
   - component: {fileID: 4549607954099999873}
   m_Layer: 0
   m_Name: Streak
-  m_TagString: Untagged
+  m_TagString: Routes
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -107,3 +107,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   routeCutDwellTime:
   - 0
+  routeCuts: []

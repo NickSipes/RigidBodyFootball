@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5347949181444332785}
   m_Layer: 0
   m_Name: Slant
-  m_TagString: Untagged
+  m_TagString: Routes
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -48,6 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   routeCutDwellTime:
   - 0
+  routeCuts: []
 --- !u!1 &5347949181700322266
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2192629649012779714}
   m_Layer: 0
   m_Name: QuickIn
-  m_TagString: Untagged
+  m_TagString: Routes
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -48,6 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   routeCutDwellTime:
   - 0
+  routeCuts: []
 --- !u!1 &3455175979698499017
 GameObject:
   m_ObjectHideFlags: 0
