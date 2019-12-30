@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class Dline : DefPlayer
 {
     // Start is called before the first frame update
-    internal void Start()
+    internal override void Start()
     {
         base.Start();
         rayColor = Color.red;

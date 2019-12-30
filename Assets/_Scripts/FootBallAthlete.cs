@@ -955,15 +955,11 @@ public class DefPlayer : FootBallAthlete
     internal List<OffPlayer> blockPlayers = new List<OffPlayer>();
     internal DefPlay defPlay;
     [SerializeField] internal int zoneLayer = 8;
-    private bool isDeepDefender;
-    internal bool isRusher;
+    private bool isPlayingDeep = false;
     internal bool isBackingOff = false;
-    internal bool isWrIncoming = false;
     internal bool isBlockingPass = false;
     internal bool inPressPos = false;
     public Zones.ZoneType zoneType;
-    [SerializeField] internal OffPlayer startOffPlayer;
-    private bool isPlayingDeep = false;
 
     //todo stats
     private float awarenessBoost = 3f;
@@ -988,14 +984,14 @@ public class DefPlayer : FootBallAthlete
         }
         if (!gameManager.isPass) return;
 
-        if (isRusher) return;
+        if (myZone.isRusher) return;
         if (!isZone) return;
 
         if (isBlockingPass) return;
         if (isPressing) return;
         if (isBackingOff) return;
 
-        if (isDeepDefender)
+        if (myZone.isDeepDefender)
         {
             if (targetOffPlayer)
             {
@@ -1146,13 +1142,38 @@ public class DefPlayer : FootBallAthlete
 
     internal void OffPlayChange(OffPlay offPlayChange)
     {
-
+        
     }
 
     internal void DefPlayChange(DefPlay defPlayChange)
     {
         GetPlayCall();
+        GetZonePositions();
         MoveToStart();
+    }
+
+    private void GetZonePositions()
+    {
+        if (!IsOffOutOfHuddle()) return;
+        if (!isZone) return;
+        //targetOffPlayer = GetClosestOffPlayer(offPlayers, myZone.zoneCenter);
+        var routeStarts = GameObject.FindGameObjectsWithTag("Routes");
+        Routes myRouteStarts = null;
+
+        //todo this all sucks 
+        float closestDistanceSqr = 50;
+
+        foreach (var routeStart in routeStarts)
+        {
+            Vector3 directionToTarget = routeStart.transform.position - myZone.transform.position;
+            float dSqrToTarget = directionToTarget.sqrMagnitude;
+            if (!(dSqrToTarget < closestDistanceSqr)) continue;
+
+            closestDistanceSqr = dSqrToTarget;
+            myRouteStarts = routeStart.GetComponent<Routes>();
+        }
+
+        myRoute = myRouteStarts;
     }
 
 
@@ -1164,66 +1185,24 @@ public class DefPlayer : FootBallAthlete
         var zoneObjects = GameObject.Find("ZoneObjects");
         myZone.transform.SetParent(zoneObjects.transform);
         zoneType = myZone.type;
+    }
 
-        switch (zoneType)
-        {
-            case Zones.ZoneType.DeepHalf:
-                isZone = true;
-                isDeepDefender = true;
-                break;
-            case Zones.ZoneType.DeepThird:
-                isDeepDefender = true;
-                isZone = true;
-                break;
-            case Zones.ZoneType.Rush:
-                isRusher = true;
-                break;
-            case Zones.ZoneType.Man:
-                break;
-            case Zones.ZoneType.Flat:
-                isZone = true;
-                break;
-            case Zones.ZoneType.Seam:
-                isZone = true;
-                break;
-            case Zones.ZoneType.Curl:
-                isZone = true;
-                break;
-            case Zones.ZoneType.Hook:
-                isZone = true;
-                break;
-            case Zones.ZoneType.Spy:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-        targetOffPlayer = GetClosestOffPlayer(offPlayers, myZone.zoneCenter);
-        var routeStarts = GameObject.FindGameObjectsWithTag("Routes");
-        Routes myRouteStarts;
-        
-        //todo this all sucks 
-        float closestDistanceSqr = 10;
-
-        foreach (var routeStart in routeStarts)
-        {
-            Vector3 directionToTarget = routeStart.transform.position - myZone.zoneCenter;
-            float dSqrToTarget = directionToTarget.sqrMagnitude;
-            if (!(dSqrToTarget < closestDistanceSqr)) continue;
-
-            closestDistanceSqr = dSqrToTarget;
-            myRouteStarts = routeStart.GetComponent<Routes>();
-        }
+    private bool IsOffOutOfHuddle()
+    {
+        //todo this
+        return true;
     }
 
     private void MoveToStart()
     {
-        //if (myZone.isPress)
-        //{
-        //    var wideReceiver = GetClosestWr(FindObjectsOfType<WR>());
-        //    SetDestination(wideReceiver.transform.position + new Vector3(0, 0, 2));
-        //    return;
-        //}
+        if (myRoute != null)
+        {
+            if (myZone.isPress)
+            {
+                SetDestination(myRoute.transform.position + new Vector3(0,0,1));
+                return;
+            }
+        }
         SetDestination(myZone.transform.position);
         StartCoroutine(FaceLineOfScrim());
     }
@@ -1234,9 +1213,7 @@ public class DefPlayer : FootBallAthlete
         {
             transform.LookAt(gameManager.lineOfScrimmage.transform);
             yield return new WaitForEndOfFrame();
-
         }
-
         transform.LookAt(gameManager.lineOfScrimmage.transform);
     }
 
@@ -1271,6 +1248,7 @@ public class DefPlayer : FootBallAthlete
 
     }
 
+    //todo needs work
     private bool CheckZone()
     {
         if (this.GetComponent<LineBacker>())
@@ -1287,7 +1265,7 @@ public class DefPlayer : FootBallAthlete
             return true;
         }
 
-        if (isDeepDefender)
+        if (myZone.isDeepDefender)
         {
 
         }
@@ -1333,12 +1311,11 @@ public class DefPlayer : FootBallAthlete
         //Debug.Log("Target Changed");
     }
 
-    internal IEnumerator WrPress(OffPlayer offPlayer)
+    internal IEnumerator PressTarget(OffPlayer offPlayer)
     {
         isPressing = true;
         float pressTime = .5f;
         anim.SetTrigger("PressTrigger");
-        SetDestination(offPlayer.transform.position + transform.forward);
         float pressTimeNorm = 0;
         //Vector3 dir = (offPlayer.transform.position - transform.position).normalized * pressTime;
         //rb.velocity = dir;
@@ -1359,17 +1336,15 @@ public class DefPlayer : FootBallAthlete
     {
         //read receiver route, move backwards, release receiver to new defender, moves towards next receiver
 
-        offPlayer.ReleasePress();
         isPressing = false;
-        StartCoroutine(TurnTowardsLOS());
+        StartCoroutine(TurnTowardsLos());
         var backOffTime = 0f;
+        SetDestination(myZone.transform.position);
+        offPlayer.ReleasePress();
         while (backOffTime < 1)
         {
-            //Vector3 dir = targetOffPlayer.position - transform.position;
-
-            isBackingOff = true;
             //Debug.Log("isBackingOff true");
-            BackOff(offPlayer);
+            isBackingOff = true;
             backOffTime += Time.deltaTime;
             yield return new WaitForFixedUpdate();
         }
@@ -1380,7 +1355,7 @@ public class DefPlayer : FootBallAthlete
         //todo this needs a stat machine to determine if the DB needs to chase the WR past the Zone, Does he have overhead help
     }
 
-    private IEnumerator TurnTowardsLOS()
+    private IEnumerator TurnTowardsLos()
     {
         //todo write this function
         yield return new WaitForFixedUpdate();

@@ -481,7 +481,6 @@ MonoBehaviour:
   blockText: {fileID: 0}
   zoneLayer: 8
   zoneType: 0
-  startOffPlayer: {fileID: 0}
 --- !u!1 &39914217
 GameObject:
   m_ObjectHideFlags: 0
@@ -1686,7 +1685,6 @@ MonoBehaviour:
   blockText: {fileID: 0}
   zoneLayer: 8
   zoneType: 0
-  startOffPlayer: {fileID: 0}
 --- !u!4 &639706030 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6098374582815525946, guid: 99fc90a8ea7d73042b00adcc3867217c,
@@ -1772,7 +1770,6 @@ MonoBehaviour:
   blockText: {fileID: 0}
   zoneLayer: 8
   zoneType: 0
-  startOffPlayer: {fileID: 0}
 --- !u!1 &666339098
 GameObject:
   m_ObjectHideFlags: 0
@@ -3512,7 +3509,6 @@ MonoBehaviour:
   blockText: {fileID: 0}
   zoneLayer: 8
   zoneType: 0
-  startOffPlayer: {fileID: 0}
 --- !u!1001 &1479540107
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4970,7 +4966,6 @@ MonoBehaviour:
   blockText: {fileID: 0}
   zoneLayer: 8
   zoneType: 0
-  startOffPlayer: {fileID: 0}
 --- !u!137 &1938320964 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 137732589740493876, guid: 06a16a104b39a454e971c1df0727d2b3,
@@ -5354,7 +5349,6 @@ MonoBehaviour:
   blockText: {fileID: 0}
   zoneLayer: 8
   zoneType: 0
-  startOffPlayer: {fileID: 0}
 --- !u!1001 &2033403936
 PrefabInstance:
   m_ObjectHideFlags: 0

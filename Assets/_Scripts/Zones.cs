@@ -7,7 +7,9 @@ public class Zones : MonoBehaviour
 {
     public static DefPlayer myDefPlayer;
     internal float zoneSize;
-    
+    internal bool isZone;
+    internal bool isDeepDefender;
+    internal bool isRusher;
     private Color zoneColor;
     [HideInInspector] public Vector3 zoneCenter;
     public bool isPress;
@@ -37,30 +39,40 @@ public class Zones : MonoBehaviour
             case ZoneType.Curl:
                 zoneColor = Color.yellow;
                 zoneSize = 5;
+                isZone = true;
                 break;
             case ZoneType.Hook:
                 zoneColor = new Color(253, 5, 5);
                 zoneSize = 5;
+                isZone = true;
                 break;
             case ZoneType.DeepHalf:
                 zoneColor = Color.blue;
                 zoneSize = 10;
+                isZone = true;
+                isDeepDefender = true;
                 break;
             case ZoneType.DeepThird:
                 zoneColor = Color.white;
                 zoneSize = 9;
+                isZone = true;
+                isDeepDefender = true;
                 break;
             case ZoneType.Flat:
                 zoneColor = Color.cyan;
                 zoneSize = 6;
+                isZone = true;
                 break;
             case ZoneType.Seam:
                 zoneColor = Color.green;
                 zoneSize = 6;
+                isZone = true;
                 break;
             case ZoneType.Rush:
                 zoneColor = Color.red;
                 zoneSize = 1;
+                isZone = true;
+                isRusher = true;
                 break;
             case ZoneType.Spy:
                 zoneColor = Color.gray;

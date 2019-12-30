@@ -51,7 +51,7 @@ public class DB : DefPlayer
                 SetTargetOffPlayer(potientialTarget);
                 if(!myZone.isPress)return;
                 if (targetOffPlayer.CanBePressed())
-                    StartCoroutine(WrPress(targetOffPlayer));
+                    StartCoroutine(PressTarget(targetOffPlayer));
                 //todo press range variable
             }
         }
