@@ -26,7 +26,7 @@ public class Dline : DefPlayer
         {
             transformTarget = GameObject.FindGameObjectWithTag("Player").transform;
         }
-        SetTargetPlayer(transformTarget);
+        SetTargetOffPlayer(transformTarget);
 
         if (wasBlocked && !isBlocked)
             StartCoroutine("BlockCoolDown"); 

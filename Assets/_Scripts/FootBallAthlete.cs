@@ -397,6 +397,27 @@ public class FootBallAthlete : MonoBehaviour
         return bestTarget;
     }
 
+    internal IEnumerator FaceLOS()
+    {
+        if(this is OffPlayer)
+        {
+            while (gameManager.isHiked == false)
+            {
+                transform.LookAt(transform.position + new Vector3(0, 0, 1));
+                yield return new WaitForEndOfFrame();
+            }
+        }
+
+        if (this is DefPlayer)
+        {
+            while (gameManager.isHiked == false)
+            {
+                transform.LookAt(transform.position + new Vector3(0, 0, -1));
+                yield return new WaitForEndOfFrame();
+            }
+        }
+    }
+
     internal void AddClickCollider()
     {
         sphereCollider = gameObject.AddComponent<SphereCollider>();
@@ -616,7 +637,7 @@ public class OffPlayer : FootBallAthlete
             routeCut.transform.position = new Vector3(xPosCut, yPosCut, zPosCut);
         }
 
-        lastCutVector = myRoute.routeCuts.Last().position;
+        if (myRoute.routeCuts.Length != 0) lastCutVector = myRoute.routeCuts.LastOrDefault().position;
         SetDestination(myRoute.GetWaypoint(currentRouteIndex));
         StartCoroutine(FaceLOS());
     }
@@ -641,14 +662,7 @@ public class OffPlayer : FootBallAthlete
         SetDestination(myRoute.GetWaypoint(currentRouteIndex));
         StartCoroutine(FaceLOS());
     }
-    internal IEnumerator FaceLOS()
-    {
-        while (gameManager.isHiked == false)
-        {
-            transform.LookAt(transform.position + new Vector3(0, 0, 1));
-            yield return new WaitForEndOfFrame();
-        }
-    }
+  
     internal void RunRoute()
     {
         if (myRoute == null) return;
@@ -1200,21 +1214,12 @@ public class DefPlayer : FootBallAthlete
             if (myZone.isPress)
             {
                 SetDestination(myRoute.transform.position + new Vector3(0,0,1));
+                StartCoroutine(FaceLOS());
                 return;
             }
         }
         SetDestination(myZone.transform.position);
-        StartCoroutine(FaceLineOfScrim());
-    }
-
-    IEnumerator FaceLineOfScrim()
-    {
-        while (Math.Abs(navMeshAgent.velocity.sqrMagnitude) > .02)
-        {
-            transform.LookAt(gameManager.lineOfScrimmage.transform);
-            yield return new WaitForEndOfFrame();
-        }
-        transform.LookAt(gameManager.lineOfScrimmage.transform);
+        StartCoroutine(FaceLOS());
     }
 
     internal void PlayReact()
@@ -1296,13 +1301,6 @@ public class DefPlayer : FootBallAthlete
         return false;
     }
 
-    public void SetTargetPlayer(Transform targetSetter)
-    {
-        EnableNavMeshAgent();
-        navMeshAgent.SetDestination(targetSetter.position);
-        transformTarget = targetSetter;
-    }
-
     internal void SetTargetOffPlayer(Transform targetTransform)
     {
         EnableNavMeshAgent();
@@ -1319,61 +1317,24 @@ public class DefPlayer : FootBallAthlete
         float pressTimeNorm = 0;
         //Vector3 dir = (offPlayer.transform.position - transform.position).normalized * pressTime;
         //rb.velocity = dir;
-        while (pressTimeNorm <= 1f)
+        while (pressTimeNorm <= 2f)
         {
-            StayInfront(offPlayer);
             pressTimeNorm += Time.deltaTime / pressTime;
             offPlayer.Press(pressTimeNorm);
             yield return new WaitForEndOfFrame();
         }
-
-        anim.SetTrigger("ReleaseTrigger");
-        StartCoroutine(BackOffPress(offPlayer));
-
+        BackOffPress(offPlayer);
     }
 
-    private IEnumerator BackOffPress(OffPlayer offPlayer)
+    private void BackOffPress(OffPlayer offPlayer)
     {
         //read receiver route, move backwards, release receiver to new defender, moves towards next receiver
-
         isPressing = false;
-        StartCoroutine(TurnTowardsLos());
-        var backOffTime = 0f;
         SetDestination(myZone.transform.position);
         offPlayer.ReleasePress();
-        while (backOffTime < 1)
-        {
-            //Debug.Log("isBackingOff true");
-            isBackingOff = true;
-            backOffTime += Time.deltaTime;
-            yield return new WaitForFixedUpdate();
-        }
-
-        anim.SetTrigger("InZoneTrigger");
-        isBackingOff = false;
+        anim.SetTrigger("ReleaseTrigger");
         //Debug.Log("isBackingOff false");
         //todo this needs a stat machine to determine if the DB needs to chase the WR past the Zone, Does he have overhead help
-    }
-
-    private IEnumerator TurnTowardsLos()
-    {
-        //todo write this function
-        yield return new WaitForFixedUpdate();
-    }
-
-    private void StayInfront(OffPlayer offPlayer)
-    {
-        DisableNavMeshAgent();
-
-        float speed = 3; //todo needs to be a calculation of WR release and DB press
-        Vector3 dir = (offPlayer.transform.position + offPlayer.transform.forward - transform.position).normalized * speed;
-        float v = dir.z;
-        float h = dir.x;
-
-        anim.SetFloat("VelocityX", h * speed);
-        anim.SetFloat("VelocityZ", v * speed);
-
-        rb.velocity = dir;
     }
 
     private void BackOff(OffPlayer offPlayer)
@@ -1398,7 +1359,7 @@ public class DefPlayer : FootBallAthlete
         canvas.transform.LookAt(Camera.main.transform);
 
         //todo make way around multiple defenders
-        SetTargetPlayer(blocker.transform);
+        SetTargetOffPlayer(blocker.transform);
         pressBar.fillAmount = blockTimeNorm;
         navMeshAgent.acceleration = 0f;
         navMeshAgent.speed = 0f;
@@ -1417,7 +1378,7 @@ public class DefPlayer : FootBallAthlete
         canvas.enabled = !canvas.enabled;
         isBlocked = false;
         wasBlocked = true;
-        SetTargetPlayer(GameObject.FindGameObjectWithTag("Player").transform);
+        SetTargetOffPlayer(GameObject.FindGameObjectWithTag("Player").transform);
         navMeshAgent.speed = navStartSpeed;
         navMeshAgent.acceleration = navStartAccel;
         gameManager.RaiseShedBlock(this);
@@ -1544,7 +1505,7 @@ public class DefPlayer : FootBallAthlete
 
     public void BallOwnerChange(FootBallAthlete ballOwner)
     {
-        SetTargetPlayer(ballOwner.transform);
+        SetTargetOffPlayer(ballOwner.transform);
     }
 
     internal void DisableNavMeshAgent()

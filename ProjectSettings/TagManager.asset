@@ -10,6 +10,9 @@ TagManager:
   - ZoneObject
   - ClickCollider
   - Routes
+  - Undefined
+  - Cuts
+  - Block
   layers:
   - Default
   - TransparentFX

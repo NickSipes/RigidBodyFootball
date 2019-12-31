@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using UnityEngine;
 
 [System.Serializable]
 public class Routes : MonoBehaviour
@@ -8,17 +11,38 @@ public class Routes : MonoBehaviour
     public float[] routeCutDwellTime;
     private Transform routeStartLocation;
     [HideInInspector] public Transform[] routeCuts;
+    private bool hasRoute;
 
     void Start()
     {
-        routeCuts = GetComponentsInChildren<Transform>();
-        //lineRenderer = GetComponent<LineRenderer>();
+        GetRouteCuts();
+        AddLineRenderer();
         //lineRenderer.widthMultiplier = .1f;
         //lineRenderer.SetPosition(0, transform.GetChild(0).position);
     }
 
+    public Vector3 LastCutVector()
+    {
+
+        return new Vector3();
+    }
+    private void AddLineRenderer()
+    {
+        if (lineRenderer == null)
+        {
+            lineRenderer = gameObject.AddComponent<LineRenderer>();
+        }
+    }
+
+    private void GetRouteCuts()
+    {
+        routeCuts = GetComponentsInChildren<Transform>();
+        hasRoute = true;
+    }
+
     void Update()
     {
+        if(GameManager.instance.isHiked)return;
         DrawPath();
     }
     private void OnDrawGizmos()
@@ -27,6 +51,7 @@ public class Routes : MonoBehaviour
         {
             int j = GetNextIndex(i);
             Gizmos.DrawSphere(GetWaypoint(i), waypointGizmoRadius);
+            Gizmos.color = Color.red;
             Gizmos.DrawLine(GetWaypoint(i), GetWaypoint(j));
         }
     }
@@ -47,11 +72,17 @@ public class Routes : MonoBehaviour
 
     void DrawPath()
     {
-        foreach (Transform cut in routeCuts)  
-        {
-            
+        //if (!hasRoute)
+        //{
+        //    GetRouteCuts();
+        //}
+        
+        //lineRenderer.positionCount = routeCuts.Length;
+        //Debug.Log(this.name + " " + lineRenderer.positionCount);
+        //foreach (Transform cut in routeCuts)  
+        //{
            
-        }
+        //}
         
     }
 

@@ -60,7 +60,7 @@ GameObject:
   - component: {fileID: 8357613739173547270}
   m_Layer: 0
   m_Name: Cut (2)
-  m_TagString: Untagged
+  m_TagString: Cuts
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 533615941193722154}
   m_Layer: 0
   m_Name: Cut (1)
-  m_TagString: Untagged
+  m_TagString: Cuts
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 309282874910806547}
   m_Layer: 0
   m_Name: Cut
-  m_TagString: Untagged
+  m_TagString: Cuts
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

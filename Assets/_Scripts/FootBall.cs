@@ -30,7 +30,6 @@ public class FootBall : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
-     
     }
 	
 	// Update is called once per frame
