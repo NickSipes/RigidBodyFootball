@@ -1,15 +1,16 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.WSA.Input;
 
-public class Zones : MonoBehaviour
+public class DefJobs : MonoBehaviour
 {
-    public static DefPlayer myDefPlayer;
+    public DefPlayer myDefPlayer;
     internal float zoneSize;
     internal bool isZone;
     internal bool isDeepDefender;
-    internal bool isRusher;
+    [SerializeField] internal bool isRusher;
     private Color zoneColor;
     [HideInInspector] public Vector3 zoneCenter;
     public bool isPress;
@@ -30,7 +31,7 @@ public class Zones : MonoBehaviour
         sphereCollider = gameObject.AddComponent<SphereCollider>();
         sphereCollider.isTrigger = true;
     }
-
+   
     private void ZoneTypeSwitch()
     {
         //todo I would love to do some kind like fill in the box math here

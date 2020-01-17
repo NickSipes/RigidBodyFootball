@@ -47,8 +47,8 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public OffPlay offPlay;
 
     [HideInInspector] public PlayCall currentPlayCall;
-    public Routes[] routes;
-    public Routes myRoute;
+    public OffJobs[] routes;
+    public OffJobs myOffJob;
     [HideInInspector] public int routeSelection;
     internal int totalCuts;
     public Vector3 lastCutVector;
@@ -69,7 +69,7 @@ public class FootBallAthlete : MonoBehaviour
     [HideInInspector] public OffPlayer[] offPlayers;
     [Range(5, 10)] public float defZoneSize; //todo should this be determined by the Zone? Maybe awareness checks
 
-    [HideInInspector] public Zones myZone;
+    [HideInInspector] public DefJobs myDefJob;
     [HideInInspector] public OffPlayer targetOffPlayer;
     [HideInInspector] public Transform transformTarget;
 
@@ -92,7 +92,7 @@ public class FootBallAthlete : MonoBehaviour
     internal virtual void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
-        routes = FindObjectsOfType<Routes>();
+        routes = FindObjectsOfType<OffJobs>();
         routeManager = FindObjectOfType<RouteManager>();
         cameraFollow = FindObjectOfType<CameraFollow>();
         cameraRaycaster = CameraRaycaster.instance;
@@ -399,7 +399,7 @@ public class FootBallAthlete : MonoBehaviour
 
     internal IEnumerator FaceLOS()
     {
-        if(this is OffPlayer)
+        if (this is OffPlayer)
         {
             while (gameManager.isHiked == false)
             {
@@ -480,7 +480,7 @@ public class OffPlayer : FootBallAthlete
         currentOffPlay = offPlay;
         if (gameManager.isRun)
         {
-            Destroy(myRoute);
+            Destroy(myOffJob);
             isReciever = false;
             return;
         }
@@ -561,7 +561,7 @@ public class OffPlayer : FootBallAthlete
             }
             currentPlayCall = offPlay;
             if (!isBlocker) isReciever = true;
-            Destroy(myRoute);
+            Destroy(myOffJob);
             GetRoute(routeSelection);
         }
     }
@@ -628,8 +628,8 @@ public class OffPlayer : FootBallAthlete
         var yPos = currentPlay.position.y;
         var zPos = currentPlay.position.z;
         currentPlay.transform.position = new Vector3(xPos, yPos, zPos);
-        myRoute.transform.position = new Vector3(xPos, yPos, zPos);
-        foreach (var routeCut in myRoute.transform.GetComponentsInChildren<Transform>())
+        myOffJob.transform.position = new Vector3(xPos, yPos, zPos);
+        foreach (var routeCut in myOffJob.transform.GetComponentsInChildren<Transform>())
         {
             var xPosCut = -(routeCut.position.x);
             var yPosCut = routeCut.position.y;
@@ -637,8 +637,8 @@ public class OffPlayer : FootBallAthlete
             routeCut.transform.position = new Vector3(xPosCut, yPosCut, zPosCut);
         }
 
-        if (myRoute.routeCuts.Length != 0) lastCutVector = myRoute.routeCuts.LastOrDefault().position;
-        SetDestination(myRoute.GetWaypoint(currentRouteIndex));
+        if (myOffJob.routeCuts.Length != 0) lastCutVector = myOffJob.routeCuts.LastOrDefault().position;
+        SetDestination(myOffJob.GetWaypoint(currentRouteIndex));
         StartCoroutine(FaceLOS());
     }
 
@@ -650,26 +650,26 @@ public class OffPlayer : FootBallAthlete
 
     internal void GetRoute(int routeSelector)
     {
-        myRoute = Instantiate(routeManager.allRoutes[routeSelector], routeStartPosition, gameManager.lineOfScrimmage.transform.rotation).GetComponent<Routes>(); //todo get route index selection
-        myRoute.transform.name = routeManager.allRoutes[routeSelector].name;
-        myRoute.transform.SetParent(routeManager.transform);
-        var childCount = myRoute.transform.childCount;
+        myOffJob = Instantiate(routeManager.allRoutes[routeSelector], routeStartPosition, gameManager.lineOfScrimmage.transform.rotation).GetComponent<OffJobs>(); //todo get route index selection
+        myOffJob.transform.name = routeManager.allRoutes[routeSelector].name;
+        myOffJob.transform.SetParent(routeManager.transform);
+        var childCount = myOffJob.transform.childCount;
         totalCuts = childCount - 1; //todo had to subtract 1 because arrays start at 0
-        lastCutVector = myRoute.transform.GetChild(totalCuts).position;
+        lastCutVector = myOffJob.transform.GetChild(totalCuts).position;
         //Debug.Log("total cuts " + totalCuts + "Child Count " + (childCount - 1));
-        //Debug.Log(myRoute.transform.name);
+        //Debug.Log(myOffJob.transform.name);
         if (!transformTarget) GetTarget();
-        SetDestination(myRoute.GetWaypoint(currentRouteIndex));
+        SetDestination(myOffJob.GetWaypoint(currentRouteIndex));
         StartCoroutine(FaceLOS());
     }
-  
+
     internal void RunRoute()
     {
-        if (myRoute == null) return;
+        if (myOffJob == null) return;
 
         if (!AtRouteCut()) return;
 
-        if (timeSinceArrivedAtRouteCut > myRoute.routeCutDwellTime[0])
+        if (timeSinceArrivedAtRouteCut > myOffJob.routeCutDwellTime[0])
         {
             CycleRouteCut();
             nextPosition = GetCurrentRouteCut();
@@ -697,7 +697,7 @@ public class OffPlayer : FootBallAthlete
 
     private void CycleRouteCut()
     {
-        currentRouteIndex = myRoute.GetNextIndex(currentRouteIndex);
+        currentRouteIndex = myOffJob.GetNextIndex(currentRouteIndex);
     }
 
     internal bool IsEndOfRoute()
@@ -716,12 +716,12 @@ public class OffPlayer : FootBallAthlete
     }
     private bool AtLastRouteCut()
     {
-        float distanceLastCut = Vector3.Distance(transform.position, (myRoute.transform.GetChild(totalCuts).position));
+        float distanceLastCut = Vector3.Distance(transform.position, (myOffJob.transform.GetChild(totalCuts).position));
         return distanceLastCut < routeCutTolerance;
     }
     private Vector3 GetCurrentRouteCut()
     {
-        return myRoute.GetWaypoint(currentRouteIndex);
+        return myOffJob.GetWaypoint(currentRouteIndex);
 
     }
 
@@ -786,37 +786,85 @@ public class OffPlayer : FootBallAthlete
         //throw new System.NotImplementedException();
     }
 
-    internal void BlockProtection() //todo consolidate duplicate code
+    internal virtual void BlockProtection() //todo consolidate duplicate code
     {
         if (!canBlock) return;
-        ;
-        //todo change code to be moving forward with blocks, get to the second level after shedding first defender
-        if (transformTarget == null)
-        {
-            //sudo get positions of all other blockers
-            var blockTargets = gameManager.defPlayers;
-            var bestBlockTarget = GetClosestDefPlayer(blockTargets);
-            if ((bestBlockTarget.transform.position - transform.position).magnitude < blockRange)
+        
+        transformTarget = GetBestBlockTarget();
 
-
-                //todo compare def players who are engaged in a block, double-team or get down-field
-                transformTarget = GetClosestDefPlayer(blockTargets);
-        }
-        if (transformTarget == null) return;
-        Vector3 directionToTarget = transformTarget.position - transform.position;
         transform.LookAt(transformTarget);
-
         if (gameManager.isRun) SetTargetDlineRun(transformTarget);
         if (gameManager.isPass) SetTargetDline(transformTarget);
 
-        float dSqrToTarget = directionToTarget.sqrMagnitude;
-        if (dSqrToTarget < 3) //todo setup block range variable
-        {
-            var defPlayer = transformTarget.GetComponent<DefPlayer>();
-            if (!isBlocking) StartCoroutine(BlockTarget(transformTarget));
-        }
+        var defPlayer = transformTarget.GetComponent<DefPlayer>();
+        if (!isBlocking) StartCoroutine(BlockTarget(defPlayer));
     }
 
+    private Transform GetBestBlockTarget()
+    {
+ 
+        //?
+        var closestTarget = GetClosestBlockTransform();
+        Vector3 directionToTarget = closestTarget.position - transform.position;
+        float dSqrToTarget = directionToTarget.sqrMagnitude;
+        
+        Transform bestDefRusher = null;
+        
+        //todo probably a better way to do this
+        List<DefJobs> defJobs = gameManager.GetSortDefJobs();
+        
+ 
+        int i = 0;
+        float bestX;
+        foreach (DefJobs defJob in defJobs)
+        {
+            if (defJob.isRusher)
+            {
+                var defRusher = defJob.myDefPlayer;
+                
+                if (defRusher.transform.position.x > gameManager.lineOfScrimmage.transform.position.x)
+                {
+                    if (bestDefRusher == null)
+                    {
+                        //todo this is reading the field left to right, so the number works but its not a good solution
+                        bestX = -100;
+                    }
+                    else
+                    {
+                        bestX = bestDefRusher.transform.position.x;
+                    }
+                    
+                    if ((defRusher.transform.position.x > bestX || bestDefRusher == null))
+                    {
+                        bestDefRusher = defRusher.transform;
+                    }
+                }
+            }
+
+            i++;
+        }
+
+        if (bestDefRusher != null)
+        {
+            return bestDefRusher;
+        }
+            
+        if (!(dSqrToTarget < blockRange))
+        {
+            return closestTarget;
+        } 
+        return null;
+    }
+
+    private Transform GetClosestBlockTransform()
+    {
+        var blockTargets = gameManager.defPlayers;
+        Transform transformTargetz = GetClosestDefPlayer(blockTargets);
+        if ((transformTargetz.transform.position - transform.position).magnitude < blockRange)
+            //todo compare def players who are engaged in a block, double-team or get down-field
+            return transformTargetz;
+        return null;
+    }
 
     private IEnumerator GetToImpactPos(Vector3 impact)
     {
@@ -863,13 +911,14 @@ public class OffPlayer : FootBallAthlete
             gameManager.isPassStarted = false;
 
         }
-        ResetRoute();
-    }
 
+        ResetRoute();
+
+    }
 
     public void ResetRoute() // Called from anim event
     {
-        myRoute = null;
+        myOffJob = null;
         footBall = null;
         transformTarget = null;
         isCatching = false;
@@ -886,7 +935,7 @@ public class OffPlayer : FootBallAthlete
     {
         if (transformTarget == null)
         {
-            SetDestination(myRoute.GetWaypoint(currentRouteIndex));
+            SetDestination(myOffJob.GetWaypoint(currentRouteIndex));
         }
 
         //if ((navMeshAgent.destination - transform.position).magnitude < 1 && targetOffPlayer == null)
@@ -901,7 +950,7 @@ public class OffPlayer : FootBallAthlete
                 .GetComponent<FootBall>(); //todo this is all bad, attempting to destroy the football and set destination to the route 
             if (ball != null)
             {
-                SetDestination(myRoute.GetWaypoint(currentRouteIndex));
+                SetDestination(myOffJob.GetWaypoint(currentRouteIndex));
             }
         }
     }
@@ -926,13 +975,11 @@ public class OffPlayer : FootBallAthlete
         SetDestination(qb.transform.position +
                        (target.position - qb.transform.position) /
                        2); // todo centralize ball carrier, access ballcarrier instead of hard coded transform
-    }
+    } 
 
-    private IEnumerator BlockTarget(Transform target)
+    private IEnumerator BlockTarget(DefPlayer defPlayer)
     {
         //todo 
-        var defPlayer = target.GetComponent<DefPlayer>();
-
         if (defPlayer.blockPlayers.Contains(this)) yield break;
 
         float blockTime = 1f; //todo make public variable
@@ -973,7 +1020,7 @@ public class DefPlayer : FootBallAthlete
     internal bool isBackingOff = false;
     internal bool isBlockingPass = false;
     internal bool inPressPos = false;
-    public Zones.ZoneType zoneType;
+    public DefJobs.ZoneType zoneType;
 
     //todo stats
     private float awarenessBoost = 3f;
@@ -998,18 +1045,18 @@ public class DefPlayer : FootBallAthlete
         }
         if (!gameManager.isPass) return;
 
-        if (myZone.isRusher) return;
+        if (myDefJob.isRusher) return;
         if (!isZone) return;
 
         if (isBlockingPass) return;
         if (isPressing) return;
         if (isBackingOff) return;
 
-        if (myZone.isDeepDefender)
+        if (myDefJob.isDeepDefender)
         {
             if (targetOffPlayer)
             {
-                if ((targetOffPlayer.transform.position - myZone.zoneCenter).sqrMagnitude > myZone.zoneSize)
+                if ((targetOffPlayer.transform.position - myDefJob.zoneCenter).sqrMagnitude > myDefJob.zoneSize)
                 {
                     targetOffPlayer = null;
                 }
@@ -1032,7 +1079,7 @@ public class DefPlayer : FootBallAthlete
             }
             else
             {
-                //Debug.Log("targetOffPlayer out of myZone");
+                //Debug.Log("targetOffPlayer out of myDefJob");
                 targetOffPlayer = null;
             }
         }
@@ -1066,10 +1113,10 @@ public class DefPlayer : FootBallAthlete
         {
             if (!offPlayer.isReciever) continue;
 
-            //if(offPlayer.transform.position.z < myZone.zoneSize + myZone.zoneCenter.z + awarenessBoost)continue;
+            //if(offPlayer.transform.position.z < myDefJob.zoneSize + myDefJob.zoneCenter.z + awarenessBoost)continue;
 
 
-            if (myZone.zoneCenter.x < 0) //Left side
+            if (myDefJob.zoneCenter.x < 0) //Left side
             {
                 if (offPlayer.transform.position.x < 0 && offPlayer.transform.position.x < lastBest)
                 {
@@ -1079,7 +1126,7 @@ public class DefPlayer : FootBallAthlete
                 }
             }
 
-            if (myZone.zoneCenter.x > 0) //Right side
+            if (myDefJob.zoneCenter.x > 0) //Right side
             {
                 if (offPlayer.transform.position.x > 0 && offPlayer.transform.position.x > lastBest)
                 {
@@ -1093,7 +1140,7 @@ public class DefPlayer : FootBallAthlete
 
         if (bestOffPlayer == null)
         {
-            SetDestination(myZone.zoneCenter);
+            SetDestination(myDefJob.zoneCenter);
             return;
         }
 
@@ -1123,7 +1170,7 @@ public class DefPlayer : FootBallAthlete
 
     IEnumerator PlayDeepBall(OffPlayer offPlayer)
     {
-        while (offPlayer.transform.position.z < myZone.zoneCenter.z)
+        while (offPlayer.transform.position.z < myDefJob.zoneCenter.z)
         {
             isPlayingDeep = true;
             SetDestination(offPlayer.transform.position + new Vector3(0, 0, 5 + awarenessBoost));
@@ -1156,7 +1203,7 @@ public class DefPlayer : FootBallAthlete
 
     internal void OffPlayChange(OffPlay offPlayChange)
     {
-        
+
     }
 
     internal void DefPlayChange(DefPlay defPlayChange)
@@ -1170,24 +1217,24 @@ public class DefPlayer : FootBallAthlete
     {
         if (!IsOffOutOfHuddle()) return;
         if (!isZone) return;
-        //targetOffPlayer = GetClosestOffPlayer(offPlayers, myZone.zoneCenter);
+        //targetOffPlayer = GetClosestOffPlayer(offPlayers, myDefJob.zoneCenter);
         var routeStarts = GameObject.FindGameObjectsWithTag("Routes");
-        Routes myRouteStarts = null;
+        OffJobs myOffJobStarts = null;
 
         //todo this all sucks 
         float closestDistanceSqr = 50;
 
         foreach (var routeStart in routeStarts)
         {
-            Vector3 directionToTarget = routeStart.transform.position - myZone.transform.position;
+            Vector3 directionToTarget = routeStart.transform.position - myDefJob.transform.position;
             float dSqrToTarget = directionToTarget.sqrMagnitude;
             if (!(dSqrToTarget < closestDistanceSqr)) continue;
 
             closestDistanceSqr = dSqrToTarget;
-            myRouteStarts = routeStart.GetComponent<Routes>();
+            myOffJobStarts = routeStart.GetComponent<OffJobs>();
         }
 
-        myRoute = myRouteStarts;
+        myOffJob = myOffJobStarts;
     }
 
 
@@ -1195,10 +1242,10 @@ public class DefPlayer : FootBallAthlete
     {
         defPlay = gameManager.currentDefPlay;
         offPlay = gameManager.currentOffPlay;
-        myZone = defPlay.GetJob(this);
+        myDefJob = defPlay.GetJob(this);
         var zoneObjects = GameObject.Find("ZoneObjects");
-        myZone.transform.SetParent(zoneObjects.transform);
-        zoneType = myZone.type;
+        myDefJob.transform.SetParent(zoneObjects.transform);
+        zoneType = myDefJob.type;
     }
 
     private bool IsOffOutOfHuddle()
@@ -1209,16 +1256,16 @@ public class DefPlayer : FootBallAthlete
 
     private void MoveToStart()
     {
-        if (myRoute != null)
+        if (myOffJob != null)
         {
-            if (myZone.isPress)
+            if (myDefJob.isPress)
             {
-                SetDestination(myRoute.transform.position + new Vector3(0,0,1));
+                SetDestination(myOffJob.transform.position + new Vector3(0, 0, 1));
                 StartCoroutine(FaceLOS());
                 return;
             }
         }
-        SetDestination(myZone.transform.position);
+        SetDestination(myDefJob.transform.position);
         StartCoroutine(FaceLOS());
     }
 
@@ -1243,13 +1290,13 @@ public class DefPlayer : FootBallAthlete
 
     internal void PlayZone()
     {
-        //todo access WR route to see if it will pass through myZone and then move towards intercept point
+        //todo access WR route to see if it will pass through myDefJob and then move towards intercept point
         if (targetOffPlayer == null)
         {
             //has return if enemy set
             if (CheckZone()) return;
         }
-        SetDestination(base.myZone.zoneCenter);
+        SetDestination(base.myDefJob.zoneCenter);
 
     }
 
@@ -1261,16 +1308,16 @@ public class DefPlayer : FootBallAthlete
             wideRecievers = FindObjectsOfType<WR>();
         }
         var possibleEnemy = GetClosestWr(wideRecievers);
-        Vector3 wrZoneCntrDist = possibleEnemy.position - base.myZone.transform.position;
+        Vector3 wrZoneCntrDist = possibleEnemy.position - base.myDefJob.transform.position;
         //Debug.Log(wrZoneCntrDist.magnitude);
-        if (wrZoneCntrDist.magnitude < base.myZone.zoneSize)
+        if (wrZoneCntrDist.magnitude < base.myDefJob.zoneSize)
         {
             //todo this will break with multiple recievers, need to determine coverage responsibility
             SetTargetOffPlayer(possibleEnemy);
             return true;
         }
 
-        if (myZone.isDeepDefender)
+        if (myDefJob.isDeepDefender)
         {
 
         }
@@ -1285,9 +1332,9 @@ public class DefPlayer : FootBallAthlete
                 RaycastHit hit = hits[i];
                 if (hit.collider.tag == "ZoneObject")
                 {
-                    Zones zoneObject = hit.collider.gameObject.GetComponent<Zones>();
+                    DefJobs defJobObject = hit.collider.gameObject.GetComponent<DefJobs>();
 
-                    if (zoneObject == base.myZone)
+                    if (defJobObject == base.myDefJob)
                     {
                         //Maybe Method
                         SetDestination(hit.point);
@@ -1330,7 +1377,7 @@ public class DefPlayer : FootBallAthlete
     {
         //read receiver route, move backwards, release receiver to new defender, moves towards next receiver
         isPressing = false;
-        SetDestination(myZone.transform.position);
+        SetDestination(myDefJob.transform.position);
         offPlayer.ReleasePress();
         anim.SetTrigger("ReleaseTrigger");
         //Debug.Log("isBackingOff false");
@@ -1466,7 +1513,7 @@ public class DefPlayer : FootBallAthlete
 
     internal bool IsTargetInZone(Transform coverTarget)
     {
-        if ((coverTarget.transform.position - base.myZone.transform.position).magnitude <= base.myZone.zoneSize) return true; //targetOffPlayer is inside myZone
+        if ((coverTarget.transform.position - base.myDefJob.transform.position).magnitude <= base.myDefJob.zoneSize) return true; //targetOffPlayer is inside myDefJob
         else return false;
     }
 

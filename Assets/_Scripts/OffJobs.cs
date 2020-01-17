@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 
 [System.Serializable]
-public class Routes : MonoBehaviour
+public class OffJobs : MonoBehaviour
 {
     LineRenderer lineRenderer;
     const float waypointGizmoRadius = 0.3f;

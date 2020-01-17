@@ -78,7 +78,7 @@ public class HB : OffPlayer
     //{
     //    if (gameManager.isRun)
     //    {
-    //        Destroy(myRoute);
+    //        Destroy(myOffJob);
     //        isReciever = false;
     //        return;
     //    }
@@ -95,7 +95,7 @@ public class HB : OffPlayer
     //                break;
     //        }
     //        if (!isBlocker) isReciever = true;
-    //        Destroy(myRoute);
+    //        Destroy(myOffJob);
     //        GetRoute(routeSelection);
     //    }
     //}

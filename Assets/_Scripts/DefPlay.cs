@@ -6,29 +6,35 @@ using UnityEngine;
 public class DefPlay : PlayCall
 {
     public bool isPress;
-    public List<Zones> formationZones;
+    public List<DefJobs> formationJobs;
     internal override void Start()
     {
         base.Start();
-        SetFormationPositions();
     }
 
     internal void SetFormationPositions()
     {
-
+        foreach (DefJobs defJobs in this.GetComponentsInChildren<DefJobs>())
+        {
+            formationJobs.Add(defJobs);
+        } 
     }
 
-    public Zones GetJob(DefPlayer defPlayer)
+    public DefJobs GetJob(DefPlayer defPlayer)
     {
+        if (formationJobs.Count == 0)
+        {
+            SetFormationPositions();
+        }
         var defPlayerName = defPlayer.name;
-        foreach (Zones zone in formationZones)
+        foreach (DefJobs defJobs in formationJobs)
         {
             //todo string reference to hierarchy
-            if (zone.transform.name == defPlayerName)
+            if (defJobs.transform.name == defPlayerName)
             {
-                zone.SetDefPlayer(defPlayer);
-                return zone;
-                //Debug.Log(myZone.name + " " + defPlayer.name + " set");
+                defJobs.SetDefPlayer(defPlayer);
+                return defJobs;
+                //Debug.Log(myDefJob.name + " " + defPlayer.name + " set");
             }
         }
         return null;

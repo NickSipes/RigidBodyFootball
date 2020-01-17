@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RouteManager : MonoBehaviour
 {
-    [SerializeField] public Routes[] allRoutes;
+    [SerializeField] public OffJobs[] allRoutes;
     GameManager gameManager;
 
     // Use this for initialization

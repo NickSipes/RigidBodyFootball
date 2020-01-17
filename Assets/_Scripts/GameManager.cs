@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -179,5 +180,12 @@ public class GameManager : MonoBehaviour
         var zoneParent = GameObject.Find("ZoneObjects");
         currentDefPlay.transform.SetParent(zoneParent.transform);
         defPlayChange?.Invoke(currentDefPlay);
+    }
+
+    public List<DefJobs> GetSortDefJobs()
+    {
+        var defJobs = currentDefPlay.formationJobs;
+        var orderedEnumerable = defJobs.OrderBy(e => e.transform.position.x);
+        return orderedEnumerable.ToList();
     }
 }
