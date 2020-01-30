@@ -443,13 +443,14 @@ public class FootBallAthlete : MonoBehaviour
 
 public class OffPlayer : FootBallAthlete
 {
-    public float blockRange = 3;
+    public float blockRange = 5;
     public float blockCoolDown = 1f;
     public bool canBlock = true;
     internal bool isBlocker;
     public bool isReciever;
     List<DefPlayer> blockList;
     internal OffPlay currentOffPlay;
+    internal Transform playStartPosition;
 
     internal override void Start()
     {
@@ -487,72 +488,93 @@ public class OffPlayer : FootBallAthlete
 
         if (gameManager.isPass)
         {
-            var number = this.name;
-            switch (number)
+            //todo switch by string is gross, also doesn't allow expansion of playcall, need to rethink whole thing.
+            switch (this.name)
             {
                 case "WR1":
                     routeSelection = offPlay.wrRoutes[0];
                     SetStartPosition(offPlay.formationTransforms[0].position);
+                    playStartPosition = offPlay.formationTransforms[0];
+
                     break;
                 case "WR2":
                     routeSelection = offPlay.wrRoutes[1];
                     SetStartPosition(offPlay.formationTransforms[1].position);
+                    playStartPosition = offPlay.formationTransforms[1];
                     break;
                 case "WR3":
                     routeSelection = offPlay.wrRoutes[2];
                     SetStartPosition(offPlay.formationTransforms[2].position);
+                    playStartPosition = offPlay.formationTransforms[2];
                     break;
                 case "WR4":
+                    //todo not implemented 
                     routeSelection = offPlay.wrRoutes[3];
+                    playStartPosition = offPlay.formationTransforms[0];
                     break;
                 case "TE1":
                     routeSelection = offPlay.teRoute[0];
                     isBlocker = offPlay.isSkillPlayerBlock[0];
                     SetStartPosition(offPlay.formationTransforms[10].position);
+                    playStartPosition = offPlay.formationTransforms[10];
                     break;
                 case "TE2":
+                    //todo not implemented 
                     routeSelection = offPlay.teRoute[1];
                     isBlocker = offPlay.isSkillPlayerBlock[1];
+                    playStartPosition = offPlay.formationTransforms[0];
                     break;
                 case "TE3":
+                    //todo not implemented 
                     routeSelection = offPlay.teRoute[2];
                     isBlocker = offPlay.isSkillPlayerBlock[2];
+                    playStartPosition = offPlay.formationTransforms[0];
                     break;
                 case "HB1":
                     routeSelection = offPlay.hbRoute[0];
                     isBlocker = offPlay.isSkillPlayerBlock[0];
                     SetStartPosition(offPlay.formationTransforms[9].position);
+                    playStartPosition = offPlay.formationTransforms[9];
                     break;
                 case "HB2":
+                    //todo not implemented 
                     routeSelection = offPlay.hbRoute[1];
                     isBlocker = offPlay.isSkillPlayerBlock[1];
+                    playStartPosition = offPlay.formationTransforms[0];
                     break;
                 case "FB":
+                    //todo not implemented 
                     //todo assign fullback route stuff
                     break;
                 case "Center":
                     SetStartPosition(offPlay.formationTransforms[3].position);
+                    playStartPosition = offPlay.formationTransforms[3];
                     isBlocker = true;
                     break;
                 case "GuardR":
                     SetStartPosition(offPlay.formationTransforms[4].position);
+                    playStartPosition = offPlay.formationTransforms[4];
                     isBlocker = true;
                     break;
                 case "GuardL":
                     SetStartPosition(offPlay.formationTransforms[5].position);
+                    playStartPosition = offPlay.formationTransforms[5];
                     isBlocker = true;
                     break;
                 case "TackleL":
                     SetStartPosition(offPlay.formationTransforms[6].position);
+                    playStartPosition = offPlay.formationTransforms[6];
                     isBlocker = true;
                     break;
                 case "TackleR":
                     SetStartPosition(offPlay.formationTransforms[7].position);
+                    playStartPosition = offPlay.formationTransforms[7];
                     isBlocker = true;
                     break;
                 case "QB":
                     navMeshAgent.speed = 4;
                     SetStartPosition(offPlay.formationTransforms[8].position);
+                    playStartPosition = offPlay.formationTransforms[8];
                     isBlocker = true;
                     break;
                 default:
@@ -732,7 +754,7 @@ public class OffPlayer : FootBallAthlete
         if (reciever == this)
         {
             StartCoroutine("GetToImpactPos", impactPos);
-            StartCoroutine("TracktheBall", ball);
+            StartCoroutine("TrackTheBall", ball);
 
             SetTarget(ball.transform);
             footBall = ball;
@@ -789,7 +811,7 @@ public class OffPlayer : FootBallAthlete
     internal virtual void BlockProtection() //todo consolidate duplicate code
     {
         if (!canBlock) return;
-        
+
         transformTarget = GetBestBlockTarget();
 
         transform.LookAt(transformTarget);
@@ -802,66 +824,62 @@ public class OffPlayer : FootBallAthlete
 
     private Transform GetBestBlockTarget()
     {
- 
-        //?
         var closestTarget = GetClosestBlockTransform();
         Vector3 directionToTarget = closestTarget.position - transform.position;
         float dSqrToTarget = directionToTarget.sqrMagnitude;
-        
+
         Transform bestDefRusher = null;
-        
+
         //todo probably a better way to do this
         List<DefJobs> defJobs = gameManager.GetSortDefJobs();
-        
- 
-        int i = 0;
-        float bestX;
-        foreach (DefJobs defJob in defJobs)
+        foreach (var defJob in defJobs)
         {
-            if (defJob.isRusher)
+            if (!defJob.isRusher) continue;
+
+            var defRusher = defJob.myDefPlayer;
+            if (closestTarget == defJob.myDefPlayer.transform)
             {
-                var defRusher = defJob.myDefPlayer;
-                
-                if (defRusher.transform.position.x > gameManager.lineOfScrimmage.transform.position.x)
+                if (isEndBlocker())
                 {
-                    if (bestDefRusher == null)
-                    {
-                        //todo this is reading the field left to right, so the number works but its not a good solution
-                        bestX = -100;
-                    }
-                    else
-                    {
-                        bestX = bestDefRusher.transform.position.x;
-                    }
-                    
-                    if ((defRusher.transform.position.x > bestX || bestDefRusher == null))
-                    {
-                        bestDefRusher = defRusher.transform;
-                    }
+                    //todo find best block determine double team
+                    //var endRusher;
+
+                    //if (isLeftSide)
+                    //{
+                    //    endRusher = FindLeftRush();
+                    //}
+
+                    //if (isRightSide)
+                    //{
+                    //    endRusher = FindLeftRush();
+                    //}
+
+                    //SetEndRusherAsTarget(endRusher);
                 }
             }
-
-            i++;
         }
 
-        if (bestDefRusher != null)
-        {
-            return bestDefRusher;
-        }
-            
-        if (!(dSqrToTarget < blockRange))
-        {
-            return closestTarget;
-        } 
-        return null;
+        return !(dSqrToTarget < blockRange) ? closestTarget : null;
     }
+
+    private bool isEndBlocker()
+    {
+        foreach (var VARIABLE in offPlayers)
+        {
+            if (isBlocker)
+            {
+                 
+            }
+        }
+        throw new NotImplementedException();
+    }
+
 
     private Transform GetClosestBlockTransform()
     {
         var blockTargets = gameManager.defPlayers;
         Transform transformTargetz = GetClosestDefPlayer(blockTargets);
         if ((transformTargetz.transform.position - transform.position).magnitude < blockRange)
-            //todo compare def players who are engaged in a block, double-team or get down-field
             return transformTargetz;
         return null;
     }
@@ -975,7 +993,7 @@ public class OffPlayer : FootBallAthlete
         SetDestination(qb.transform.position +
                        (target.position - qb.transform.position) /
                        2); // todo centralize ball carrier, access ballcarrier instead of hard coded transform
-    } 
+    }
 
     private IEnumerator BlockTarget(DefPlayer defPlayer)
     {
